@@ -63,7 +63,7 @@ There may be many public comments associated with a docket, each of which has te
 
 <figure>
 <img src="images/006_comment_submission.png" alt="comment submission form" />
-<figcaption><i>The <a href="https://beta.regulations.gov/commenton/FWS-HQ-ES-2020-0102-0001">public comment submission form</a>. This shows the fields available for individuals. Only the first name and last name are required, but there is no verification of identity.</i></figcaption>
+<figcaption><i>The <a href="https://beta.regulations.gov/commenton/COLC-2020-0010-0075">public comment submission form</a>. This shows the fields available for individuals. Only the first name and last name are required, but there is no verification of identity.</i></figcaption>
 </figure>
 
 <br><br>
