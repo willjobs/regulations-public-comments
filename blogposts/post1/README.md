@@ -43,7 +43,7 @@ Information on Regulations.gov can be retrieved via the web browser or via a pub
 
 <br>
 
-There may be many public comments associated with a docket, each of which has text and/or attachments and some metadata about the commenter. The metadata are often just the commenter's name or organization, but may also include city, state, and organization type. These metadata are optional, are not verified, and anonymous comments are allowed.
+There may be many public comments associated with a docket, each of which has text and/or attachments and some metadata about the commenter. The metadata are often just the commenter's name or organization, but may also include city, state, and organization type. These metadata are optional, are not verified, and allow for anonymous comments.
 
 
 | ![example listing of comment](images/004_example_listing.png) | 
