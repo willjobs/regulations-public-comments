@@ -33,7 +33,7 @@ The Regulations.gov website is the central hub for communication of and public c
 <figcaption><i>Comparison of the old Regulations.gov and the redesigned version.  </i></figcaption>
 </figure>
 
-<br>&nbsp;
+&nbsp;
 
 Information on Regulations.gov can be retrieved via the web browser or via a public API that can be used to download information from (and [recently](https://regulatorystudies.columbian.gwu.edu/new-regulationsgov-api), upload comments to) a docket. Each docket includes a summary of the docket topic, contact information for the associated agency, various documents associated with the regulation, and a link to public comments.
 
