@@ -66,8 +66,6 @@ There may be many public comments associated with a docket, each of which has te
 
 At the top of the comment submission form, the "Commenter's Checklist" gives advice on attachment file names and reasons that a comment might not be posted. Most importantly for this research, some reasons include comments that are part of a mass submission campaign, are duplicates, contain profanity, or are not related to the regulation. In addition, the site explicitly calls out form letters, saying that form letters **"do not constitute a 'vote'"** and that **"a single, well-supported comment may carry more weight than a thousand form letters."**
 
-<br>
-
 | ![commenter's checklist](images/007_commenter_checklist.png) | 
 |:--:| 
 | *Excerpt from the "Commenter's Checklist" about reasons why a comment might not be posted and consideration around form letters.* |
@@ -76,8 +74,6 @@ At the top of the comment submission form, the "Commenter's Checklist" gives adv
 
 Despite these instructions, it is common to find many identical comments for any given docket item. For example, on one docket item ("Endangered and Threatened Species: Regulations for Interagency Cooperation", [docket FWS-HQ-ES-2020-0102](https://beta.regulations.gov/docket/FWS-HQ-ES-2020-0102)), a quick search showed almost 300 public comments were submitted by members of the "Boone and Crockett Club" in support of the plan with identical language, most of which are identical or near-identical (with a few extra words or an extra paragraph added).
  
-<br>
-
 | ![Many identical comments in response to one rule](images/008_boone_crockett.png) | 
 |:--:| 
 | *There were [almost 300 comments](https://beta.regulations.gov/document/FWS-HQ-ES-2020-0102-0001/comment?filter=boone%20and%20crockett%20club) with identical or near-identical language submitted in response to one proposed rule.* |
