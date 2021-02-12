@@ -130,7 +130,7 @@ Some comments were submitted as attachments with multiple submitters, e.g., a co
 
 | ![teamsters comment](images/014_teamsters.png) | 
 |:--:| 
-| *An example of a typewritten letter submitted as a collection of multiple letters from many individuals listed under a single [public commet](https://beta.regulations.gov/comment/FMCSA-2000-7382-0769-0005). All copies of the letter are the same except for the signee. * |
+| *An example of a typewritten letter submitted as a collection of multiple letters from many individuals listed under a single [public commet](https://beta.regulations.gov/comment/FMCSA-2000-7382-0769-0005). All copies of the letter are the same except for the signee.* |
 
 <br>
 
