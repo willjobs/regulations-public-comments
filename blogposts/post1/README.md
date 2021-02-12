@@ -182,7 +182,7 @@ However, a search on (regular) Google returned a [news article](https://fcw.com/
 
 <br>
 
-Unfortunately, the organization that developed Influence Explorer, Sunlight Labs, [shut down on November 11, 2016](https://www.propublica.org/nerds/sunlight-labs-takeover-update) (Willis, 2016). Many of their projects were moved to [GitHub](https://sunlightlabs.github.io), and hidden on an unlinked page is a [Bulk Data page](https://sunlightlabs.github.io/datacommons/bulk_data.html) with links to several datasets, including a federal regulations dataset with "approximately 13,000 regulatory dockets comprised of over 3,000,000 documents" which is "approximately 14 gigabytes" in size.
+Unfortunately, the organization that developed Influence Explorer, Sunlight Labs, [shut down on November 11, 2016](https://www.propublica.org/nerds/sunlight-labs-takeover-update) (Willis, 2016). Many of their projects were moved to [GitHub](https://sunlightlabs.github.io). Hidden on an unlinked page of this site is a [Bulk Data page](https://sunlightlabs.github.io/datacommons/bulk_data.html) with links to several datasets, including a federal regulations dataset with "approximately 13,000 regulatory dockets comprised of over 3,000,000 documents" which is "approximately 14 gigabytes" in size.
 
 
 | ![bulk data page](images/016_bulk_data.png) | 
