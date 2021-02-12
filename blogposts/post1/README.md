@@ -199,7 +199,7 @@ Its parent organization, Sunlight Labs, unfortunately [shut down on November 11,
 
 | ![Bulk Data page section on federal regulations](images/017_bulk_regs.png) | 
 |:--:| 
-| *Section of the [Bulk Data](https://sunlightlabs.github.io/datacommons/bulk_data.html) page describing their Federal Regulations dataset.* |
+| *Section of the [Bulk Data](https://sunlightlabs.github.io/datacommons/bulk_data.html#available-datasets/federal-regulations) page describing their Federal Regulations dataset.* |
 
 <br>
 
