@@ -47,7 +47,10 @@ Information on Regulations.gov can be retrieved via the web browser or via a pub
 <figcaption><i><a href="https://beta.regulations.gov/document/FWS-HQ-ES-2020-0102-0001">Docket listing</a> for a proposed rule.</i></figcaption>
 </figure>
 
-<br><br>
+| ![a docket](images/003_docket.png) | 
+|:--:| 
+| *[Docket listing](https://beta.regulations.gov/document/FWS-HQ-ES-2020-0102-0001) for a proposed rule.* |
+
 
 There may be many public comments associated with a docket, each of which has text and/or attachments and some metadata about the commenter. The metadata are often just the commenter's name or organization, but may also include city, state, and organization type. These metadata are optional, are not verified, and anonymous comments are allowed.
 
