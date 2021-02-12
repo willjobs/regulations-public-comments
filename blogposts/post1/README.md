@@ -72,7 +72,7 @@ At the top of the comment submission form, the "Commenter's Checklist" gives adv
 
 <br>
 
-Despite these instructions, it is common to find many identical comments for any given docket item. For example, on one docket item ("Endangered and Threatened Species: Regulations for Interagency Cooperation", [docket FWS-HQ-ES-2020-0102](https://beta.regulations.gov/docket/FWS-HQ-ES-2020-0102)), a quick search showed almost 300 public comments in support of the plan were submitted by members of the "Boone and Crockett Club" with identical or near-identical language (with a few extra words or an extra paragraph added).
+Despite these instructions, it is common to find many identical comments for any given docket item. For example, on one docket item ("Endangered and Threatened Species: Regulations for Interagency Cooperation", [docket FWS-HQ-ES-2020-0102](https://beta.regulations.gov/docket/FWS-HQ-ES-2020-0102)), a quick search showed almost 300 public comments in support of the plan were submitted by members of the "Boone and Crockett Club" with identical or near-identical language (i.e., with a few extra words or an extra paragraph added).
  
 | ![Many identical comments in response to one rule](images/008_boone_crockett.png) | 
 |:--:| 
