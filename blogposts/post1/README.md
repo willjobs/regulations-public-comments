@@ -148,7 +148,7 @@ Some comments were submitted as attachments with multiple submitters, e.g., a co
 
 ---
 ## <a id="research"></a>Research questions and ideas
-Given these observations, for this project I will be limiting my work to comments submitted on or after January 1, 2010. This is primarily for concerns of dataset size. If this proves not to be a concern, I could extend the time even further, back to January 1, 2002, which is the first year that a majority of the population of the U.S. had access to the internet according to [the International Telecommunications Union](https://www.itu.int/en/ITU-D/Statistics/Documents/statistics/2020/PercentIndividualsUsingInternet.xlsx) (ITU, 2020). 
+Given these observations, for this project I will be limiting my work to comments submitted on or after January 1, 2010. This ensures that the vast majority of comments will be submitted online (as opposed to by mail or fax) and helps reduce the size of what could be a vast dataset. If dataset size proves not to be a concern, I could extend the time even further, back to January 1, 2002, which is the first year that a majority of the population of the U.S. had access to the internet according to [the International Telecommunications Union](https://www.itu.int/en/ITU-D/Statistics/Documents/statistics/2020/PercentIndividualsUsingInternet.xlsx) (ITU, 2020). 
 
 Given the difficulty of parsing PDFs, images, and other attachments, I will also restrict my dataset to comments for which the plain-text is available. Depending on dataset size, I may need to further restrict my dataset to a smaller set of years. I do not plan on restricting comments based on agency or regulation type.
 
