@@ -19,8 +19,8 @@ My name is Will Jobs and I am a second-year master's student in statistics. Back
 When a federal agency proposes a new regulation, it must go through a formal review process before it is put into effect. Typically, the process entails a Notice of Proposed Rulemaking (NPRM), a public comment period, response to public comments, and Final Rule (Carey, 2013). The documents associated with the rule and all public comments are stored in the corresponding "docket" at [Regulations.gov](https://www.regulations.gov/). The public comment period may range from 30-60 days (or even up to 180 days for more complex rules), and if deemed necessary, may cause a revision to the proposed rule. More information on the rulemaking process is available on the [Federal Register website]( https://www.federalregister.gov/uploads/2011/01/the_rulemaking_process.pdf) and at the [Congressional Research Service](https://crsreports.congress.gov/product/pdf/RL/RL32240).
 
 <figure>
-<img src="images/001_illustration.png" alt="illustration of promulgation" />
-<figcaption><i>Illustration of the promulgation of regulations from federal agencies (Carey, 2013).</i></figcaption>
+<img src="images/001_illustration.png" alt="illustration of rule process" />
+<figcaption><i>Illustration of the proposal of regulations, solicitation of comments, and finalization of rules for federal agencies (Carey, 2013).</i></figcaption>
 </figure>  
 <br>
 
