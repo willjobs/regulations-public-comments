@@ -163,9 +163,9 @@ I expect there will be many issues to deal with while conducting this research, 
 * Text in the comments section that is not actually a comment, but is metadata (e.g., "comment unavailable" or variations on "our comment is attached")
 * Spelling errors
 * Comments in languages other than English
-* Submitters writing a comment in response in the wrong docket
-* Fake comments (though it is unclear how I would detect these)
+* Submitters writing a comment in response to the wrong docket
 * Comments that contain URLs
+* Fake comments (though it is unclear how I would detect these)
 
 <br>
 
