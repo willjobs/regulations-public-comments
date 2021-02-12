@@ -94,7 +94,6 @@ From what I have seen, these kinds of comments (which I will call "form letter c
 
 Especially worrying, it is now within the realm of possibility that more recent NLP models, such as [GPT-2](https://openai.com/blog/gpt-2-1-5b-release/) could be used to generate novel text for each comment, making this kind of automation harder to detect. The General Services Administration (GSA) held a [public meeting](https://regulatorystudies.columbian.gwu.edu/gsa-moving-deal-mass-and-fake-comments) on this problem in 2020, and a [2019 study](https://techscience.org/a/2019121801) showed that humans were no better than random chance at discerning "deepfake" comments from human submissions (Weiss, 2019).
 
-<br>
 
 ---
 ## <a id="obs"></a>Initial observations
@@ -144,6 +143,8 @@ It is not clear exactly when public comments began being transcribed or submitte
 <br><br>
 
 Some comments were submitted as attachments with multiple submitters, e.g., a collection of letters from the Teamsters union. This suggests that even early on, the use of form letters for public comments was common. 
+
+<br >
 
 <figure>
 <img src="images/014_teamsters.png" alt="teamsters comment" />
