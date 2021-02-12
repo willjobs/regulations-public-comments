@@ -64,7 +64,7 @@ There may be many public comments associated with a docket, each of which has te
 
 <br>
 
-At the top of the comment submission form, the "Commenter's Checklist" gives advice on attachment file names and reasons that the comment might not be posted. Most importantly for this research, some reasons include comments that are part of a mass submission campaign, are duplicates, contain profanity, or are not related to the regulation. In addition, the site explicitly calls out form letters, saying that form letters **"do not constitute a 'vote'"** and that **"a single, well-supported comment may carry more weight than a thousand form letters."**
+At the top of the comment submission form, the "Commenter's Checklist" gives advice on attachment file names and reasons that a comment might not be posted. Most importantly for this research, some reasons include comments that are part of a mass submission campaign, are duplicates, contain profanity, or are not related to the regulation. In addition, the site explicitly calls out form letters, saying that form letters **"do not constitute a 'vote'"** and that **"a single, well-supported comment may carry more weight than a thousand form letters."**
 
 <br>
 
