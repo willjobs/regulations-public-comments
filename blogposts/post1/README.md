@@ -36,39 +36,37 @@ The Regulations.gov website is the central hub for communication of and public c
 <br><br>
 Information on Regulations.gov can be retrieved via the web browser or via a public API that can be used to download information from (and [recently](https://regulatorystudies.columbian.gwu.edu/new-regulationsgov-api), upload comments to) a docket. Each docket includes a summary of the docket topic, contact information for the associated agency, various documents associated with the regulation, and a link to public comments.
 
-<br>
 
 <figure>
 <img src="images/003_docket.png" alt="a docket" />
 <figcaption><i><a href="https://beta.regulations.gov/document/FWS-HQ-ES-2020-0102-0001">Docket listing</a> for a proposed rule.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 There may be many public comments associated with a docket, each of which has text and/or attachments and some metadata about the commenter. The metadata are often just the commenter's name or organization, but may also include city, state, and organization type. These metadata are optional, are not verified, and anonymous comments are allowed.
 
-<br>
 
 <figure>
 <img src="images/004_example_listing.png" alt="example listing of comment" />
 <figcaption><i>An <a href="https://beta.regulations.gov/document/FWS-HQ-ES-2020-0102-0001/comment">example listing</a> of comments for one docket.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 <figure>
 <img src="images/005_example_comment.png" alt="example comment" />
 <figcaption><i>An <a href="https://beta.regulations.gov/comment/FWS-HQ-ES-2020-0102-6515">example of a comment</a> for one docket.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 <figure>
 <img src="images/006_comment_submission.png" alt="comment submission form" />
 <figcaption><i>The <a href="https://beta.regulations.gov/commenton/FWS-HQ-ES-2020-0102-0001">public comment submission form</a>. This shows the fields available for individuals. Only the first name and last name are required, but there is no verification of identity.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 At the top of the comment submission form, the "Commenter's Checklist" gives advice on attachment file names and reasons that the comment might not be posted. Most importantly for this research, some reasons include comments that are part of a mass submission campaign, are duplicates, contain profanity, or are not related to the regulation. In addition, the site explicitly calls out form letters, saying that form letters **"do not constitute a 'vote'"** and that **"a single, well-supported comment may carry more weight than a thousand form letters."**
 
@@ -79,7 +77,7 @@ At the top of the comment submission form, the "Commenter's Checklist" gives adv
 <figcaption><i>Excerpt from the "Commenter's Checklist" about reasons why a comment might not be posted and consideration around form letters.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 Despite these instructions, it is common to find many identical comments for any given docket item. For example, on one docket item ("Endangered and Threatened Species: Regulations for Interagency Cooperation", [docket FWS-HQ-ES-2020-0102](https://beta.regulations.gov/docket/FWS-HQ-ES-2020-0102)), a quick search showed almost 300 public comments were submitted by members of the "Boone and Crockett Club" in support of the plan with identical language, most of which are identical or near-identical (with a few extra words or an extra paragraph added).
  
@@ -90,9 +88,10 @@ Despite these instructions, it is common to find many identical comments for any
 <figcaption><i>There were <a href="https://beta.regulations.gov/document/FWS-HQ-ES-2020-0102-0001/comment?filter=boone%20and%20crockett%20club">almost 300 comments</a> with identical or near-identical language submitted in response to one proposed rule.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 From what I have seen, these kinds of comments (which I will call "form letter comments") may be either in support of or against a proposed regulation, usually do not include attachments, and tend to be submitted by many individuals who belong to an organization and are encouraged to submit comments. Due to the lack of identity verification, it is possible that a simple bot could submit comments automatically (even given the reCAPTCHA protection on the new site). In 2017, [several](https://www.wired.com/story/bots-broke-fcc-public-comment-system/) [outlets](https://www.washingtonpost.com/news/the-switch/wp/2017/11/24/fcc-net-neutrality-process-corrupted-by-fake-comments-and-vanishing-consumer-complaints-officials-say/) [reported](https://hackernoon.com/more-than-a-million-pro-repeal-net-neutrality-comments-were-likely-faked-e9f0e3ed36a6) on over a million automated comments for and against the repeal of the FCC's net neutrality rules, and [one source](https://regulatorystudies.columbian.gwu.edu/gsa-moving-deal-mass-and-fake-comments) estimated the number near 22 million. This was also [reported in 2006](https://scholarworks.umass.edu/cgi/viewcontent.cgi?referer=https://www.google.com/&httpsredir=1&article=1001&context=erulemaking) by then UMass Assistant Professor Stuart Shulman in an article about the lack of deliberation in these open dockets (Schulman, 2006). He explains the obvious reasoning behind these tactics: "Some groups believe that overwhelming an agency like the Forest Service with form letters will result in a favorable outcome. . . .The organizational incentives combined with occasional claims of victory suggest the practice is likely to dominate the near future of electronic rulemaking." That said, a paper by the George Washington University Regulatory Studies Center concludes that, after reviewing over 1,000 mass comment campaigns on EPA rulemakings between 2012 and 2016, "there is little consistency between mass comment campaigns and the content of rules" (Balla et al., 2019).
+
 Especially worrying, it is now within the realm of possibility that more recent NLP models, such as [GPT-2](https://openai.com/blog/gpt-2-1-5b-release/) could be used to generate novel text for each comment, making this kind of automation harder to detect. The General Services Administration (GSA) held a [public meeting](https://regulatorystudies.columbian.gwu.edu/gsa-moving-deal-mass-and-fake-comments) on this problem in 2020, and a [2019 study](https://techscience.org/a/2019121801) showed that humans were no better than random chance at discerning "deepfake" comments from human submissions (Weiss, 2019).
 
 <br>
@@ -108,7 +107,7 @@ Regulations.gov has comments as far back as 1952, but many (most?) of the earlie
 <figcaption><i>The <a href="https://beta.regulations.gov/comment/OSHA-S777-2006-0953-0464">earliest comment</a> on Regulations.gov. </i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 Some of these early comments include attachments that are journal articles related to the regulation.
 
@@ -119,7 +118,7 @@ Some of these early comments include attachments that are journal articles relat
 <figcaption><i><a href="https://beta.regulations.gov/comment/OSHA-H020-2006-0928-2141">Example</a> of an early comment (from 1964) with an attachment containing a journal article related to the proposed regulation.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 
 Sometime later, comments included typewritten letters attached to the docket. Unfortunately, these typewritten comments have not been transcribed (by hand or by OCR) into plain-text and would be difficult to analyze. 
@@ -131,7 +130,7 @@ Sometime later, comments included typewritten letters attached to the docket. Un
 <figcaption><i>Example of a typewritten letter attached to a <a href="https://beta.regulations.gov/comment/OSHA-S108A-2006-0686-0199">public comment</a> from 1980.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 It is not clear exactly when public comments began being transcribed or submitted as plain-text, but some were found in the year 1999. It is clear that by this point, the general public has an opportunity to weigh in, and they clearly had strong opinions.
 
@@ -142,7 +141,7 @@ It is not clear exactly when public comments began being transcribed or submitte
 <figcaption><i><a href="https://beta.regulations.gov/comment/FMCSA-1997-2350-0851">Example</a> of a plain-text comment from 1999.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 Some comments were submitted as attachments with multiple submitters, e.g., a collection of letters from the Teamsters union. This suggests that even early on, the use of form letters for public comments was common. 
 
@@ -151,7 +150,7 @@ Some comments were submitted as attachments with multiple submitters, e.g., a co
 <figcaption><i>An example of a typewritten letter submitted as a collection of multiple letters from many individuals listed under a single <a href="https://beta.regulations.gov/comment/FMCSA-2000-7382-0769-0005">public comment</a>. All copies of the letter are the same except for the signee. </i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 
 ### Examples of public comments with strong opinions from 2000-2008.
@@ -208,7 +207,7 @@ However, a search on (regular) Google returned a [news article](https://fcw.com/
 <figcaption><i><a href="https://fcw.com/articles/2011/10/05/watchdog-makes-regulations-gov-comments-searchable.aspx">Article</a> documenting the creation go the Influence Explorer.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 Its parent organization, Sunlight Labs, unfortunately [shut down on November 11, 2016](https://www.propublica.org/nerds/sunlight-labs-takeover-update) (Willis, 2016). Many of their projects were moved to [GitHub](https://sunlightlabs.github.io), and hidden on an unlinked page is a [Bulk Data page](https://sunlightlabs.github.io/datacommons/bulk_data.html) with links to several datasets, including a federal regulations dataset with "approximately 13,000 regulatory dockets comprised of over 3,000,000 documents" which is "approximately 14 gigabytes" in size.
 
@@ -219,14 +218,14 @@ Its parent organization, Sunlight Labs, unfortunately [shut down on November 11,
 <figcaption><i><a href="https://sunlightlabs.github.io/datacommons/bulk_data.html">Bulk Data</a> page on Sunlight Labs' GitHub site.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 <figure>
 <img src="images/017_bulk_regs.png" alt="Bulk Data page section on federal regulations" />
 <figcaption><i>Section of the <a href="https://sunlightlabs.github.io/datacommons/bulk_data.html">Bulk Data</a> page describing their Federal Regulations dataset.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 Unfortunately, all links to this dataset are broken, and while a search of the [Internet Archive]( https://web.archive.org/web/20121002000716/http://torrents.sunlightfoundation.com/browse/regulations-2011-09-27/) did produce a listing of dockets by agency, none of those links were archived. In addition, the [GitHub page](https://github.com/sunlightlabs/regulations-scraper) with code used to scrape the dockets was found, but there was no evidence of where the data might be stored.
 
@@ -237,14 +236,14 @@ Unfortunately, all links to this dataset are broken, and while a search of the [
 <figcaption><i><a href="https://web.archive.org/web/20121002000716/http://torrents.sunlightfoundation.com/browse/regulations-2011-09-27">Web archive listing</a> of the agencies' dockets in Sunlight Labs' extract. This capture was from October 2, 2012.</i></figcaption>
 </figure>
 
-<br>
+<br><br>
 
 <figure>
 <img src="images/019_broken_link.png" alt="broken links" />
 <figcaption><i>All links to the federal register data from Sunlight Labs' Bulk Data page, as well as links from the web archive, were broken.</i></figcaption>
 </figure> 
 
-<br>
+<br><br>
 
 Given the lack of a current or recent dataset of public comments on the internet, it appears I will have to create this dataset on my own using the [Regulations.gov API](https://open.gsa.gov/api/regulationsgov).
 
