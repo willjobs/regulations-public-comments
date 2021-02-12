@@ -12,7 +12,7 @@
 
 ---
 ## <a id="intro"></a>Introduction
-My name is Will Jobs and I am a second-year master's student in statistics. Back when I worked at an environmental consulting firm, much of the work I did was done for the US Environmental Protection Agency (EPA). We performed various tasks for the EPA, but among other things, one recurring project was the processing and organization of public comments written in response to proposed regulations so that they could be reviewed and addressed. This semester my project will center on the collection and analysis of these public comments that are submitted to several federal agencies (not just EPA) over several years to identify and characterize the data and any apparent trends.
+My name is Will Jobs and I am a second-year master's student in statistics. Back when I worked at an environmental consulting firm, much of the work I did was done for the US Environmental Protection Agency (EPA). We performed various tasks for the EPA, but among other things, one recurring project was the processing and organization of public comments written in response to proposed regulations. This semester my project will center on the collection and analysis of these public comments that are submitted to several federal agencies (not just EPA) over several years to identify and characterize the data and any apparent trends.
 
 ---
 ## <a id="background"></a>Background
