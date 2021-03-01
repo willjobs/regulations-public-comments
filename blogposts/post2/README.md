@@ -52,11 +52,11 @@ returns a JSON response with 25 comments matching the search term "water", using
 
 | ![metadata](images/jobs-02-003-metadata.png) | 
 |:--:| 
-| *In the JSON response there is metadata indicating the number of elements matched by the request, the number of elements on each page of the response, and the total number of pages in this response.* |
+| *In the JSON response there are metadata indicating the number of elements matched by the request, the number of elements on each page of the response, and the total number of pages in the response.* |
 
 <br>
 
-In the example given above, the metadata in the response shows that while there are almost 1.3 million comments returned by this response, what is returned by the request is a "page" with only 25 elements, and that there are 20 "pages" in the result set. This is because the API paginates responses, rather than provide the data requested in bulk. Although the API is not presented as literal pages, it maps directly on to how the data are viewed on Regulations.gov (which, it turns out, uses this very same API to get its own results).
+In the example given above, the metadata in the response shows that while there are almost 1.3 million comments returned by this response, what is returned by the request is a "page" with only 25 elements and an indicator that there are 20 "pages" in the result set. This is because the API paginates responses instead of providing the data requested in bulk. Although the API is not presented as literal pages, it maps directly onto how the data are viewed on Regulations.gov (which, it turns out, uses this very same API to get its own results).
 
 The process of getting data from the API when there are many pages is as follows:
 
