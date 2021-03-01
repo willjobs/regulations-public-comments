@@ -108,7 +108,7 @@ Finally, a month-by-month trend showing the total number of documents and the to
 
 | ![documents per month](images/jobs-02-007-documentspermonth.png) | 
 |:--:| 
-| *Plots of the total number of documents (top) and of documents with a document type of "Rule" or "Proposed Rule" in each month. Note the dip in early 2019: this is the government shutdown. The asterisk in the second plot title is to call out that this plot's data is the subset of Rule and Proposed Rule documents with a comment period (even if no comments were submitted).* |
+| *Plots of the total number of documents (top) and of documents with a document type of "Rule" or "Proposed Rule" in each month. Note the dip in early 2019: this is the government shutdown. The asterisk in the second plot title is to call out that this plot's data is further filtered to documents with a comment period (even if no comments were submitted).* |
 
 <br>
 
