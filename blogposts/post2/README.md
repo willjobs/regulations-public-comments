@@ -284,7 +284,7 @@ The following screenshots show the columns for each item type (comment, document
 ---
 ## <a id="advice"></a>Advice from a (former) Sunlight Labs programmer
 
-During my email exchange with the developer from Sunlight Labs he said that sentiment analyses did not work well because comments tend to be very specific to the domain of the proposed rule. As a result, it can be difficult to determine whether a comment supports or opposed a rule. For an example, he made up a comment that could be submitted to a proposed rule related to net neutrality: "I think ISPs should be regulated as common carriers under Title II." Without context, the comment's language alone does not provide positive or negative sentiment in a way that could be generalized to comments on other topics.
+During my email exchange with the developer from Sunlight Labs he said that sentiment analyses did not work well because comments tend to be very specific to the domain of the proposed rule. As a result, it can be difficult to determine whether a comment supports or opposes a rule. He made up a comment as an example that could be submitted to a proposed rule related to net neutrality: "I think ISPs should be regulated as common carriers under Title II." Without context, the comment's language alone does not provide positive or negative sentiment in a way that could be generalized to comments on other topics.
 
 Some ideas he recommended that might be worth pursuing were:
 
