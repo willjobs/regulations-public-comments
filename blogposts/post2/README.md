@@ -62,7 +62,7 @@ The process of getting data from the API when there are many pages is as follows
 
 1. Make a request as shown above.
 2. That request returns 25 elements by default and metadata telling you the total number of elements in the result set. Note that the page size can be varied from 5-250 per "page" using the `page[size]` parameter.
-3. To get the next page of 5-250 elements, pass in the parameter `page[number]` = 2 (or whichever page).
+3. To get the next page of 5-250 elements, pass in the parameter `page[number]=2` (or whichever page number).
 4. Repeat this process until page 20. Note that it is important that the data are queried with a sort to ensure that subsequent requests do not return duplicates of earlier requests. Sorting can be accomplished by passing another parameter (e.g., `sort=postedDate` to sort the result set in ascending order of the date the item was posted on Regulations.gov).
 5. If there are more than 5,000 elements (20 pages times 250 elements/page = 5,000 elements) in the result set, getting the next set requires using information from the last item to adjust the filter for the next set. The [example in the API documentation](https://open.gsa.gov/api/regulationsgov/#searching-for-comments-1) shows the process when sorting by `lastModifiedDate`. In this example, the last comment in the previous result set's `lastModifiedDate` is used to filter the next result set with the parameter `filter[lastModifiedDate][ge]` to specify a date greater than or equal to ("ge") that date. 
 6. Using that new result set, you continue back at step 3 until the full set of elements is returned.
