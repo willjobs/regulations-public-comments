@@ -27,7 +27,7 @@ In the [last blog post](https://douglas-r-rice.github.io/jobs/firstpost/2021/02/
 ---
 ## <a id="api"></a>The API and its limitations
 
-The documentation for the [Regulations.gov API](https://open.gsa.gov/api/regulationsgov/) is quite thorough and provides examples of how to use it. It was [first released in 2012](https://sunlightfoundation.com/2013/04/09/regulations-gov-continues-to-improve-but-still-has-potential-for-growth/) and has had several major versions since then. Using it requires an API key which is immediately provided after filling out a form with your name and email. An API key is [limited](https://api.data.gov/docs/rate-limits/) to 1,000 requests per hour, after which any calls to the API return a status code 429 error ("Over Rate Limit") until it resets the next hour. 
+The documentation for the [Regulations.gov API](https://open.gsa.gov/api/regulationsgov/) is quite thorough and provides examples of how to use it. It was [first released in 2012](https://sunlightfoundation.com/2013/04/09/regulations-gov-continues-to-improve-but-still-has-potential-for-growth/) and has had several major versions since then. Using it requires an API key which is immediately provided after filling out a form with one's name and email. An API key is [limited](https://api.data.gov/docs/rate-limits/) to 1,000 requests per hour, after which any calls to the API return a status code 429 error ("Over Rate Limit") until it resets the next hour. 
 
 There are three main API endpoints:
 
