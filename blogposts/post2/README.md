@@ -31,9 +31,9 @@ The documentation for the [Regulations.gov API](https://open.gsa.gov/api/regulat
 
 There are three main API endpoints:
 
-* [https://api.regulations.gov/v4/**dockets**](https://api.regulations.gov/v4/dockets)
-* [https://api.regulations.gov/v4/**documents**](https://api.regulations.gov/v4/documents)
-* [https://api.regulations.gov/v4/**comments**](https://api.regulations.gov/v4/comments)
+* <div>https://api.regulations.gov/v4/<b>dockets</b></div>
+* <div>https://api.regulations.gov/v4/<b>documents</b></div>
+* <div>https://api.regulations.gov/v4/<b>comments</b></div>
 
 each of which returns either a listing of many of the respective items filtered according to provided criteria, or detailed information about a single item. For example, the following API call
 
