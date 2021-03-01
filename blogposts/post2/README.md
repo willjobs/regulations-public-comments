@@ -89,7 +89,7 @@ I examined the number of dockets per year and per month to see if there were spi
 
 | ![dockets per year and month](images/jobs-02-005-docketsperyear.png) | 
 |:--:| 
-| *Number of dockets per year and per month (with dates determined based on the `lastModifiedDate` column). For the average number of dockets per month the values shown reflect the average over the four years between 2016 and 2019, and the black lines show the range across all four years.* |
+| *Number of dockets per year and per month (with dates determined based on the `lastModifiedDate` column). For the bottom chart the values shown reflect the average over the four years between 2016 and 2019 and the black lines show the range across all four years.* |
 
 <br>
 
