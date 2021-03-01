@@ -200,7 +200,7 @@ This suggested an issue with time zones. [It turns out](https://open.gsa.gov/api
 
 ### **Issues with SQLite**
 
-While SQLite is a great single-file database, it can have some surprising gotchas. One frustrating thing SQLite does is ignore variable types; it allows any data type to be inserted into any column, regardless of its declared type. This is by design (see question 3 at https://www.sqlite.org/faq.html). In addition, when inserting data from one table into another, if you use `SELECT *` syntax (i.e., `INSERT INTO mytable SELECT * FROM myothertable`) it doesn't match data based on column names but instead on the position order of each column in its respective table. This means that you can end up putting the wrong data into the wrong columns and SQLite will be silent about it.
+While SQLite is a great single-file database, it can have some surprising gotchas. One frustrating thing SQLite does is ignore variable types; it allows any data type to be inserted into any column, regardless of its declared type. This is by design (see question 3 at https://www.sqlite.org/faq.html). In addition, when inserting data from one table into another, if you use `SELECT *` syntax (i.e., `INSERT INTO mytable SELECT * FROM myothertable`) it doesn't match data based on column names but instead on the position order of each column in its respective table. Together with the first issue, this means that you can end up putting the wrong data into the wrong columns and SQLite will be silent about it.
 
 Another issue I encountered was while using one cursor to loop over records in the documents table, requesting the associated document's comments from the API, then inserting them into the comments table. This led to the following error:
 
