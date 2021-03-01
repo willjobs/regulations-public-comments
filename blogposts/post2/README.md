@@ -150,7 +150,7 @@ So, the final plan was to get a sampling of 10 documents from each month in each
 5. For each document, request its "Detail" page.
 6. For each unique docket, request its "Detail" page. Note that not all documents are associated with a docket.
 
-This approach took several days to finish because of the 1,000 requests/hour limit. The data were collected in a SQLite database for ease of querying and to ensure data integrity, e.g., by adding unique indexes on document IDs and column IDs and that each comment's corresponding document was also retrieved.
+This approach took several days to finish because of the 1,000 requests/hour limit. The data were collected in a SQLite database for ease of querying and to ensure data integrity, e.g., by adding unique indexes on document IDs and column IDs and making it easier to confirm that each comment's corresponding document was also retrieved.
 
 
 ---
