@@ -162,7 +162,7 @@ In addition to the issues described above (predominantly related to the API rate
 
 While getting a sense of the number of comments and documents posted since 2011, I realized the number was far lower than I expected. Just [one proposal](https://www.federalregister.gov/documents/2017/06/02/2017-11455/restoring-internet-freedom) by the FCC generated almost 22 million comments from mass comment campaigns, according to the [Regulatory Studies Center](https://regulatorystudies.columbian.gwu.edu/gsa-moving-deal-mass-and-fake-comments) at George Washington University. When viewing this docket [on Regulations.gov](https://www.regulations.gov/document/FCC-2017-0200-0001), I found that it directs comments to the FCC's own [Electronic Comment Filing System (ECFS)](https://www.fcc.gov/ecfs/).
 
-After some more digging, I found that there are many "independent" federal agencies that publish their documents to the Federal Register but which do not accept comments on Regulations.Gov. This list includes agencies such as the FCC, FEC, SEC, DOJ, USDA, HUD, USPS, GAO, and others. The list of participating and non-participating agencies is available at https://www.regulations.gov/agencies.
+After some more digging, I found that there are many "independent" federal agencies that publish their documents to the Federal Register but which do not accept comments on Regulations.gov. This list includes agencies such as the FCC, FEC, SEC, DOJ, USDA, HUD, USPS, GAO, and others. The list of participating and non-participating agencies is available at https://www.regulations.gov/agencies.
 
 ### **Inconsistency of time zone between the API and the dataset**
 
