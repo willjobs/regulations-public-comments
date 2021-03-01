@@ -16,7 +16,7 @@ Using the [Regulations.gov API](https://open.gsa.gov/api/regulationsgov/) I was 
 
 ---
 ## <a id="datasetsearch"></a>Dataset search redux
-In the [last blog post](https://douglas-r-rice.github.io/jobs/firstpost/2021/02/14/1-jobs.html) I described my search for Sunlight Labs' 1.5-terabyte dataset of all data on Regulations.gov. I [reached out](https://github.com/sunlightlabs/regulations-scraper/issues/1#issuecomment-785509146) to the main software developer who worked on this project in the early 2010s to ask if the dataset might still exist somewhere. Unfortunately, he pointed out that the Sunlight Foundation (the umbrella organization) [shutdown in September 2020](https://sunlightfoundation.com/2020/09/24/a-note-from-the-sunlight-foundations-board-chair/), and unfortunately, "the whole technical footprint is gone with it".
+In the [last blog post](https://douglas-r-rice.github.io/jobs/firstpost/2021/02/14/1-jobs.html) I described my search for Sunlight Labs' 1.5-terabyte dataset of all data on Regulations.gov. I [reached out](https://github.com/sunlightlabs/regulations-scraper/issues/1#issuecomment-785509146) to the main software developer who worked on this project in the early 2010s to ask if the dataset might still exist somewhere. Unfortunately, he pointed out that the Sunlight Foundation (the umbrella organization) [shut down in September 2020](https://sunlightfoundation.com/2020/09/24/a-note-from-the-sunlight-foundations-board-chair/), and unfortunately, "the whole technical footprint is gone with it".
 
 | ![GitHub discussion](images/jobs-02-001-github.png) | 
 |:--:| 
