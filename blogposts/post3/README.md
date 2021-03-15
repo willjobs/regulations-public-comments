@@ -61,7 +61,7 @@ Therefore, I decided to flag "attached" comments as those matching the following
 
 The remaining comments, which I call "non-attached" comments, are likely to have more information than these "attached" comments, and I may focus analysis on these non-attached comments. This comes at the loss of 42,132 comments (28,7% of the dataset). There are some false positives matched by the filter (e.g., the filter would match the phrase "I have grown attached to this regulation"), but I did not see many such cases.
 
-The distribution of comments per document for only the "non-attached" comments is given belong, alongside the number of comments per document in each year.
+The distribution of comments per document for only the "non-attached" comments is given below, alongside the number of comments per document in each year.
 
 ![non-attached comments](images/jobs-03-007-comments-per-doc-nonattached.png)
 
@@ -87,7 +87,7 @@ The distribution of comments over time for each of these agencies is shown below
  
 Two key insights from this graphic are:
 
-* The spike in Small Business Administration comments in 2020 is due to the Paycheck Protection Program
+* The spike in Small Business Administration comments in 2020 is due to the Paycheck Protection Program.
 * There are no FDA comments in 2020 (in this dataset) because there were only 25 "Rule" and "Proposed Rule" documents in that year and only a subset of them had at least 25 comments, so it was highly likely that my sampling algorithm would miss those documents.
 
 ---
@@ -139,7 +139,7 @@ I thought it worthwhile to look at the comments for a handful of these frequent 
 
 ### Jean Publieee
 
-I was curious about why this individual's name so high in the list of frequent submitters, especially since it appears that their last name probably has a typo. Pulling a sampling of comments, it seems the individual has very strong opinions and they comment on a variety of topics.
+I was curious about why this individual's name was so high in the list of frequent submitters, especially since it appears that their last name probably has a typo. Pulling a sampling of comments, it seems the individual has very strong opinions and they comment on a variety of topics.
  
 ![Jean Publieee](images/jobs-03-015-jean-pubileee.png)
 
@@ -174,13 +174,13 @@ My favorite surprise on the frequent submitters list was this middle school in V
 
 | ![squirrel](images/jobs-03-022-delmarva_squirrel.jpg) | 
 |:--:| 
-| *Image from https://commons.wikimedia.org/wiki/File:Sciurus_niger1.jpg* |
+| *The Delmarva Peninsula Fox Squirrel. Image from https://commons.wikimedia.org/wiki/File:Sciurus_niger1.jpg* |
 
 
 ---
 ## <a id="parsing-corpus"></a>Parsing the corpus
 
-Using Quanteda, I created a corpus of all comments, using each comment as a "document" in the corpus. In the future I might also try concatenating all comments for a given document into a single string so that a government document is the "document" in the corpus. The number of sentences per comment (for non-attached comments) is shown below. Notice its strong similarity to the distribution of comment lengths. Comments that are listed with a very large number of sentences often the result of a comment including a list of citations or references to court cases.
+Using quanteda, I created a corpus of all comments, using each comment as a "document" in the corpus. In the future I might also try concatenating all comments for a given document into a single string so that a government document is the "document" in the corpus. The number of sentences per comment (for non-attached comments) is shown below. Notice its strong similarity to the distribution of comment lengths. Comments that are listed with a very large number of sentences often include a list of citations or references to court cases.
 
 ![sentences per comment](images/jobs-03-023-SentencesPerComment-Nonattached.png)
 
@@ -188,7 +188,7 @@ The top 9 most-commented agencies' interquartile range of sentences per comment 
 
 ![sentences per comment by agency](images/jobs-03-024-SentencesPerComment-Top9Agencies.png)
 
-I had a hypothesis that documents receiving many comments would tend to have shorter comments (in terms of number of characters and number of sentences) because more of the public would be chiming in with short sentences stating their support or opposition, while comments with fewer comments would attract a niche audience which would write more detailed comments. However, I did not find evidence in the data to support this hypothesis:
+I had a hypothesis that documents receiving many comments would tend to have shorter comments (in terms of number of characters and number of sentences) because more of the public would be chiming in with short sentences stating their support or opposition, while documents with fewer comments would attract a niche audience which would write more detailed comments. However, I did not find evidence in the data to support this hypothesis:
 
 ![comments, number vs length](images/jobs-03-025-Comments_NumberVsLength.png)
 
@@ -202,7 +202,7 @@ After creating a document-feature matrix (DFM) for all comments and for only non
 
 ![top features with HTML](images/jobs-03-027-topfeatures-html.png)
 
-Thus, I went back and used the `rvest` package to strip out the HTML tags and entities (e.g., `#39;` for a single quote or `&amp;` for an ampersand). Then I re-ran Quanteda's `dfm` function, this time removing English stop words, symbols, numbers, and URLs before examining the top features. Below is a comparison of the top 50 features (and counts) for all comments and for just the non-attached comments. The list contained 56 entries because I included the union of the two top 50 lists. Notice that four tokens are missing from the non-attached list: "see", "attached", "file", and "s" (as in "see attached file(s)").
+Thus, I went back and used the `rvest` package to strip out the HTML tags and entities (e.g., `#39;` for a single quote or `&amp;` for an ampersand). Then I re-ran quanteda's `dfm` function, this time removing English stop words, symbols, numbers, and URLs before examining the top features. Below is a comparison of the top 50 features (and counts) for all comments and for just the non-attached comments. The list contains 56 entries because I included the union of the two top 50 lists. Notice that four tokens are missing from the non-attached list: "see", "attached", "file", and "s" (as in "see attached file(s)").
 
 ![top features, clean](images/jobs-03-028-topfeatures.png)
 
@@ -212,14 +212,14 @@ Using these updated corpora I made word clouds for all comments and for the non-
 
 ![word clouds](images/jobs-03-029-wordclouds.png)
  
-Finally, I made a word cloud  for each of the top 9 most-commented agencies. Notice that the word clouds do a decent job in each of identifying topics that would reasonably be associated with each agency. For example, the Centers for Medicare & Medicaid Services includes words like "patient", "physician", and "insurance"; the Food and Drug Administration includes the words "tobacco", "nicotine", and "labeling"; and the Environmental Protection Agency includes words like "water", "pollution", "air", and "emissions".
+Because the corpora used to generate these word clouds encompass documents submitted by a wide array of federal agencies and on a variety of topics, the largest words in the word clouds are very general, like "proposed", "rule", "federal", "people", and "support". This led to the idea of making a word cloud for each of the top 9 most-commented agencies. Notice that the word clouds do a decent job in each case of identifying topics that would reasonably be associated with each agency. For example, the word cloud for the Centers for Medicare & Medicaid Services includes words like "patient", "physician", and "insurance"; the Food and Drug Administration includes the words "tobacco", "nicotine", and "labeling"; and the Environmental Protection Agency includes words like "water", "pollution", "air", and "emissions".
  
 ![word clouds by agency](images/jobs-03-030-wordclouds.png)
 
 ---
 ## <a id="trade-war"></a>Bonus: trade war!
 
-In the last post [I mentioned](https://douglas-r-rice.github.io/jobs/2021/02/28/2-jobs.html#observations) that if you plot the number of documents by year from 2010-2019 and group the documents by document type you can see a marked increase in the total number of documents in 2018-2019 entirely driven by an increase in the "Other" document type category. At the time I had no explanation but was curious so I downloaded the header information for all 361,457 documents with the "Other" document type in that time window. The first thing I did with this data was to group it by "subtype", an optional field that agencies can use to further categorize a document, and grouped the data by year, resulting in the following visualization:
+In the last post [I mentioned](https://douglas-r-rice.github.io/jobs/2021/02/28/2-jobs.html#observations) that if you plot the number of documents by year from 2010-2019 and group the documents by document type you can see a marked increase in the total number of documents in 2018-2019 entirely driven by an increase in the "Other" document type category. At the time I had no explanation but was curious so I downloaded the header information for all 361,457 documents with the "Other" document type from 2010-2020. The first thing I did with this dataset was to group it by "subtype" (an optional field that agencies can use to further categorize a document) and year, resulting in the following visualization:
 
 ![document subtypes by year](images/jobs-03-100-other_subtypes_by_year.png)
 
@@ -229,13 +229,13 @@ Or, if you're more into seeing this animated:
 
 Clearly, the spike in 2018 and 2019 is driven by "Other" documents with a missing (NA) subtype. Mysterious.
 
-At this point it was worth looking at the titles of some of these Other-NA documents. I quickly noticed that most of them began with the capitalized words "EXCLUSION GRANTED", and less commonly, "EXCLUSION DENIED". In fact, of the 103,345 documents with an NA subtype in 2018 and 2019, 99,298 of them (96%) begin with the word "exclusion", and exclusions happened only in 2018 and 2019 during which time they accounted for 73% and 61% of all comments in those years, respectively. When these "exclusions" wee removed from the dataset, the total number of "Other" comments in 2018 and 2019 is similar to previous years.
+At this point it was worth looking at the titles of some of these Other-NA documents. I quickly noticed that most of them began with the capitalized words "EXCLUSION GRANTED", and less commonly, "EXCLUSION DENIED". In fact, of the 103,345 documents with an NA subtype in 2018 and 2019, 99,298 of them (96%) begin with the word "exclusion". Exclusions happened only in 2018 and 2019, during which time they accounted for 73% and 61% of all comments in those years, respectively. When these "exclusions" were removed from the dataset, the total number of "Other" comments in 2018 and 2019 is similar to previous years.
  
 ![exclusions](images/jobs-03-102-exclusions-list.png)
 
-Of the 103k exclusions, around 86k were associated with documents published by the Bureau of Industry and Security (BIS) and another 14k were associated with documents published by the United States Trade Representative (USTR). Counting the "EXCLUSION GRANTED" and "EXCLUSION DENIED" documents separately, the BIS documents were 70.4% "EXCLUSION GRANTED" while the USTR documents were only 34.4% "EXCLUSION GRANTED" documents.
+Of the 103k exclusions, around 86k were associated with documents published by the Bureau of Industry and Security (BIS) and another 14k were associated with documents published by the United States Trade Representative (USTR). Of the exclusion documents for these two agencies, 70.4% and 34.4% were "EXCLUSION GRANTED" for BIS and USTR, respectively.
 
-Looking at individual comments, I found that these were associated with companies seeking special exceptions for their companies to get around tariffs associated with the Trump Administration's trade wars in 2018 and 2019.
+Looking at individual comments, I found that these were associated with companies seeking special exceptions to get around tariffs associated with the Trump Administration's trade wars in 2018 and 2019.
 
 ![example exclusion comment](images/jobs-03-103-exclusion.png)
  
