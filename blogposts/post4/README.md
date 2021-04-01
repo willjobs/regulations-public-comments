@@ -303,14 +303,15 @@ It is worth noting that it is possible to have a very large edit distance and hi
 ---
 ## <a id="where-next"></a>Where next?
 
-Now I have a set of around 83,000 comments with several variables that could be used to train a model to detect form letter comments. I intend to manually label a large number of comments, targeting comments with high similarity especially and looking across agencies. I will ideally aim for a balanced dataset (or at least not too imbalanced). The variables I have prepared for this model are, for each comment:
+Now I have a set of around 83,000 comments with several variables that could be used to train a model to detect form letter comments. I intend to manually label a large number of comments, targeting comments with high similarity especially and looking across agencies. The variables I have prepared for this model are, for each comment:
 
 * max cosine similarity (to any other comment in the same document)
 * min edit distance (to any other comment in the same document)
-* max longest common substring (LCS) (to any other comment in the same document), and max LCS normalized to the length of the comment
+* max longest common substring (LCS) (to any other comment in the same document)
+* max LCS normalized to the length of the comment
 * federal agency associated with the document
 * year the document was posted
-* length of the comment, in characters
+* length of the comment
 * count of comments submitted in response to the comment's document
 * number and percent of comments in the comment's document with a similarity score greater than 0.9
 
