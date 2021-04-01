@@ -280,7 +280,7 @@ I would assign a max cosine similarity of 0.7 to comment A and 0.8 to comments B
 
 <br>
 
-The relationship between maximum cosine similarity and minimum edit distance is shown below. It appears that edit distances near zero are clustered closer to a cosine similarity of 1.0, but that there is also a pocked near cosine similarity of 0. These are likely comments that are very short and which have different words. The largest amount of comments have a cosine similarity between 0.125 and 0.625, and an edit distance between 150 and 200.
+The relationship between maximum cosine similarity and minimum edit distance is shown below. It appears that edit distances near zero are clustered closer to a cosine similarity of 1.0, but that there is also a pocket near cosine similarity of 0. These are likely very short comments with different words. The largest amount of comments have a cosine similarity between 0.125 and 0.625, and an edit distance between 150 and 200.
 
 <br>
 
