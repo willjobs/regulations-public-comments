@@ -228,7 +228,7 @@ As another idea, I examined the similarity of comments by agency. Perhaps dividi
 
 <br>
 
-I also examined a scatterplot of the median cosine similarity for each agency against the number of comments an agency received by that agency to see if there was any relationship. I found that agencies that received a large number of comments tended to have lower median cosine similarity across their comment corpus, and agencies with a very small number of comments tend to have higher median cosine similarity, but the relationship (if it truly exists) is highly nonlinear.
+I also examined a scatterplot of the median cosine similarity for each agency against the number of comments an agency received to see if there was any relationship. I found that agencies that received a large number of comments tended to have lower median cosine similarity across their comment corpus, and agencies with a very small number of comments tend to have higher median cosine similarity, but the relationship (if it truly exists) is highly nonlinear.
 
 <br>
 
