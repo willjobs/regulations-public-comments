@@ -153,9 +153,9 @@ Form letter comments are often identical, but not always: see, for example, [1](
 
 1. A user might add a few words, like "please", "thank you", or "to whom it may concern". See [1](https://www.regulations.gov/comment/FWS-R3-ES-2011-0029-0467) and [2](https://www.regulations.gov/comment/FWS-R3-ES-2011-0029-0486).
 2. A user might make typos when they copy and paste the text into the comment box. See [1](https://www.regulations.gov/comment/OPM-2019-0004-0475) and [2](https://www.regulations.gov/comment/OPM-2019-0004-0531).
-3. A commenter's computer might alter the formatting, such as by using number bullets instead of dot bullets, or inserting "smart quotes" (&#8220; and &#8221;) instead of straight quotes. See [1](https://www.regulations.gov/comment/NOAA-NMFS-2013-0029-0610) and [2](https://www.regulations.gov/comment/NOAA-NMFS-2013-0029-0626).
+3. A commenter's computer might alter the formatting, such as using number bullets instead of dot bullets or inserting "smart quotes" (&#8220; and &#8221;) instead of straight quotes. See [1](https://www.regulations.gov/comment/NOAA-NMFS-2013-0029-0610) and [2](https://www.regulations.gov/comment/NOAA-NMFS-2013-0029-0626).
 4. Someone might slightly rephrase things, include their professional affiliation or title, or add some details that are important to them. See [1](https://www.regulations.gov/comment/FWS-R5-ES-2013-0097-0600) and [2](https://www.regulations.gov/comment/FWS-R5-ES-2013-0097-0588).
-5. In some cases, a commenter may start with a "prompt", that is, a series of points that the organizers want the commenter to include in their letter. See [1](https://www.regulations.gov/comment/CMS-2016-0116-3351) and [2](https://www.regulations.gov/comment/CMS-2016-0116-4499).
+5. In some cases, a commenter may start with a "prompt", that is, a series of points that the organizers of a form letter campaign want the commenter to include in their letter. See [1](https://www.regulations.gov/comment/CMS-2016-0116-3351) and [2](https://www.regulations.gov/comment/CMS-2016-0116-4499).
 
 Ways 1-3 are not too difficult to detect. Way 4 is a little more challenging. Way 5 would be much more difficult to detect, and it is debatable whether that kind of comment should be treated as a form letter comment or not. For this reason, I would divide documents into four categories:
 
