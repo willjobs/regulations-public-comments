@@ -242,7 +242,7 @@ Finally, I compared the similarity of comments within a given document to the si
 
 | <img src="images/jobs-004-014-similarity_samedoc.png" height="400"> | 
 |:--:| 
-| *Distribution of mean comment similarity in each document in the non-attached document corpus for documents with at least 25 comments. The similarities were calculated within each document and the mean, variance, IQR, and proportion with a similarity greater than 0.95 or equal to 1.0 were calculated for each document separately. The plot shows the distribution of these means, and the textbox summarizes the mean of these means, the mean of these variances, etc.* |
+| *Distribution of mean comment similarity in each document in the non-attached document corpus for documents with at least 25 comments. The similarities were calculated within each document and the mean, variance, IQR, and proportion with a similarity greater than 0.95 or equal to 1.0 were calculated for each document separately. The plot shows the distribution of these means and the textbox summarizes the mean of these means, the mean of these variances, etc.* |
 
 <br>
 
@@ -256,7 +256,7 @@ To estimate the expected similarity of comments not within the same document, I 
 
 <br>
 
-Overall, comment similarity seems a good, though not perfect, way of identifying form letter comments. It does very well with comments that are clearly form letters, but I have observed some comments that are form letters with similarities between 0.7 and 0.8. For example, [this comment](https://www.regulations.gov/comment/EPA-HQ-OA-2018-0259-8948) and [this comment](https://www.regulations.gov/comment/EPA-HQ-OA-2018-0259-8959) have a cosine similarity of 0.7. The comments are largely identical, except for some short personal additions at the bottom. Similarly, these two comments ([1](https://www.regulations.gov/comment/FWS-R9-ES-2010-0086-0580) and [2](https://www.regulations.gov/comment/FWS-R9-ES-2010-0086-0746)) have a cosine similarity of 0.702. While the second is much longer than the first, they both include exactly the same paragraph of text, suggesting the second commenter added additional information on their own. As a result, I believe that cosine similarity can be incorporated into a successful strategy for form letter identification, but isn't sufficient on its own.
+Overall, comment similarity seems a good, though not perfect, way of identifying form letter comments. It does very well with comments that are clearly form letters, but I have observed some comments that are form letters with similarities between 0.7 and 0.8. For example, [this comment](https://www.regulations.gov/comment/EPA-HQ-OA-2018-0259-8948) and [this comment](https://www.regulations.gov/comment/EPA-HQ-OA-2018-0259-8959) have a cosine similarity of 0.7. The comments are largely identical, except for some short tweaks throughout. Similarly, these two comments ([1](https://www.regulations.gov/comment/FWS-R9-ES-2010-0086-0580) and [2](https://www.regulations.gov/comment/FWS-R9-ES-2010-0086-0746)) have a cosine similarity of 0.702. While the second is much longer than the first, they both include exactly the same paragraph of text, suggesting the second commenter added additional information on their own. As a result, I believe that cosine similarity can be incorporated into a successful strategy for form letter identification, but isn't sufficient on its own.
 
 
 ### <a id="additional-measures"></a>Additional measures of similarity
