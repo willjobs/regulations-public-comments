@@ -1,4 +1,4 @@
-# Assessments of Polarity and Similarity in Public Comments
+# Assessment of Polarity and Similarity in Public Comments
 
 In this post I will discuss how I used a dictionary approach to assess the polarity of public comments. This approach was limited by the wide range of topics in the dataset, the various ways people may indicate support or opposition to a proposed regulation, and the distinction between emotional valence and position on an issue. I will also cover my efforts to use measures of similarity to begin to identify form letter comments that are similar, but not identical. In the next post I plan to use the similarity dataset I constructed to build a supervised learning model to identify form letter comments.
 
@@ -9,7 +9,7 @@ In this post I will discuss how I used a dictionary approach to assess the polar
     * <a href="#dictionary-lengthyear">Comment polarity vs. comment length and year</a>
     * <a href="#dictionary-validation">Validation of the dictionary approach</a>
 * <a href="#same-time">Comments submitted at the same time</a>
-* <a href="#similarity">Comment Similarity</a>
+* <a href="#similarity">Comment similarity</a>
     * <a href="#cosine">Cosine similarity</a>
     * <a href="#additional-measures">Additional measures of similarity</a>
 * <a href="#where-next">Where next?</a>
@@ -24,7 +24,7 @@ I used three dictionaries contained in the R library [`quanteda.dictionaries`](h
 1. The NRC Word-Emotion Association Lexicon ("NRC") [(Mohammad and Turney, 2013)](https://arxiv.org/abs/1308.6297)
 1. The Affective Norms for English Words dictionary ("AFINN") [Nielsen, 2011](https://arxiv.org/abs/1103.2903)
 
-I calculated polarity the same for all three dictionaries. First, I created a document-feature matrix (DFM) from the [non-attached comments corpus](https://douglas-r-rice.github.io/jobs/2021/03/14/3-jobs.html#attached), lowercasing all words and removing punctuation (but not stemming). I then calculated polarity as the difference between the number of "positive" and "negative" terms (as defined by the dictionary), normalized by the sum of these terms. The distribution of comment polarities is shown below for each dictionary. It is reassuring that all three dictionaries show the same pattern; for this reason, in subsequent analyses I used only one dictionary, NRC (arbitrarily-chosen).
+I calculated polarity the same way for all three dictionaries. First, I created a document-feature matrix (DFM) from the [non-attached comments corpus](https://douglas-r-rice.github.io/jobs/2021/03/14/3-jobs.html#attached), lowercasing all words and removing punctuation (but not stemming). I then calculated polarity as the difference between the number of "positive" and "negative" terms (as defined by the dictionary), normalized by the sum of these terms. The distribution of comment polarities is shown below for each dictionary. It is reassuring that all three dictionaries show the same pattern; for this reason, in subsequent analyses I used only one dictionary, NRC (arbitrarily-chosen).
 
 <br>
 
@@ -38,7 +38,7 @@ I was curious about whether some agencies elicited a more positive or negative s
 
 <br>
 
-| <img src="images/jobs-004-002-polarity_by_agency_NRC.png" alt="polarity by agency" height="1000"> | 
+| <img src="images/jobs-004-002-polarity_by_agency_NRC.png" alt="polarity by agency" width="1000"> | 
 |:--:| 
 | *Mean polarity of non-attached comments, by agency, using the NRC dictionary. Vertical dashed line indicates the overall average polarity across all comments.* |
 
@@ -147,7 +147,7 @@ This was concerning. Once I looked at some of these comments, however, I saw tha
 
 
 ---
-## <a id="similarity"></a>Comment Similarity
+## <a id="similarity"></a>Comment similarity
 
 Form letter comments are often identical, but not always: see, for example, [1](https://www.regulations.gov/comment/FMCSA-2017-0297-0278) and [2](https://www.regulations.gov/comment/FMCSA-2017-0297-0849). The same text may be altered in many small and large ways: 
 
@@ -200,7 +200,7 @@ The two most-similar comments from each of these schools are shown in the table 
 
 <br>
 
-The table below shows a few comments with very high similarity (> 0.99) because the author only changed a few words (highlighted in yellow).
+The table below shows a few comments with very high similarity (> 0.99) because the author only changed a few words (highlighted in yellow, if GitHub markdown allows it).
 
 <br>
 
