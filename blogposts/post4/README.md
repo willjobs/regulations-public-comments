@@ -236,13 +236,13 @@ I also examined a scatterplot of the median cosine similarity for each agency ag
 
 <br>
 
-Finally, I compared the similarity of comments within a given document to the similarity of comments from other documents. Accomplishing the former was easy: I looped over each document, created the TFIDF DFM matrix, and calculated the cosine similarity for each pair of comments. This allowed me to then compare the mean similarity, variance of similarities, etc., across all documents in the dataset; see the plot below.
+Finally, I compared the similarity of comments within a given document to the similarity of comments from other documents. Accomplishing the former was easy: I looped over each document, created the TF-IDF DFM matrix, and calculated the cosine similarity for each pair of comments. This allowed me to then compare the mean similarity, variance of similarities, etc., across all documents in the dataset; see the plot below.
 
 <br>
 
 | <img src="images/jobs-004-014-similarity_samedoc.png" height="400"> | 
 |:--:| 
-| *Distribution of mean comment similarity in each document in the non-attached document corpus, for documents with at least 25 comments. The similarities were calculated within each document and the mean, variance, IQR, and proportion with a similarity greater than 0.95 or equal to 1.0 were calculated for each document separately. The plot shows the distribution of these means, and the textbox summarizes the mean of these means, the mean of these variances, etc.* |
+| *Distribution of mean comment similarity in each document in the non-attached document corpus for documents with at least 25 comments. The similarities were calculated within each document and the mean, variance, IQR, and proportion with a similarity greater than 0.95 or equal to 1.0 were calculated for each document separately. The plot shows the distribution of these means, and the textbox summarizes the mean of these means, the mean of these variances, etc.* |
 
 <br>
 
@@ -288,7 +288,7 @@ The relationship between maximum cosine similarity and minimum edit distance is 
 
 <br>
 
-It is worth noting that it is possible to have a very large edit distance and high similarity at the same time. For example, two prompt-driven comments about the same topic and which use the same specialized language (e.g., about osteopathic medicine) might have very high similarity scores owing to the TFIDF weighting of their use of infrequent words (vs. the entire corpus), but also have high edit distances if the comments are long and written in the authors' own words. See, for example, the two comments shown below, which have a cosine similarity of 0.927 and an edit distance of 1,644.
+It is worth noting that it is possible to have a very large edit distance and high similarity at the same time. For example, two prompt-driven comments about the same topic and which use the same specialized language (e.g., about osteopathic medicine) might have very high similarity scores owing to the TF-IDF weighting of their use of infrequent words (vs. the entire corpus), but also have high edit distances if the comments are long and written in the authors' own words. See, for example, the two comments shown below, which have a cosine similarity of 0.927 and an edit distance of 1,644.
 
 
 <br>
