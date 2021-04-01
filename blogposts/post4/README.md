@@ -51,7 +51,7 @@ To see how these findings held up across dictionaries, I examined the rankings g
 
 | <img src="images/jobs-004-003-top_bottom_polarity_agency.png" alt="change in agency polarity rankings by dictionary" width="800"> | 
 |:--:| 
-| *Examination of how the three dictionaries ranked the top 5 and bottom 5 ranked (by polarity) agencies. There are 19 agencies in the figure because the top 5 and bottom 5 from each dictionary were combined to make the full list. The horizontal line shows the rank of rankings across the three dictionaries. The agencies are sorted in this list by the highest rank (1 = highest possible) given by any of the three dictionaries.* |
+| *Examination of how the three dictionaries differed in their rankings of the top 5 and bottom 5 (by polarity) agencies. There are 19 agencies in the figure because the top 5 and bottom 5 from each dictionary were combined to make the full list. The horizontal line shows the range of rankings across the three dictionaries. The agencies are sorted in this list by the highest rank (1 = highest possible) given by any of the three dictionaries.* |
 
 <br>
 
