@@ -29,7 +29,7 @@ The updated sampling summary is shown below.
 
 <br>
 
-![updated sampling summary](images/jobs-005-001-sampling.png)
+<img alt="updated sampling summary" src="images/jobs-005-001-sampling.png" width="600" />
 
 ---
 ## <a id="graphics"></a>Re-creating important graphics
@@ -134,7 +134,7 @@ Note that I could not use other enticing variables, like the federal agency asso
 
 <br>
 
-![correlations](images/jobs-005-006-data_correlations.png)
+<img alt="correlations" src="images/jobs-005-006-data_correlations.png" width="600" />
 
 <br>
 
