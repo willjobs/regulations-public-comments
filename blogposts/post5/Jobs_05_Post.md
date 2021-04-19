@@ -140,12 +140,144 @@ Note that I could not use other enticing variables, like the federal agency asso
 
 ### <a id="logistic"></a>Logistic regression
 
+Before doing anything fancy, I find it helpful to use a simple model as a baseline. In this case, doing a classification task, I fit a logistic regression to the data after first centering and standardizing the variables. The Hosmer-Lemeshow test (for which the null hypothesis is that the model is a good fit) gave a p-value of 0.98, indicating a good fit to the data (technically, we did not identify a lack of fit). The accuracy, precision, and recall were all in the 90+% range for both the training set and the test set, and the area under the ROC curve was very close to 1.
+
+<br>
+
+<img alt="logistic regression, all variables, ROC curve" src="images/jobs-005-007-logit_all_roc_curve.png" width="600" />
+
+<br>
+
+A plot of the relative variable importance showed that maximum cosine similarity was by far the most important variable, followed by the number of unique tokens, number of all tokens, and number and percent of duplicate comments. Neither the number nor percent of "rare" tokens were important to the model.
+
+<br>
+
+![logistic regression, all variables, variable importance](images/jobs-005-008-logistic_all_varimp.png)
+
+<br>
+
+A table with the coefficient p-values and standardized coefficients is given below, sorted in descending order of significance. 
+
+<br>
+
+![logistic regression coefficients](images/jobs-005-009-logistic-coefficients.png)
+
+<br>
+
+Given the incredibly high accuracy, recall, precision, and AUC, it is worth trying to remove some variables, many of which are highly correlated (e.g., number and percent of duplicate comments on a document). Therefore, I used a stepwise selection method (proceeding alternately forwards and backwards) to reduce the number of variables in the model.  The resulting "stepwise" model also has a good fit by the Hosmer-Lemeshow test (p = 0.9739), a ROC curve nearly identical to the all-variables ROC curve and an AUC near 1, and only slightly lower accuracy, precision, and recall. The reduced model's relative variable importances are shown below. Maximum cosine similarity is still the most important variable by far, and the only big change from the full model's variable importance plot is that maximum LCS is now the third most important variable.
+
+<br>
+
+![logistic regression, stepwise, variable importance](images/jobs-005-010-logistic_stepwise_varimp.png)
+
+<br>
+
 ### <a id="forest"></a>Random forests
+
+Given such great performance with the baseline model, I was tempted to stop there, as its interpretability is a major benefit. Nonetheless, I also trained a couple random forests on the same preprocessed data, tuning the number of random predictors to sample at each split in each tree. The tuning process optimized for accuracy in five-fold cross=validation, and its results are shown below. Eight was chosen as the optimal number of predictors.
+
+<br>
+
+<img alt="tuning random forest" src="images/jobs-005-011-random_forest_all_tuning.png" width="600" />
+
+<br>
+
+The resulting model beat out the logistic regression: on the training set, accuracy, precision, recall, and AUC were all perfect (100%). On the test set, the model's AUC was near 1, accuracy and recall were 99%, and precision was 96%. The ROC curves and variable importance plot for the model are shown below.
+
+<br>
+
+<img alt="random forest ROC curve" src="images/jobs-005-012-randomforest_all_roc_curve.png" width="600" />
+
+<br>
+
+![random forest variable importance](images/jobs-005-013-randomforest_all_varimp.png)
+
+<br>
+
+Given the variable importance plot's indication that only a few variables are the most important, I trained another random forest using only the top 5 variables from the first random forest. The resulting variable importance plot is shown below. The main difference is that maximum cosine similarity went from being about 2.5 times as important as the next variable to over 4 times as important as the next variable.
+
+<br>
+
+![random forest subset variable importance](images/jobs-005-014-randomforest_subset_varimp.png)
+
+<br>
+
+A summary of the four models' performance is given in the table below.
+
+![model summary](images/jobs-005-015-model-summary.png)
 
 ---
 ## <a id="analysis"></a>Post-model analysis
+
+Altogether, I'm concerned that my models are fitting *too* well. Maybe the metric I've chosen are ideal for this kind of task, but I think it's more likely that my hand-labeling was effective at the easy cases and less effective on long comments with snippets of form letters mixed in among a commenter's novel language.
+
+Note that because the random forest gets 100% on all three metrics for the training set, which comprises 80% of the annotated dataset, I used the logistic regression (stepwise) model for the analyses that follow.
+
+As a quick assessment of the model's performance by agency, I evaluated the precision, recall, and accuracy for each of the top 9 most-commented agencies that were annotated. The table below shows that, while there is some variation, all nine agencies' performance are similar (one exception is the precision for the Small Business Administration; I'm not sure what's going on there).
+
+|     agency                                               |     N      |     precision    |     recall    |     accuracy    |
+|----------------------------------------------------------|------------|------------------|---------------|-----------------|
+|     Fish And Wildlife Service                          |     217    |     92%          |     97%       |     95%         |
+|     Agricultural Marketing Service                     |     211    |     91%          |     89%       |     96%         |
+|     Centers For Medicare & Medicaid Services           |     205    |     98%          |     93%       |     96%         |
+|     Environmental Protection Agency                    |     199    |     94%          |     97%       |     98%         |
+|     National Oceanic And Atmospheric Administration    |     186    |     93%          |     83%       |     96%         |
+|     Food And Drug Administration                       |     179    |     98%          |     98%       |     98%         |
+|     Department Of Education                            |     174    |     100%         |     98%       |     99%         |
+|     Food And Nutrition Service                         |     165    |     100%         |     92%       |     99%         |
+|     Small Business Administration                      |     134    |     66%          |     95%       |     91%         |
+
+<br>
+
+When grouped by agency, a plot of each agency's metric and the agency's fraction of form letters in the annotated dataset shows that as the fraction of form letters increases, both recall and precision tend to increase, while accuracy remains relatively constant.
+
+<br>
+
+<img alt="performance vs % form letters" src="images/jobs-005-016-logit_step_perfVsFracY.png" width="800" />
+
+As a measure of validation, I wanted to look at the comments where the model (stepwise logistic regression) got it wrong to figure out why. Of the 12 instances where this happened, half were due to human (my) error in labeling; in my defense, three of them were very tricky. For example, in the image below which compares two comments, the darker text indicates differences, and the lighter text indicates identical portions. Given the large amount of text overlap, it is clear that the comments are from a form letter campaign. However, as a human labeler, it was very difficult to read these long comments, see the large amount of different text, and think these are form letters, especially when there are dozens of other comments to review. While I got it wrong, the model got it right!
+
+<br>
+
+![highly different form letter comments](images/jobs-005-017-diff.png)
+
+<br>
+
+A full listing of the comments that the model got "wrong", and the reason why, is given below. In my opinion, of the 12 cases, only four could be considered truly the model's error.
+
+|     Comment ID                  |     Form   Letter?    |     Prediction    |     Confidence    |     Why is the   model wrong?                     |
+|---------------------------------|-----------------------|-------------------|-------------------|---------------------------------------------------|
+|     AMS-FV-11-0074-0815         |     No                |     Yes           |     0.999         |     same person posted twice                    |
+|     AMS-FV-11-0074-0817         |     No                |     Yes           |     0.999         |     same person posted twice                    |
+|     CMS-2011-0157-0457          |     No                |     Yes           |     0.876         |     human error (labeled wrong)                 |
+|     FWS-R8-ES-2012-0067-0007    |     No                |     Yes           |     0.967         |     human error (labeled wrong)                 |
+|     FWS-R8-ES-2012-0067-0007    |     No                |     Yes           |     0.967         |     human error (labeled wrong)                 |
+|     FWS-R8-ES-2012-0100-0857    |     No                |     Yes           |     0.847         |     short comment with common first sentence    |
+|     FWS-R8-ES-2012-0100-1015    |     No                |     Yes           |     0.857         |     short comment with common first sentence    |
+|     SBA-2016-0008-0017          |     No                |     Yes           |     0.819         |     tricky! human error                         |
+|     SBA-2016-0008-0017          |     No                |     Yes           |     0.819         |     tricky! human error                         |
+|     SBA-2018-0003-0027          |     No                |     Yes           |     0.853         |     model is wrong                              |
+|     SBA-2018-0003-0033          |     No                |     Yes           |     0.870         |     model is wrong                              |
+|     SBA-2018-0009-4141          |     No                |     Yes           |     0.846         |     tricky! human error                         |
+
+<br>
+
+Finally, as another measure of validation, I examined comments where the model was very unsure; that is comments where the model's prediction was near 0.5 probability, indicating the model could not clearly classify it one way or the other. In the image below, I show, for each of the variables in the stepwise linear regression model, the distribution of values among those variables for the predictions where the model is highly confident (in red), and where the model is not sure (in blue). The clearest difference is for the maximum cosine similarity variable. Comments with a maximum cosine similarity around 0.7 make the model very unsure in its predictions, while cosine similarities that are much lower or higher make it more certain in its predictions. Given [the distribution of maximum cosine similarities](https://douglas-r-rice.github.io/jobs/2021/03/28/4-jobs.html#additional-measures) in the dataset, which is bimodal, this isn't too surprising.
+
+<br>
+
+![confident vs not, predictors](images/jobs-005-018-logit_probs_unsure_vs_confident.png)
 
 
 ---
 ## <a id="bonus"></a>Bonus: a song and a play!
 
+While annotating comments to train my models, I discovered these two gems. Both were in response to a proposal by NOAA to change the designated critical habitat for an endangered whale. One is a song, and the other is a short play.
+
+<br>
+
+![song](images/jobs-005-019-song.png)
+
+<br>
+
+![play](images/jobs-005-020-play.png)
