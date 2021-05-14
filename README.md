@@ -43,7 +43,7 @@ The comments in `regulations_utils.py` are pretty thorough and explain how each 
 ## Get the JSON associated with a request to the header API:
 
         >>> get_request_json(f'https://api.regulations.gov/v4/comments',
-                             api_key,
+                             api_key="DEMO_KEY",
                              params={"filter[agencyId]": "EPA",
                                      "filter[postedDate][ge]": "2021-01-01",
                                      "filter[postedDate][le]": "2021-01-05",})
@@ -96,7 +96,7 @@ The comments in `regulations_utils.py` are pretty thorough and explain how each 
 ## Get the JSON associated with a request to the header API:
 
         >>> r = get_request_json(f'https://api.regulations.gov/v4/comments',
-                             api_key,
+                             api_key="DEMO_KEY",
                              params={"filter[agencyId]": "EPA",
                                      "filter[postedDate][ge]": "2021-01-01",
                                      "filter[postedDate][le]": "2021-01-05",})
@@ -124,7 +124,7 @@ The comments in `regulations_utils.py` are pretty thorough and explain how each 
 
     >>> comments_header_cols = [x for x in pd.read_sql_query('select * from comments_header', conn).columns if x != "sqltime"]
 
-    >>> gather_headers(api_key,
+    >>> gather_headers(api_key="DEMO_KEY",
                        data_type="comments",
                        cols=comments_header_cols,
                        id_col="commentId",
@@ -158,7 +158,7 @@ The comments in `regulations_utils.py` are pretty thorough and explain how each 
 
     >>> comment_ids = pd.read_sql_query('select commentId from comments_header order by postedDate', conn)['commentId'].values
 
-    >>> gather_details(api_key,
+    >>> gather_details(api_key="DEMO_KEY",
                        data_type="comments",
                        cols=comments_detail_cols,
                        id_col="commentId",
