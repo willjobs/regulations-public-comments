@@ -4,6 +4,8 @@ More information on the API, including a description and examples of the API res
 
 To sign up for an API key, go to [this link](https://open.gsa.gov/api/regulationsgov/#getting-started). You can also use `DEMO_KEY` as an API key for up to 25 requests per hour. This is what the documentation at Regulations.gov uses in their examples.
 
+Note: This code came about as the result of a final project for a course I took at UMass Amherst ("Text as Data"). The results are shown in [poster.pdf](https://github.com/willjobs/regulations-public-comments/blob/master/poster.pdf), and milestone blog posts are in the [blogposts](https://github.com/willjobs/regulations-public-comments/tree/master/blogposts) folder.
+
 ---
 
 # How this works
