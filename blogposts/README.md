@@ -1,0 +1,1 @@
+![sampling process](sampling.png)
