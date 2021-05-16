@@ -196,12 +196,14 @@ def output_data(data, table_name=None, cols=None, conn=None, cur=None, flatfile_
         flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
             case a connection and cursor should be specified.
     """
+    if conn is None and flatfile_name is None:
+        raise ValueError("Need to specify either conn or flatfile_name")
+
     if conn is not None:
         insert_data(data, table_name, cols, conn, cur)
-    elif flatfile_name is not None:
+    
+    if flatfile_name is not None:
         write_to_flatfile(data, flatfile_name)
-    else:
-        raise ValueError("Need to specify either conn or flatfile_name")
 
 
 def gather_headers(api_key, data_type, cols, id_col, params, max_items=None, conn=None, flatfile_name=None):
