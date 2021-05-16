@@ -168,9 +168,16 @@ def write_to_flatfile(data, flatfile_name):
         raise ValueError("flatfile_name cannot be None")
 
     the_time = datetime.now().strftime('%H:%M:%S')
-    print(f"{the_time}: Writing {len(data)} records to {flatfile_name}...", flush=True)
-    pd.DataFrame(data).to_csv(flatfile_name, index=False, mode='a', quoting=csv.QUOTE_ALL,
-                              header=(not os.path.isfile(flatfile_name)))
+    print(f"{the_time}: Writing {len(data)} records to {flatfile_name}...", end="", flush=True)
+
+    df = pd.DataFrame(data)
+    if "comment" in df.columns:
+        df["comment"] = df["comment"].str.replace("\n", " ")
+    
+    df.to_csv(flatfile_name, index=False, mode='a', quoting=csv.QUOTE_ALL,
+              header=(not os.path.isfile(flatfile_name)))
+
+    print("Done", flush=True)
 
 
 def output_data(data, table_name=None, cols=None, conn=None, cur=None, flatfile_name=None):
