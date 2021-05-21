@@ -6,6 +6,10 @@ from datetime import datetime
 from dateutil import tz
 import time
 import csv
+import urllib3
+
+# we are ignoring the HTTPS check because the server occasionally returns malformed certificates (missing EOF)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def get_requests_remaining(api_key=None, request=None):
     """Get the number of requests remaining. An API key usually gives you 1000 requests/hour.
@@ -27,7 +31,8 @@ def get_requests_remaining(api_key=None, request=None):
         pass
     else:
         request = requests.get('https://api.regulations.gov/v4/documents/FDA-2009-N-0501-0012',
-                         headers={'X-Api-Key': api_key})
+                         headers={'X-Api-Key': api_key},
+                         verify=False)
         if request.status_code != 200:
             print(request.json())
             request.raise_for_status()
@@ -69,19 +74,21 @@ def get_request_json(endpoint, api_key, params=None, print_remaining_requests=Fa
             r = requests.get(endpoint,
                              headers={'X-Api-Key': api_key},
                              params={**params,
-                                     'page[size]': 250}) # always get max page size
+                                     'page[size]': 250}, # always get max page size
+                             verify=False)
         else:  # querying the "detail" endpoint (e.g., /documents/{documentId})
-            r = requests.get(endpoint, headers={'X-Api-Key': api_key})
+            r = requests.get(endpoint, headers={'X-Api-Key': api_key}, verify=False)
 
         if r.status_code != 200:
             if r.status_code == STATUS_CODE_OVER_RATE_LIMIT and wait_for_rate_limits:
-                the_time = datetime.now().strftime('%H:%M:%S')
-                print(f'{the_time}: Hit rate limits. Waiting {WAIT_MINUTES} minutes to try again (attempt {tries})')
+                the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                print(f'{the_time}: Hit rate limits. Waiting {WAIT_MINUTES} minutes to try again (attempt {tries})', flush=True)
                 # We ran out of requests. Wait for a bit.
-                for i in range(WAIT_MINUTES * 60 / POLL_SECONDS):
+                for i in range(int(WAIT_MINUTES * 60 / POLL_SECONDS)):
                     time.sleep(POLL_SECONDS)
 
             else:  # some other kind of error
+                print([r, r.status_code])
                 print(r.json())
                 r.raise_for_status()
         else:
@@ -91,7 +98,7 @@ def get_request_json(endpoint, api_key, params=None, print_remaining_requests=Fa
                 (num_requests_left < 10) or \
                 (num_requests_left <= 100 and num_requests_left % 10 == 0) or \
                 (num_requests_left % 100 == 0 and num_requests_left < 1000):
-                print(f"Requests left: {r.headers['X-RateLimit-Remaining']}")
+                print(f"Requests left: {r.headers['X-RateLimit-Remaining']}", flush=True)
 
             return r.json()
 
@@ -148,7 +155,7 @@ def insert_data(data, table_name, cols, conn, cur=None):
     if cur is None:
         cur = conn.cursor()
 
-    the_time = datetime.now().strftime('%H:%M:%S')
+    the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     print(f"{the_time}: Inserting {len(data)} records into database...", flush=True)
     pd.DataFrame(data).to_sql("tmp", conn, if_exists="replace", index=False)
@@ -167,7 +174,7 @@ def write_to_flatfile(data, flatfile_name):
     if flatfile_name is None:
         raise ValueError("flatfile_name cannot be None")
 
-    the_time = datetime.now().strftime('%H:%M:%S')
+    the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{the_time}: Writing {len(data)} records to {flatfile_name}...", end="", flush=True)
 
     df = pd.DataFrame(data)
@@ -346,7 +353,7 @@ def gather_details(api_key, data_type, cols, id_col, ids, conn=None, flatfile_na
 
     cur = None if conn is None else conn.cursor()
 
-    the_time = datetime.now().strftime('%H:%M:%S')
+    the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f'{the_time}: Gathering details for {len(ids)} {data_type}...', flush=True)
 
     for item_id in ids:
@@ -375,7 +382,7 @@ def gather_details(api_key, data_type, cols, id_col, ids, conn=None, flatfile_na
                     cur=cur, 
                     flatfile_name=flatfile_name)
 
-    the_time = datetime.now().strftime('%H:%M:%S')
+    the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
 
 

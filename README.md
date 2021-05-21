@@ -93,7 +93,7 @@ The comments in `regulations_utils.py` are pretty thorough and explain how each 
         }
 
 
-## Get the JSON associated with a request to the header API:
+## Process the JSON associated with a request to the header API:
 
         >>> r = get_request_json(f'https://api.regulations.gov/v4/comments',
                              api_key="DEMO_KEY",
