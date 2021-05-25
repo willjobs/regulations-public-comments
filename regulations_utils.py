@@ -11,6 +11,13 @@ import urllib3
 # we are ignoring the HTTPS check because the server occasionally returns malformed certificates (missing EOF)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+def is_duplicated_on_server(response_json):
+    # a bug in the server: there are some commentIds, like NRCS-2009-0004-0003, which correspond to multiple actual comments!
+    return ('errors' in response_json.keys()) \
+            and (response_json['errors'][0]['status'] == "500") \
+            and (response_json['errors'][0]['detail'][:21] == "Incorrect result size")
+
+
 def get_requests_remaining(api_key=None, request=None):
     """Get the number of requests remaining. An API key usually gives you 1000 requests/hour.
 
@@ -30,6 +37,7 @@ def get_requests_remaining(api_key=None, request=None):
     if request is not None:
         pass
     else:
+        # this is a document that we know exists; it was chosen arbitrarily
         request = requests.get('https://api.regulations.gov/v4/documents/FDA-2009-N-0501-0012',
                          headers={'X-Api-Key': api_key},
                          verify=False)
@@ -40,7 +48,8 @@ def get_requests_remaining(api_key=None, request=None):
     return int(request.headers['X-RateLimit-Remaining'])
 
 
-def get_request_json(endpoint, api_key, params=None, print_remaining_requests=False, wait_for_rate_limits=False):
+def get_request_json(endpoint, api_key, params=None, print_remaining_requests=False, 
+                     wait_for_rate_limits=False, skip_duplicates=False):
     """Used to return the JSON associated with a request to the API
 
     Args:
@@ -54,6 +63,8 @@ def get_request_json(endpoint, api_key, params=None, print_remaining_requests=Fa
             requests this hour, based on the response headers. Defaults to False.
         wait_for_rate_limits (bool, optional): Determines whether to wait to re-try if we run out of
             requests in a given hour. Defaults to False.
+        skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
+            should we skip that request? Defaults to False.
 
     Returns:
         dict: JSON-ified request response
@@ -68,44 +79,60 @@ def get_request_json(endpoint, api_key, params=None, print_remaining_requests=Fa
     WAIT_MINUTES = 20  # time between attempts to get a response
     POLL_SECONDS = 10  # run time.sleep() for this long, so we can check if we've been interrupted
 
-    tries = 1
-    while tries <= int(60 / WAIT_MINUTES) + 2:
+    # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
+    # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
+    session = requests.Session()
+    session.mount('https', HTTPAdapter(max_retries=8))
+
+    def poll_for_response(api_key, else_func):
         if params is not None:  # querying the search endpoint (e.g., /documents)
-            r = requests.get(endpoint,
-                             headers={'X-Api-Key': api_key},
-                             params={**params,
-                                     'page[size]': 250}, # always get max page size
-                             verify=False)
+            r = session.get(endpoint,
+                            headers={'X-Api-Key': api_key},
+                            params={**params,
+                                    'page[size]': 250}, # always get max page size
+                            verify=False)
         else:  # querying the "detail" endpoint (e.g., /documents/{documentId})
-            r = requests.get(endpoint, headers={'X-Api-Key': api_key}, verify=False)
+            r = session.get(endpoint, headers={'X-Api-Key': api_key}, verify=False)
 
-        if r.status_code != 200:
-            if r.status_code == STATUS_CODE_OVER_RATE_LIMIT and wait_for_rate_limits:
-                the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                print(f'{the_time}: Hit rate limits. Waiting {WAIT_MINUTES} minutes to try again (attempt {tries})', flush=True)
-                # We ran out of requests. Wait for a bit.
-                for i in range(int(WAIT_MINUTES * 60 / POLL_SECONDS)):
-                    time.sleep(POLL_SECONDS)
-
-            else:  # some other kind of error
-                print([r, r.status_code])
-                print(r.json())
-                r.raise_for_status()
-        else:
+        if r.status_code == 200:
             # SUCCESS! Return the JSON of the request
             num_requests_left = int(r.headers['X-RateLimit-Remaining'])
             if print_remaining_requests or \
                 (num_requests_left < 10) or \
                 (num_requests_left <= 100 and num_requests_left % 10 == 0) or \
                 (num_requests_left % 100 == 0 and num_requests_left < 1000):
-                print(f"Requests left: {r.headers['X-RateLimit-Remaining']}", flush=True)
+                print(f"Requests left: {r.headers['X-RateLimit-Remaining']}")
 
-            return r.json()
+            return [True, r.json()]
+        else:
+            if r.status_code == STATUS_CODE_OVER_RATE_LIMIT and wait_for_rate_limits:
+                else_func()
+            elif is_duplicated_on_server(r.json()) and skip_duplicates:
+                print("****Duplicate entries on server. Skipping.")
+                print(r.json()['errors'][0]['detail'])
+            else:  # some other kind of error
+                print([r, r.status_code])
+                print(r.json())
+                r.raise_for_status()
 
-        tries += 1
+        return [False, r.json()]
 
-    print(r.json())
-    raise RuntimeError(f"Unrecoverable error; status code = {r.status_code}")
+    def wait_for_requests():
+        the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'{the_time}: Hit rate limits. Waiting {WAIT_MINUTES} minutes to try again', flush=True)
+        # We ran out of requests. Wait for WAIT_MINUTES minutes, but poll every POLL_SECONDS seconds for interruptions
+        for i in range(int(WAIT_MINUTES * 60 / POLL_SECONDS)):
+            time.sleep(POLL_SECONDS)
+    
+    # if we get here, that means we tried all the API keys. Now we wait on an API key until it becomes ready
+    for _ in range(1, int(60 / WAIT_MINUTES) + 3):
+        success, r = poll_for_response(api_key, wait_for_requests)
+
+        if success or (is_duplicated_on_server(r) and skip_duplicates):
+            return r
+
+    print(r)
+    raise RuntimeError(f"Unrecoverable error; {r}")
 
 
 def process_data(data, cols, id_col):
