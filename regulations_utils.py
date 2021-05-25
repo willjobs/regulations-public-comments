@@ -144,7 +144,7 @@ def process_data(data, cols, id_col):
         data (list of dict): List of items to process from a request (e.g., a bunch of comments).
             Each dict is expected to be formatted like: {'id': '...', 'attributes': {'attrib1': 'data', ...}, <other keys:values>}
         cols (list of str): List of columns desired in the output
-        id_col (str): Name of the ID column for this data type, i.e., 'documentId' or 'commentId'
+        id_col (str): Name of the ID column for this data type, i.e., 'docketId', 'documentId', or 'commentId'
 
     Returns:
         list of dict: processed dataset, ready for input into sqlite or output to flat file
@@ -169,7 +169,8 @@ def insert_data(data, table_name, cols, conn, cur=None):
 
     Args:
         data (list of dict): Data to be inserted into database
-        table_name (str): "documents_header", "documents_detail", "comments_header", or "comments_detail" -- specifies table to insert into
+        table_name (str): specifies table to insert into (one of: "dockets_header", "dockets_detail", 
+            "documents_header", "documents_detail", "comments_header", or "comments_detail")
         cols (list of str): columns to be inserted, can be a subset of the columns in data
         conn (sqlite3.Connection): Open connection to database
         cur (sqlite3.Cursor): Open cursor into the database
@@ -219,8 +220,8 @@ def output_data(data, table_name=None, cols=None, conn=None, cur=None, flatfile_
 
     Args:
         data (list of dict): Data to write out
-        table_name (str): For sqlite database, "documents_header", "documents_detail",  "comments_header", 
-            or "comments_detail". Can be None if using flat file.
+        table_name (str): For sqlite database, specifies table to insert into (one of: "dockets_header", "dockets_detail", 
+            "documents_header", "documents_detail", "comments_header", or "comments_detail"). Can be None if using flat file.
         cols (list of str): For sqlite database, columns to be inserted, can be a subset of the columns in data.
             Can be None if using flat file.
         conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified.
@@ -261,9 +262,9 @@ def gather_headers(api_key, data_type, cols, id_col, params, max_items=None, con
 
     Args:
         api_key (str): API key
-        data_type (str): Either "comments" or "documents".
+        data_type (str): One of "dockets", "documents", or "comments".
         cols (list of str): columns to save; can be a subset of the columns in data
-        id_col (str): Name of the ID column for this data type, i.e., 'documentId' or 'commentId'
+        id_col (str): Name of the ID column for this data type, i.e., 'docketId', 'documentId', or 'commentId'
         params (dict): Parameters to specify to the endpoint request for the query. See details 
             on available parameters at https://open.gsa.gov/api/regulationsgov/.
         max_items (int, optional): If this is specified, limits to this many items. Note that this
@@ -361,9 +362,9 @@ def gather_details(api_key, data_type, cols, id_col, ids, conn=None, flatfile_na
 
     Args:
         api_key (str): API key
-        data_type (str): Either "comments" or "documents"
+        data_type (str): One of "dockets", "documents", or "comments".
         cols (list of str): columns to save; can be a subset of the columns in data
-        id_col (str): Name of the ID column for this data type, i.e., 'documentId' or 'commentId'
+        id_col (str): Name of the ID column for this data type, i.e., 'docketId', 'documentId', or 'commentId'
         ids (list of str): List of IDs for items for which you are querying details. These IDs are
             appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
         conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified
@@ -419,10 +420,12 @@ def setup_database(filename=None, return_conn=True):
 
     Args:
         filename (str): Filename, optionally including path.
-        return_conn (bool, optional): [description]. Defaults to True.
+        return_conn (bool, optional): Whether to return an open connection to the database. Defaults to True.
+            If False, closes the connection before finishing.
+        
 
     Returns:
-        [type]: [description]
+        sqlite3.Connection: Open connection to database
     """
     if filename is None:
         filename = 'regulations.gov_' + datetime.now().strftime('%Y%m%d') + ".db"
@@ -430,10 +433,50 @@ def setup_database(filename=None, return_conn=True):
     conn = sqlite3.connect(filename)
     cur = conn.cursor()
 
+    cur.execute('drop table if exists dockets_header')
+    cur.execute('drop table if exists dockets_detail')
     cur.execute('drop table if exists documents_header')
     cur.execute('drop table if exists documents_detail')
     cur.execute('drop table if exists comments_header')
     cur.execute('drop table if exists comments_detail')
+
+    cur.execute("""
+    CREATE TABLE dockets_header (
+        docketId            TEXT    NOT NULL UNIQUE,
+        agencyId            TEXT,
+        docketType          TEXT,
+        title               TEXT,
+        lastModifiedDate    TEXT,
+        objectId            TEXT,
+        sqltime             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )""")
+
+
+    cur.execute("""
+    CREATE TABLE dockets_detail (
+        docketId        TEXT    NOT NULL UNIQUE,
+        agencyId        TEXT,
+        category        TEXT,
+        dkAbstract      TEXT,
+        docketType      TEXT,
+        effectiveDate   TEXT,
+        field1          TEXT,
+        field2          TEXT,
+        generic         TEXT,
+        keywords        TEXT,
+        legacyId        TEXT,
+        modifyDate      TEXT,
+        objectId        TEXT,
+        organization    TEXT,
+        petitionNbr     TEXT,
+        program         TEXT,
+        rin             TEXT,
+        shortTitle      TEXT,
+        subType         TEXT,
+        subType2        TEXT,
+        title           TEXT,
+        sqltime         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )""")
 
     cur.execute("""
     CREATE TABLE documents_header (
@@ -443,20 +486,20 @@ def setup_database(filename=None, return_conn=True):
         docketId            TEXT,
         documentType        TEXT,
         frDocNum            TEXT,
-        lastModifiedDate    TEXT    NOT NULL,
-        objectId            TEXT    NOT NULL,
-        postedDate          TEXT    NOT NULL,
+        lastModifiedDate    TEXT,
+        objectId            TEXT,
+        postedDate          TEXT,
         subtype             TEXT,
         title               TEXT,
         withdrawn           INTEGER,
-        sqltime             TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        sqltime             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
 
     cur.execute("""
     CREATE TABLE documents_detail (
         documentId              TEXT    NOT NULL UNIQUE,
         additionalRins          TEXT,
-        agencyId                TEXT    NOT NULL,
+        agencyId                TEXT,
         allowLateComments       INTEGER,
         authorDate              TEXT,
         authors                 TEXT,
@@ -484,8 +527,8 @@ def setup_database(filename=None, return_conn=True):
         lastName                TEXT,
         legacyId                TEXT,
         media                   TEXT,
-        modifyDate              TEXT    NOT NULL,
-        objectId                TEXT    NOT NULL UNIQUE,
+        modifyDate              TEXT,
+        objectId                TEXT,
         ombApproval             TEXT,
         openForComment          INTEGER,
         organization            TEXT,
@@ -493,7 +536,7 @@ def setup_database(filename=None, return_conn=True):
         pageCount               TEXT,
         paperLength             INTEGER,
         paperWidth              INTEGER,
-        postedDate              TEXT    NOT NULL,
+        postedDate              TEXT,
         postmarkDate            TEXT,
         reasonWithdrawn         TEXT,
         receiveDate             TEXT,
@@ -512,17 +555,17 @@ def setup_database(filename=None, return_conn=True):
         trackingNbr             TEXT,
         withdrawn               INTEGER,
         zip                     TEXT,
-        sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
 
     cur.execute("""
     CREATE TABLE comments_header (
         commentId               TEXT    NOT NULL UNIQUE,
-        agencyId                TEXT    NOT NULL,
+        agencyId                TEXT,
         documentType            TEXT,
-        lastModifiedDate        TEXT    NOT NULL,
-        objectId                TEXT    NOT NULL UNIQUE,
-        postedDate              TEXT    NOT NULL,
+        lastModifiedDate        TEXT,
+        objectId                TEXT,
+        postedDate              TEXT,
         title                   TEXT,
         withdrawn               INTEGER,
         sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -531,15 +574,15 @@ def setup_database(filename=None, return_conn=True):
     cur.execute("""
     CREATE TABLE comments_detail (
         commentId               TEXT    NOT NULL UNIQUE,
-        agencyId                TEXT    NOT NULL,
+        agencyId                TEXT,
         category                TEXT,
         city                    TEXT,
         comment                 TEXT,
-        commentOn               TEXT    NOT NULL,
-        commentOnDocumentId     TEXT    NOT NULL,
+        commentOn               TEXT,
+        commentOnDocumentId     TEXT,
         country                 TEXT,
         docAbstract             TEXT,
-        docketId                TEXT    NOT NULL,
+        docketId                TEXT,
         documentType            TEXT,
         duplicateComments       INTEGER,
         field1                  TEXT,
@@ -549,13 +592,13 @@ def setup_database(filename=None, return_conn=True):
         govAgencyType           TEXT,
         lastName                TEXT,
         legacyId                TEXT,
-        modifyDate              TEXT    NOT NULL,
-        objectId                TEXT    NOT NULL UNIQUE,
+        modifyDate              TEXT,
+        objectId                TEXT,
         openForComment          INTEGER,
         organization            TEXT,
         originalDocumentId      TEXT,
         pageCount               TEXT,
-        postedDate              TEXT    NOT NULL,
+        postedDate              TEXT,
         postmarkDate            TEXT,
         reasonWithdrawn         TEXT,
         receiveDate             TEXT,
@@ -569,7 +612,10 @@ def setup_database(filename=None, return_conn=True):
         trackingNbr             TEXT,
         withdrawn               INTEGER,
         zip                     TEXT,
-        sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
 
-    return conn
+    if(return_conn):
+        return conn
+    else:
+        conn.close()
