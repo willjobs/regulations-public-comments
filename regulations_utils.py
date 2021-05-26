@@ -176,6 +176,184 @@ class CommentsDownloader:
         return totalElements
 
 
+    def gather_headers(self, data_type, params, max_items=None, conn=None, flatfile_name=None):
+        """This function is meant to get the header data for the item returned by the query defined by 
+        params. The API returns these data in "pages" of up to 250 items at a time, and up to 20 pages are
+        available per query. If the query would return more than 250*20 = 5000 items, the recommended way
+        to retrieve the full dataset is to sort the data by lastModifiedDate and save the largest value
+        from the last page of a given query, then use that to filter the next batch to all those with a 
+        lastModifiedDate greater than or equal to the saved date. Unfortunately, this also means it's
+        you'll retrieve some of the same headers multiple times, but this is unavoidable because there is no
+        uniqueness constraint on lastModifiedDate.
+
+        The data retrieved are output either to a database (specified by conn) or a flatfile 
+        (specified by flatfile_name). These data do not include more specific detail that would be 
+        retrieved in a "Details" query, which returns that data (e.g., plain-text of a comment). 
+        That kind of data can be gathered using the gather_details function below. 
+        
+        An example call is:
+            gather_headers(data_type='comments', conn=conn, params={'filter[postedDate][ge]': '2020-01-01'})
+
+        Args:
+            data_type (str): One of "dockets", "documents", or "comments".
+            params (dict): Parameters to specify to the endpoint request for the query. See details 
+                on available parameters at https://open.gsa.gov/api/regulationsgov/.
+            max_items (int, optional): If this is specified, limits to this many items. Note that this
+                is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
+                end up with duplicate records being pulled, so we will hit this limit sooner than we should,
+                but we shouldn't be off by very much. Defaults to None.
+            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified
+            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+                case a connection should be specified.
+
+        Raises:
+            ValueError: [description]
+        """
+
+        if conn is None and flatfile_name is None:
+            raise ValueError("Must specify either a connection (conn) or the name of a file to write to (flatfile)")
+
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == "s" else data_type + "s"
+
+        n_retrieved = 0
+        prev_query_max_date = '1900-01-01 00:00:00'  # placeholder value for first round of 5000
+        EASTERN_TIME = tz.gettz('America/New_York')
+        
+        # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
+        id_col = data_type[:len(data_type)-1] + "Id"
+
+        cur = None if conn is None else conn.cursor()
+
+        # first request, to ensure there are documents and to get a total count
+        totalElements = self.get_items_count(data_type, params)
+        print(f'Found {totalElements} {data_type}...', flush=True)
+
+        if max_items is not None and max_items < totalElements:
+            print(f'...but limiting to {max_items} {data_type}...', flush=True)
+            totalElements = max_items
+
+        while n_retrieved < totalElements:
+            # loop over 5000 in each request (20 pages of 250 each)
+            print(f'\nEnter outer loop ({n_retrieved} {data_type} collected)...', flush=True)
+            page = 1
+            data = []
+
+            while (n_retrieved < totalElements) and (page == 1 or (not r_items['meta']['lastPage'])):
+                ## note: this will NOT lead to an off-by-one error because at the start of the loop
+                # r_items is from the *previous* request. If the *previous* request was the last page
+                # then we exit the loop (unless we're on the first page, in which case get the data then exit)
+                retries = 5
+                while retries > 0:
+                    try:
+                        r_items = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}',
+                                                        params={**params,
+                                                                'filter[lastModifiedDate][ge]': prev_query_max_date,
+                                                                'page[number]': str(page),
+                                                                'sort': f'lastModifiedDate'},
+                                                        wait_for_rate_limits=True)
+                        break
+                    except:
+                        retries -= 1
+
+                n_retrieved += len(r_items['data'])
+                data.extend(r_items['data'])  # add all items from this request
+                page += 1
+
+                ## There may be duplicates due to pagination, so the commented out code here doesn't apply,
+                ## but I'm leaving it in so I know not to "fix" this issue later on.
+                #if n_retrieved > totalElements:
+                #    data = data[:-(n_retrieved - totalElements)]  # remove the extras
+                #    assert len(data) == totalElements
+                #    n_retrieved = totalElements
+
+                print(f'    {n_retrieved} {data_type} retrieved', flush=True)
+
+            # get our query's final record's lastModifiedDate, and convert to eastern timezone for filtering via URL
+            prev_query_max_date = r_items['data'][-1]['attributes']['lastModifiedDate'].replace('Z', '+00:00')
+            prev_query_max_date = datetime.fromisoformat(prev_query_max_date).astimezone(EASTERN_TIME).strftime('%Y-%m-%d %H:%M:%S')
+
+            data = self._get_processed_data(data, id_col)
+            self._output_data(data, 
+                              table_name=(data_type + "_header"), 
+                              conn=conn, 
+                              cur=cur, 
+                              flatfile_name=flatfile_name)
+
+        # this may not reflect what's in the database because of unique constraint; due to pagination,
+        # there may be duplicates downloaded along the way
+        print(f'\nFinished: {n_retrieved} {data_type} collected', flush=True)
+
+
+    def gather_details(self, data_type, ids, conn=None, flatfile_name=None, insert_every_n_rows=500, skip_duplicates=True):
+        """This function is meant to get the Details data for each item in ids, one at a time. The data 
+        for each item is output either to a database (specified by conn) or a flatfile (specified by flatfile_name). 
+        
+        An example call is:
+            gather_details(data_type='documents', cols=documents_cols, id_col='documentId', ids=document_ids, conn=conn)
+
+        Args:
+            data_type (str): One of "dockets", "documents", or "comments".
+            ids (list of str): List of IDs for items for which you are querying details. These IDs are
+                appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
+            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified
+            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+                case a connection should be specified.
+            insert_every_n_rows (int): How often to write to the database or flat file. Defaults to every 500 rows.
+            skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
+                should we skip that request? Defaults to True.
+
+        """
+        if conn is None and flatfile_name is None:
+            raise ValueError("Must specify either a connection (conn) or the name of a file to write to (flatfile)")
+
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == "s" else data_type + "s"
+
+        n_retrieved = 0
+        data = []
+
+        cur = None if conn is None else conn.cursor()
+        
+        # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
+        id_col = data_type[:len(data_type)-1] + "Id"
+
+        the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'{the_time}: Gathering details for {len(ids)} {data_type}...', flush=True)
+
+        for item_id in ids:
+            r_item = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}/{item_id}',
+                                           wait_for_rate_limits=True,
+                                           skip_duplicates=skip_duplicates)
+            
+            if(skip_duplicates and self.is_duplicated_on_server(r_item)):
+                print(f"Skipping for {item_id}\n")
+                continue
+
+            n_retrieved += 1
+            data.append(r_item['data'])  # only one item from the Details endpoint, not a list, so use append (not extend)
+
+            if n_retrieved > 0 and n_retrieved % insert_every_n_rows == 0:
+                data = self._get_processed_data(data, id_col)
+                self._output_data(data, 
+                                  table_name=(data_type + "_detail"),
+                                  conn=conn, 
+                                  cur=cur, 
+                                  flatfile_name=flatfile_name)
+                data = []  # reset for next batch
+
+        if len(data) > 0:  # insert any remaining in final batch
+            data = self._get_processed_data(data, id_col)
+            self._output_data(data, 
+                              table_name=(data_type + "_detail"),
+                              conn=conn, 
+                              cur=cur, 
+                              flatfile_name=flatfile_name)
+
+        the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
+
+
     def _get_database_connection(self, filename=None, drop_if_exists=False):
         # If the database exists already, this just ensures all the necessary tables exist
         self._setup_database(filename, drop_if_exists=drop_if_exists)
@@ -386,184 +564,6 @@ class CommentsDownloader:
         conn.close()
 
 
-    def gather_headers(self, data_type, params, max_items=None, conn=None, flatfile_name=None):
-        """This function is meant to get the header data for the item returned by the query defined by 
-        params. The API returns these data in "pages" of up to 250 items at a time, and up to 20 pages are
-        available per query. If the query would return more than 250*20 = 5000 items, the recommended way
-        to retrieve the full dataset is to sort the data by lastModifiedDate and save the largest value
-        from the last page of a given query, then use that to filter the next batch to all those with a 
-        lastModifiedDate greater than or equal to the saved date. Unfortunately, this also means it's
-        you'll retrieve some of the same headers multiple times, but this is unavoidable because there is no
-        uniqueness constraint on lastModifiedDate.
-
-        The data retrieved are output either to a database (specified by conn) or a flatfile 
-        (specified by flatfile_name). These data do not include more specific detail that would be 
-        retrieved in a "Details" query, which returns that data (e.g., plain-text of a comment). 
-        That kind of data can be gathered using the gather_details function below. 
-        
-        An example call is:
-            gather_headers(data_type='comments', conn=conn, params={'filter[postedDate][ge]': '2020-01-01'})
-
-        Args:
-            data_type (str): One of "dockets", "documents", or "comments".
-            params (dict): Parameters to specify to the endpoint request for the query. See details 
-                on available parameters at https://open.gsa.gov/api/regulationsgov/.
-            max_items (int, optional): If this is specified, limits to this many items. Note that this
-                is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
-                end up with duplicate records being pulled, so we will hit this limit sooner than we should,
-                but we shouldn't be off by very much. Defaults to None.
-            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified
-            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
-                case a connection should be specified.
-
-        Raises:
-            ValueError: [description]
-        """
-
-        if conn is None and flatfile_name is None:
-            raise ValueError("Must specify either a connection (conn) or the name of a file to write to (flatfile)")
-
-        # make sure the data_type is plural
-        data_type = data_type if data_type[-1:] == "s" else data_type + "s"
-
-        n_retrieved = 0
-        prev_query_max_date = '1900-01-01 00:00:00'  # placeholder value for first round of 5000
-        EASTERN_TIME = tz.gettz('America/New_York')
-        
-        # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
-        id_col = data_type[:len(data_type)-1] + "Id"
-
-        cur = None if conn is None else conn.cursor()
-
-        # first request, to ensure there are documents and to get a total count
-        totalElements = self.get_items_count(data_type, params)
-        print(f'Found {totalElements} {data_type}...', flush=True)
-
-        if max_items is not None and max_items < totalElements:
-            print(f'...but limiting to {max_items} {data_type}...', flush=True)
-            totalElements = max_items
-
-        while n_retrieved < totalElements:
-            # loop over 5000 in each request (20 pages of 250 each)
-            print(f'\nEnter outer loop ({n_retrieved} {data_type} collected)...', flush=True)
-            page = 1
-            data = []
-
-            while (n_retrieved < totalElements) and (page == 1 or (not r_items['meta']['lastPage'])):
-                ## note: this will NOT lead to an off-by-one error because at the start of the loop
-                # r_items is from the *previous* request. If the *previous* request was the last page
-                # then we exit the loop (unless we're on the first page, in which case get the data then exit)
-                retries = 5
-                while retries > 0:
-                    try:
-                        r_items = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}',
-                                                        params={**params,
-                                                                'filter[lastModifiedDate][ge]': prev_query_max_date,
-                                                                'page[number]': str(page),
-                                                                'sort': f'lastModifiedDate'},
-                                                        wait_for_rate_limits=True)
-                        break
-                    except:
-                        retries -= 1
-
-                n_retrieved += len(r_items['data'])
-                data.extend(r_items['data'])  # add all items from this request
-                page += 1
-
-                ## There may be duplicates due to pagination, so the commented out code here doesn't apply,
-                ## but I'm leaving it in so I know not to "fix" this issue later on.
-                #if n_retrieved > totalElements:
-                #    data = data[:-(n_retrieved - totalElements)]  # remove the extras
-                #    assert len(data) == totalElements
-                #    n_retrieved = totalElements
-
-                print(f'    {n_retrieved} {data_type} retrieved', flush=True)
-
-            # get our query's final record's lastModifiedDate, and convert to eastern timezone for filtering via URL
-            prev_query_max_date = r_items['data'][-1]['attributes']['lastModifiedDate'].replace('Z', '+00:00')
-            prev_query_max_date = datetime.fromisoformat(prev_query_max_date).astimezone(EASTERN_TIME).strftime('%Y-%m-%d %H:%M:%S')
-
-            data = self._get_processed_data(data, id_col)
-            self._output_data(data, 
-                              table_name=(data_type + "_header"), 
-                              conn=conn, 
-                              cur=cur, 
-                              flatfile_name=flatfile_name)
-
-        # this may not reflect what's in the database because of unique constraint; due to pagination,
-        # there may be duplicates downloaded along the way
-        print(f'\nFinished: {n_retrieved} {data_type} collected', flush=True)
-
-
-    def gather_details(self, data_type, ids, conn=None, flatfile_name=None, insert_every_n_rows=500, skip_duplicates=True):
-        """This function is meant to get the Details data for each item in ids, one at a time. The data 
-        for each item is output either to a database (specified by conn) or a flatfile (specified by flatfile_name). 
-        
-        An example call is:
-            gather_details(data_type='documents', cols=documents_cols, id_col='documentId', ids=document_ids, conn=conn)
-
-        Args:
-            data_type (str): One of "dockets", "documents", or "comments".
-            ids (list of str): List of IDs for items for which you are querying details. These IDs are
-                appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
-            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified
-            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
-                case a connection should be specified.
-            insert_every_n_rows (int): How often to write to the database or flat file. Defaults to every 500 rows.
-            skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
-                should we skip that request? Defaults to True.
-
-        """
-        if conn is None and flatfile_name is None:
-            raise ValueError("Must specify either a connection (conn) or the name of a file to write to (flatfile)")
-
-        # make sure the data_type is plural
-        data_type = data_type if data_type[-1:] == "s" else data_type + "s"
-
-        n_retrieved = 0
-        data = []
-
-        cur = None if conn is None else conn.cursor()
-        
-        # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
-        id_col = data_type[:len(data_type)-1] + "Id"
-
-        the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f'{the_time}: Gathering details for {len(ids)} {data_type}...', flush=True)
-
-        for item_id in ids:
-            r_item = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}/{item_id}',
-                                           wait_for_rate_limits=True,
-                                           skip_duplicates=skip_duplicates)
-            
-            if(skip_duplicates and self.is_duplicated_on_server(r_item)):
-                print(f"Skipping for {item_id}\n")
-                continue
-
-            n_retrieved += 1
-            data.append(r_item['data'])  # only one item from the Details endpoint, not a list, so use append (not extend)
-
-            if n_retrieved > 0 and n_retrieved % insert_every_n_rows == 0:
-                data = self._get_processed_data(data, id_col)
-                self._output_data(data, 
-                                  table_name=(data_type + "_detail"),
-                                  conn=conn, 
-                                  cur=cur, 
-                                  flatfile_name=flatfile_name)
-                data = []  # reset for next batch
-
-        if len(data) > 0:  # insert any remaining in final batch
-            data = self._get_processed_data(data, id_col)
-            self._output_data(data, 
-                              table_name=(data_type + "_detail"),
-                              conn=conn, 
-                              cur=cur, 
-                              flatfile_name=flatfile_name)
-
-        the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
-
-    
     def _get_processed_data(self, data, id_col):
         """Used to take the data contained in a response (e.g., the data for a bunch of comments)
         and remove unnecessary columns (i.e., those not specified in `cols`). Also adds the ID
