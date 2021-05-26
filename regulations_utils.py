@@ -176,7 +176,13 @@ class CommentsDownloader:
         return totalElements
 
 
-    def setup_database(self, filename=None, drop_if_exists=False, return_conn=True):
+    def _get_database_connection(self, filename=None, drop_if_exists=False):
+        # If the database exists already, this just ensures all the necessary tables exist
+        self._setup_database(filename, drop_if_exists=drop_if_exists)
+        return sqlite3.connect(filename)
+
+
+    def _setup_database(self, filename=None, drop_if_exists=False):
         """Set up a sqlite database with the tables and columns necessary for the data returned
         by the Regulations.gov API.
 
@@ -184,15 +190,12 @@ class CommentsDownloader:
             filename (str): Filename, optionally including path.
             drop_if_exists (bool, optional): Whether to drop the six tables used here if they already exist.
                 Defaults to False so that we don't delete any information.
-            return_conn (bool, optional): Whether to return an open connection to the database. Defaults to True.
-                If False, closes the connection before finishing.
-            
-
-        Returns:
-            sqlite3.Connection: Open connection to database
         """
         if filename is None:
             filename = 'regulations.gov_' + datetime.now().strftime('%Y%m%d') + ".db"
+
+        # make the path if necessary
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
 
         conn = sqlite3.connect(filename)
         cur = conn.cursor()
@@ -380,10 +383,7 @@ class CommentsDownloader:
             sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )""")
 
-        if(return_conn):
-            return conn
-        else:
-            conn.close()
+        conn.close()
 
 
     def gather_headers(self, data_type, params, max_items=None, conn=None, flatfile_name=None):
