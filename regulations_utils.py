@@ -63,15 +63,6 @@ class CommentsDownloader:
         return int(r.headers['X-RateLimit-Remaining'])
 
 
-    def is_duplicated_on_server(self, response_json):
-            # there is a bug in the server: there are some commentIds, like NRCS-2009-0004-0003, 
-            # which correspond to multiple actual comments! This function determines whether the
-            # returned JSON has an error indicating this issue
-            return ('errors' in response_json.keys()) \
-                    and (response_json['errors'][0]['status'] == "500") \
-                    and (response_json['errors'][0]['detail'][:21] == "Incorrect result size")
-
-
     def get_request_json(self, endpoint, params=None, print_remaining_requests=False, 
                          wait_for_rate_limits=False, skip_duplicates=False):
         """Used to return the JSON associated with a request to the API
@@ -130,7 +121,7 @@ class CommentsDownloader:
             else:
                 if r.status_code == STATUS_CODE_OVER_RATE_LIMIT and wait_for_rate_limits:
                     else_func()
-                elif self.is_duplicated_on_server(r.json()) and skip_duplicates:
+                elif self._is_duplicated_on_server(r.json()) and skip_duplicates:
                     print("****Duplicate entries on server. Skipping.")
                     print(r.json()['errors'][0]['detail'])
                 else:  # some other kind of error
@@ -150,7 +141,7 @@ class CommentsDownloader:
         for _ in range(1, int(60 / WAIT_MINUTES) + 3):
             success, r_json = poll_for_response(self.api_key, wait_for_requests)
 
-            if success or (self.is_duplicated_on_server(r_json) and skip_duplicates):
+            if success or (self._is_duplicated_on_server(r_json) and skip_duplicates):
                 return r_json
 
         print(r_json)
@@ -341,7 +332,7 @@ class CommentsDownloader:
                                            wait_for_rate_limits=True,
                                            skip_duplicates=skip_duplicates)
             
-            if(skip_duplicates and self.is_duplicated_on_server(r_item)):
+            if(skip_duplicates and self._is_duplicated_on_server(r_item)):
                 print(f"Skipping for {item_id}\n")
                 continue
 
@@ -370,7 +361,21 @@ class CommentsDownloader:
         print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
 
 
-    def _get_database_connection(self, filename=None, drop_if_exists=False):
+    def _get_database_connection(self, filename, drop_if_exists=False):
+        """Get a connection to the database in the file at filename. If the database does not
+        exist it will be created with the necessary tables. If it does exist, tables are kept as-is
+        unless drop_if_exists is specified, in which case existing tables are dropped before creating
+        the necessary tables.
+
+        Args:
+            filename (str): Filename of database, optionally including path.
+            drop_if_exists (bool, optional): Whether to drop the necessary tables if they exist. 
+                Defaults to False, in which case if the tables exist, they will be left as-is and
+                new data will be appended.
+
+        Returns:
+            sqlite.Connection: open connection to the database
+        """
         # If the database exists already, this just ensures all the necessary tables exist
         self._setup_database(filename, drop_if_exists=drop_if_exists)
         return sqlite3.connect(filename)
@@ -592,6 +597,23 @@ class CommentsDownloader:
                 conn.close()
             except:
                 pass
+
+
+    def _is_duplicated_on_server(self, response_json):
+        """Used to determine whether a given response indicates a duplicate on the server. This is
+        because there is a bug in the server: there are some commentIds, like NRCS-2009-0004-0003, 
+        which correspond to multiple actual comments! This function determines whether the
+        returned JSON has an error indicating this issue
+
+        Args:
+            response_json (dict): JSON from request to API (usually, from get_request_json)
+
+        Returns:
+            bool: whether the response indicates a duplicate issue or not
+        """
+        return ('errors' in response_json.keys()) \
+                and (response_json['errors'][0]['status'] == "500") \
+                and (response_json['errors'][0]['detail'][:21] == "Incorrect result size")
 
 
     def _get_processed_data(self, data, id_col):
