@@ -168,7 +168,9 @@ class CommentsDownloader:
         Returns:
             int: Number of items returned by request
         """
-        # first request, to ensure there are documents and to get a total count
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == "s" else data_type + "s"
+
         r_items = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}', params=params)
         totalElements = r_items['meta']['totalElements']
         return totalElements
@@ -418,6 +420,9 @@ class CommentsDownloader:
         if conn is None and flatfile_name is None:
             raise ValueError("Must specify either a connection (conn) or the name of a file to write to (flatfile)")
 
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == "s" else data_type + "s"
+
         n_retrieved = 0
         prev_query_max_date = '1900-01-01 00:00:00'  # placeholder value for first round of 5000
         EASTERN_TIME = tz.gettz('America/New_York')
@@ -508,6 +513,9 @@ class CommentsDownloader:
         """
         if conn is None and flatfile_name is None:
             raise ValueError("Must specify either a connection (conn) or the name of a file to write to (flatfile)")
+
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == "s" else data_type + "s"
 
         n_retrieved = 0
         data = []
