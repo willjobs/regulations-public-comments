@@ -30,8 +30,8 @@ class CommentsDownloader:
                                           "filter[postedDate][ge]": "2021-01-01",
                                           "filter[postedDate][le]": "2021-04-30"},
                                   conn=conn)
-                                  # alternatively, specify a flatfile: 
-                                  # flatfile_name="comments.csv"
+                                  # alternatively, specify a CSV: 
+                                  # csv_filename="comments.csv"
 
         comment_ids = pd.read_sql_query('select commentId from comments_header order by postedDate', conn)['commentId'].values
         
@@ -167,7 +167,7 @@ class CommentsDownloader:
         return totalElements
 
 
-    def gather_headers(self, data_type, params, dbfile_name=None, flatfile_name=None, max_items=None):
+    def gather_headers(self, data_type, params, db_filename=None, csv_filename=None, max_items=None):
         """This function is meant to get the header data for the item returned by the query defined by 
         params. The API returns these data in "pages" of up to 250 items at a time, and up to 20 pages are
         available per query. If the query would return more than 250*20 = 5000 items, the recommended way
@@ -177,22 +177,22 @@ class CommentsDownloader:
         you'll retrieve some of the same headers multiple times, but this is unavoidable because there is no
         uniqueness constraint on lastModifiedDate.
 
-        The data retrieved are output either to a database (dbfile_name), or a flatfile (flatfile_name),
+        The data retrieved are output either to a database (db_filename), or a CSV (csv_filename),
         or both. These data do not include more specific detail that would be retrieved in a "Details" query, 
         which returns that data (e.g., plain-text of a comment). That kind of data can be gathered 
         using the gather_details function below. 
         
         An example call is:
-            gather_headers(data_type='comments', dbfile_name="comments_2020", params={'filter[postedDate][ge]': '2020-01-01'})
+            gather_headers(data_type='comments', db_filename="comments_2020", params={'filter[postedDate][ge]': '2020-01-01'})
 
         Args:
             data_type (str): One of "dockets", "documents", or "comments".
             params (dict): Parameters to specify to the endpoint request for the query. See details 
                 on available parameters at https://open.gsa.gov/api/regulationsgov/.
-            dbfile_name (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
                 it will be created automatically. If it does exist, we will add to it. Can be None, in which 
-                case a flat file should be specified.
-            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+                case a CSV file should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
                 case a connection should be specified.
             max_items (int, optional): If this is specified, limits to this many items. Note that this
                 is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
@@ -200,8 +200,8 @@ class CommentsDownloader:
                 but we shouldn't be off by very much. Defaults to None.
         """
 
-        if dbfile_name is None and flatfile_name is None:
-            raise ValueError("Must specify either a database file name or flatfile name (i.e., a CSV")
+        if db_filename is None and csv_filename is None:
+            raise ValueError("Must specify either a database file name or CSV filename")
 
         # make sure the data_type is plural
         data_type = data_type if data_type[-1:] == "s" else data_type + "s"
@@ -213,8 +213,8 @@ class CommentsDownloader:
         # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
         id_col = data_type[:len(data_type)-1] + "Id"
 
-        if dbfile_name is not None:
-            conn = self._get_database_connection(dbfile_name)
+        if db_filename is not None:
+            conn = self._get_database_connection(db_filename)
             cur = conn.cursor()
         else:
             conn = cur = None
@@ -272,12 +272,12 @@ class CommentsDownloader:
                               table_name=(data_type + "_header"), 
                               conn=conn, 
                               cur=cur, 
-                              flatfile_name=flatfile_name)
+                              csv_filename=csv_filename)
 
         # Note: the count in n_retrieved may not reflect what's in the database because there may be 
         # duplicates downloaded along the way due to the pagination mechanism on Regulations.gov's API.
         # The sqlite database uses a unique constraint to avoid duplicates, so the final count printed 
-        # below may not match what is shown in the database. For flat files, the count here should match
+        # below may not match what is shown in the database. For CSVs, the count here should match
         # the number of rows in the output.
 
         self._close_database_connection(conn)
@@ -285,29 +285,29 @@ class CommentsDownloader:
         print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
 
 
-    def gather_details(self, data_type, ids, dbfile_name=None, flatfile_name=None, insert_every_n_rows=500, skip_duplicates=True):
+    def gather_details(self, data_type, ids, db_filename=None, csv_filename=None, insert_every_n_rows=500, skip_duplicates=True):
         """This function is meant to get the Details data for each item in ids, one at a time. The data 
-        for each item is output either to a database (specified by conn) or a flatfile (specified by flatfile_name). 
+        for each item is output either to a database (specified by db_filename) or a CSV (specified by csv_filename). 
         
         An example call is:
-            gather_details(data_type='documents', cols=documents_cols, id_col='documentId', ids=document_ids, flatfile_name="documents_2020.csv")
+            gather_details(data_type='documents', cols=documents_cols, id_col='documentId', ids=document_ids, csv_filename="documents_2020.csv")
 
         Args:
             data_type (str): One of "dockets", "documents", or "comments".
             ids (list of str): List of IDs for items for which you are querying details. These IDs are
                 appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
-            dbfile_name (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
                 it will be created automatically. If it does exist, we will add to it. Can be None, in which 
-                case a flat file should be specified.
-            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
                 case a connection should be specified.
-            insert_every_n_rows (int): How often to write to the database or flat file. Defaults to every 500 rows.
+            insert_every_n_rows (int): How often to write to the database or CSV. Defaults to every 500 rows.
             skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
                 should we skip that request? Defaults to True.
 
         """
-        if dbfile_name is None and flatfile_name is None:
-            raise ValueError("Must specify either a database file name or flatfile name (i.e., a CSV")
+        if db_filename is None and csv_filename is None:
+            raise ValueError("Must specify either a database file name or CSV filename")
 
         # make sure the data_type is plural
         data_type = data_type if data_type[-1:] == "s" else data_type + "s"
@@ -318,8 +318,8 @@ class CommentsDownloader:
         # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
         id_col = data_type[:len(data_type)-1] + "Id"
 
-        if dbfile_name is not None:
-            conn = self._get_database_connection(dbfile_name)
+        if db_filename is not None:
+            conn = self._get_database_connection(db_filename)
             cur = conn.cursor()
         else:
             conn = cur = None
@@ -345,7 +345,7 @@ class CommentsDownloader:
                                   table_name=(data_type + "_detail"),
                                   conn=conn, 
                                   cur=cur, 
-                                  flatfile_name=flatfile_name)
+                                  csv_filename=csv_filename)
                 data = []  # reset for next batch
 
         if len(data) > 0:  # insert any remaining in final batch
@@ -354,7 +354,7 @@ class CommentsDownloader:
                               table_name=(data_type + "_detail"),
                               conn=conn, 
                               cur=cur, 
-                              flatfile_name=flatfile_name)
+                              csv_filename=csv_filename)
 
         self._close_database_connection(conn)
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -627,7 +627,7 @@ class CommentsDownloader:
             id_col (str): Name of the ID column for this data type, i.e., 'docketId', 'documentId', or 'commentId'
 
         Returns:
-            list of dict: processed dataset, ready for input into sqlite or output to flat file
+            list of dict: processed dataset, ready for input into sqlite or output to CSV
         """
         output = []
         cols = [x for x in data[0]['attributes'].keys() if x not in \
@@ -671,19 +671,19 @@ class CommentsDownloader:
         conn.commit()
 
 
-    def _write_to_flatfile(self, data, flatfile_name):
+    def _write_to_csv(self, data, csv_filename):
         """Write out data to a CSV file. Data will be appended to an existing file, or if the file does
         not exist, the file will be created with headers. Subsequent appends do not include the header row.
 
         Args:
             data (list of dict): Data to write out
-            flatfile_name (str): Name (optionally with path) of the CSV file to write to
+            csv_filename (str): Name (optionally with path) of the CSV file to write to
         """
-        if flatfile_name is None:
-            raise ValueError("flatfile_name cannot be None")
+        if csv_filename is None:
+            raise ValueError("csv_filename cannot be None")
 
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f"{the_time}: Writing {len(data)} records to {flatfile_name}...", end="", flush=True)
+        print(f"{the_time}: Writing {len(data)} records to {csv_filename}...", end="", flush=True)
 
         df = pd.DataFrame(data)
         
@@ -691,34 +691,34 @@ class CommentsDownloader:
         df.replace(r"\n", " ", regex=True, inplace=True)
 
         # make the path if necessary
-        if len(os.path.dirname(flatfile_name)) > 0:
-            os.makedirs(os.path.dirname(flatfile_name), exist_ok=True)
+        if len(os.path.dirname(csv_filename)) > 0:
+            os.makedirs(os.path.dirname(csv_filename), exist_ok=True)
 
-        df.to_csv(flatfile_name, index=False, mode='a', quoting=csv.QUOTE_ALL,
-                  header=(not os.path.isfile(flatfile_name)))
+        df.to_csv(csv_filename, index=False, mode='a', quoting=csv.QUOTE_ALL,
+                  header=(not os.path.isfile(csv_filename)))
 
         print("Done", flush=True)
 
 
-    def _output_data(self, data, table_name=None, conn=None, cur=None, flatfile_name=None):
-        """Routes the output call to either database or the flatfile, depending on parameters
+    def _output_data(self, data, table_name=None, conn=None, cur=None, csv_filename=None):
+        """Routes the output call to either database or the CSV, depending on parameters
 
         Args:
             data (list of dict): Data to write out
             table_name (str): For sqlite database, specifies table to insert into (one of: "dockets_header", "dockets_detail", 
-                "documents_header", "documents_detail", "comments_header", or "comments_detail"). Can be None if using flat file.
-            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified.
-                Can be None if using flat file.
-            cur (sqlite3.Cursor): Open cursor into the database. Can be None, in which case a flat file should be specified.
-                Can be None if using flat file.
-            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+                "documents_header", "documents_detail", "comments_header", or "comments_detail"). Can be None if using CSV.
+            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a CSV should be specified.
+                Can be None if using a CSV.
+            cur (sqlite3.Cursor): Open cursor into the database. Can be None, in which case a CSV should be specified.
+                Can be None if using a CSV.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
                 case a connection and cursor should be specified.
         """
-        if conn is None and flatfile_name is None:
-            raise ValueError("Need to specify either conn or flatfile_name")
+        if conn is None and csv_filename is None:
+            raise ValueError("Need to specify either conn or csv_filename")
 
         if conn is not None:
             self._insert_data(data, table_name, conn, cur)
         
-        if flatfile_name is not None:
-            self._write_to_flatfile(data, flatfile_name)
+        if csv_filename is not None:
+            self._write_to_csv(data, csv_filename)
