@@ -176,7 +176,7 @@ class CommentsDownloader:
         return totalElements
 
 
-    def gather_headers(self, data_type, params, max_items=None, conn=None, flatfile_name=None):
+    def gather_headers(self, data_type, params, dbfile_name=None, flatfile_name=None, max_items=None):
         """This function is meant to get the header data for the item returned by the query defined by 
         params. The API returns these data in "pages" of up to 250 items at a time, and up to 20 pages are
         available per query. If the query would return more than 250*20 = 5000 items, the recommended way
@@ -186,32 +186,31 @@ class CommentsDownloader:
         you'll retrieve some of the same headers multiple times, but this is unavoidable because there is no
         uniqueness constraint on lastModifiedDate.
 
-        The data retrieved are output either to a database (specified by conn) or a flatfile 
-        (specified by flatfile_name). These data do not include more specific detail that would be 
-        retrieved in a "Details" query, which returns that data (e.g., plain-text of a comment). 
-        That kind of data can be gathered using the gather_details function below. 
+        The data retrieved are output either to a database (dbfile_name), or a flatfile (flatfile_name),
+        or both. These data do not include more specific detail that would be retrieved in a "Details" query, 
+        which returns that data (e.g., plain-text of a comment). That kind of data can be gathered 
+        using the gather_details function below. 
         
         An example call is:
-            gather_headers(data_type='comments', conn=conn, params={'filter[postedDate][ge]': '2020-01-01'})
+            gather_headers(data_type='comments', dbfile_name="comments_2020", params={'filter[postedDate][ge]': '2020-01-01'})
 
         Args:
             data_type (str): One of "dockets", "documents", or "comments".
             params (dict): Parameters to specify to the endpoint request for the query. See details 
                 on available parameters at https://open.gsa.gov/api/regulationsgov/.
+            dbfile_name (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which 
+                case a flat file should be specified.
+            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+                case a connection should be specified.
             max_items (int, optional): If this is specified, limits to this many items. Note that this
                 is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
                 end up with duplicate records being pulled, so we will hit this limit sooner than we should,
                 but we shouldn't be off by very much. Defaults to None.
-            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified
-            flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
-                case a connection should be specified.
-
-        Raises:
-            ValueError: [description]
         """
 
-        if conn is None and flatfile_name is None:
-            raise ValueError("Must specify either a connection (conn) or the name of a file to write to (flatfile)")
+        if dbfile_name is None and flatfile_name is None:
+            raise ValueError("Must specify either a database file name or flatfile name (i.e., a CSV")
 
         # make sure the data_type is plural
         data_type = data_type if data_type[-1:] == "s" else data_type + "s"
@@ -223,7 +222,11 @@ class CommentsDownloader:
         # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
         id_col = data_type[:len(data_type)-1] + "Id"
 
-        cur = None if conn is None else conn.cursor()
+        if dbfile_name is not None:
+            conn = self._get_database_connection(dbfile_name)
+            cur = conn.cursor()
+        else:
+            conn = cur = None
 
         # first request, to ensure there are documents and to get a total count
         totalElements = self.get_items_count(data_type, params)
@@ -280,23 +283,31 @@ class CommentsDownloader:
                               cur=cur, 
                               flatfile_name=flatfile_name)
 
-        # this may not reflect what's in the database because of unique constraint; due to pagination,
-        # there may be duplicates downloaded along the way
-        print(f'\nFinished: {n_retrieved} {data_type} collected', flush=True)
+        # Note: the count in n_retrieved may not reflect what's in the database because there may be 
+        # duplicates downloaded along the way due to the pagination mechanism on Regulations.gov's API.
+        # The sqlite database uses a unique constraint to avoid duplicates, so the final count printed 
+        # below may not match what is shown in the database. For flat files, the count here should match
+        # the number of rows in the output.
+
+        self._close_database_connection(conn)
+        the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
 
 
-    def gather_details(self, data_type, ids, conn=None, flatfile_name=None, insert_every_n_rows=500, skip_duplicates=True):
+    def gather_details(self, data_type, ids, dbfile_name=None, flatfile_name=None, insert_every_n_rows=500, skip_duplicates=True):
         """This function is meant to get the Details data for each item in ids, one at a time. The data 
         for each item is output either to a database (specified by conn) or a flatfile (specified by flatfile_name). 
         
         An example call is:
-            gather_details(data_type='documents', cols=documents_cols, id_col='documentId', ids=document_ids, conn=conn)
+            gather_details(data_type='documents', cols=documents_cols, id_col='documentId', ids=document_ids, flatfile_name="documents_2020.csv")
 
         Args:
             data_type (str): One of "dockets", "documents", or "comments".
             ids (list of str): List of IDs for items for which you are querying details. These IDs are
                 appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
-            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a flat file should be specified
+            dbfile_name (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which 
+                case a flat file should be specified.
             flatfile_name (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
                 case a connection should be specified.
             insert_every_n_rows (int): How often to write to the database or flat file. Defaults to every 500 rows.
@@ -304,8 +315,8 @@ class CommentsDownloader:
                 should we skip that request? Defaults to True.
 
         """
-        if conn is None and flatfile_name is None:
-            raise ValueError("Must specify either a connection (conn) or the name of a file to write to (flatfile)")
+        if dbfile_name is None and flatfile_name is None:
+            raise ValueError("Must specify either a database file name or flatfile name (i.e., a CSV")
 
         # make sure the data_type is plural
         data_type = data_type if data_type[-1:] == "s" else data_type + "s"
@@ -313,10 +324,14 @@ class CommentsDownloader:
         n_retrieved = 0
         data = []
 
-        cur = None if conn is None else conn.cursor()
-        
         # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
         id_col = data_type[:len(data_type)-1] + "Id"
+
+        if dbfile_name is not None:
+            conn = self._get_database_connection(dbfile_name)
+            cur = conn.cursor()
+        else:
+            conn = cur = None
 
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f'{the_time}: Gathering details for {len(ids)} {data_type}...', flush=True)
@@ -350,6 +365,7 @@ class CommentsDownloader:
                               cur=cur, 
                               flatfile_name=flatfile_name)
 
+        self._close_database_connection(conn)
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
 
@@ -373,7 +389,8 @@ class CommentsDownloader:
             filename = 'regulations.gov_' + datetime.now().strftime('%Y%m%d') + ".db"
 
         # make the path if necessary
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        if len(os.path.dirname(filename)) > 0:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
 
         conn = sqlite3.connect(filename)
         cur = conn.cursor()
@@ -564,6 +581,19 @@ class CommentsDownloader:
         conn.close()
 
 
+    def _close_database_connection(self, conn):
+        """Close a database connection
+
+        Args:
+            conn (sqlite3.Connection): Try to close the connection. If there are any errors, ignore them.
+        """
+        if conn is not None and type(conn) == sqlite3.Connection:
+            try:
+                conn.close()
+            except:
+                pass
+
+
     def _get_processed_data(self, data, id_col):
         """Used to take the data contained in a response (e.g., the data for a bunch of comments)
         and remove unnecessary columns (i.e., those not specified in `cols`). Also adds the ID
@@ -637,6 +667,11 @@ class CommentsDownloader:
         
         # remove line breaks in each field so that the rows of the CSV correspond to one record
         df.replace(r"\n", " ", regex=True, inplace=True)
+
+        # make the path if necessary
+        if len(os.path.dirname(flatfile_name)) > 0:
+            os.makedirs(os.path.dirname(flatfile_name), exist_ok=True)
+
         df.to_csv(flatfile_name, index=False, mode='a', quoting=csv.QUOTE_ALL,
                   header=(not os.path.isfile(flatfile_name)))
 
