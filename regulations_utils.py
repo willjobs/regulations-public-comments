@@ -176,12 +176,14 @@ class CommentsDownloader:
         return totalElements
 
 
-    def setup_database(self, filename=None, return_conn=True):
+    def setup_database(self, filename=None, drop_if_exists=False, return_conn=True):
         """Set up a sqlite database with the tables and columns necessary for the data returned
         by the Regulations.gov API.
 
         Args:
             filename (str): Filename, optionally including path.
+            drop_if_exists (bool, optional): Whether to drop the six tables used here if they already exist.
+                Defaults to False so that we don't delete any information.
             return_conn (bool, optional): Whether to return an open connection to the database. Defaults to True.
                 If False, closes the connection before finishing.
             
@@ -195,15 +197,16 @@ class CommentsDownloader:
         conn = sqlite3.connect(filename)
         cur = conn.cursor()
 
-        cur.execute('drop table if exists dockets_header')
-        cur.execute('drop table if exists dockets_detail')
-        cur.execute('drop table if exists documents_header')
-        cur.execute('drop table if exists documents_detail')
-        cur.execute('drop table if exists comments_header')
-        cur.execute('drop table if exists comments_detail')
+        if drop_if_exists:
+            cur.execute('drop table if exists dockets_header')
+            cur.execute('drop table if exists dockets_detail')
+            cur.execute('drop table if exists documents_header')
+            cur.execute('drop table if exists documents_detail')
+            cur.execute('drop table if exists comments_header')
+            cur.execute('drop table if exists comments_detail')
 
         cur.execute("""
-        CREATE TABLE dockets_header (
+        CREATE TABLE IF NOT EXISTS dockets_header (
             docketId            TEXT    NOT NULL UNIQUE,
             agencyId            TEXT,
             docketType          TEXT,
@@ -215,7 +218,7 @@ class CommentsDownloader:
 
 
         cur.execute("""
-        CREATE TABLE dockets_detail (
+        CREATE TABLE IF NOT EXISTS dockets_detail (
             docketId        TEXT    NOT NULL UNIQUE,
             agencyId        TEXT,
             category        TEXT,
@@ -241,7 +244,7 @@ class CommentsDownloader:
         )""")
 
         cur.execute("""
-        CREATE TABLE documents_header (
+        CREATE TABLE IF NOT EXISTS documents_header (
             documentId          TEXT    NOT NULL UNIQUE,
             commentEndDate      TEXT,
             commentStartDate    TEXT,
@@ -258,7 +261,7 @@ class CommentsDownloader:
         )""")
 
         cur.execute("""
-        CREATE TABLE documents_detail (
+        CREATE TABLE IF NOT EXISTS documents_detail (
             documentId              TEXT    NOT NULL UNIQUE,
             additionalRins          TEXT,
             agencyId                TEXT,
@@ -321,7 +324,7 @@ class CommentsDownloader:
         )""")
 
         cur.execute("""
-        CREATE TABLE comments_header (
+        CREATE TABLE IF NOT EXISTS comments_header (
             commentId               TEXT    NOT NULL UNIQUE,
             agencyId                TEXT,
             documentType            TEXT,
@@ -334,7 +337,7 @@ class CommentsDownloader:
         )""")
 
         cur.execute("""
-        CREATE TABLE comments_detail (
+        CREATE TABLE IF NOT EXISTS comments_detail (
             commentId               TEXT    NOT NULL UNIQUE,
             agencyId                TEXT,
             category                TEXT,
