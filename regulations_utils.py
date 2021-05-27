@@ -762,17 +762,3 @@ class CommentsDownloader:
 
         if csv_filename is not None:
             self._write_to_csv(data, csv_filename)
-
-
-    def set_csv_fieldsize(self):
-        """Comments can be very long, so the default field size might be too short. This function should make 
-        it long enough by reducing the max file size by a factor of 2 until we don't get an OverflowError.
-        The usual `csv.field_size_limit(sys.maxsize)` resulted in an OverflowError (Python int too large
-        to convert to C long) on Windows 10.
-        """
-        for exponent in range(32, 10-1, -1):
-            try:
-                csv.field_size_limit(2**exponent)
-                break  # found one that works!
-            except OverflowError:
-                pass
