@@ -449,7 +449,7 @@ class CommentsDownloader:
 
         def get_document_ids(docket_id): 
             the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(f"{the_time}: Getting documents associated with docket...\n", flush=True)
+            print(f"{the_time}: Getting documents associated with docket {docket_id}...\n", flush=True)
        
             temp_filename = f"document_headers_{datetime.now().strftime('%H%M%S')}.csv"
             self.gather_headers(data_type="documents", 
@@ -457,11 +457,17 @@ class CommentsDownloader:
                                 db_filename=db_filename,
                                 csv_filename=temp_filename,
                                 verbose=False)
-            document_ids = self.get_ids_from_csv(temp_filename, "documents", unique=True)
-            try:
-                os.remove(temp_filename)
-            except:
-                pass
+
+            # if file didn't get created, we found 0 documents
+            if os.path.isfile(temp_filename):
+                document_ids = self.get_ids_from_csv(temp_filename, "documents", unique=True)
+
+                try:
+                    os.remove(temp_filename)
+                except:
+                    pass
+            else:
+                raise ValueError(f"Docket {docket_id} has no documents (did you specify a documentId instead of a docketId by mistake?)")
 
             print(f"\nDone----------------\n", flush=True)
             return document_ids
