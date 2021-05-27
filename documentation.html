@@ -1,0 +1,2609 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>comment_downloader API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>comment_downloader</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import sys
+import os
+import requests
+from requests.adapters import HTTPAdapter
+import sqlite3
+import pandas as pd
+from datetime import datetime
+from dateutil import tz
+import time
+import csv
+import urllib3
+
+# we are ignoring the HTTPS check because the server occasionally returns malformed certificates (missing EOF)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+
+class CommentsDownloader:
+    &#34;&#34;&#34;This class is used for downloading dockets, documents, and comments from Regulations.gov
+
+    It can be used in very general ways, by getting the raw JSON from the API, or in a more common way,
+    downloading the &#34;headers&#34; and &#34;details&#34; of items in bulk.
+    &#34;&#34;&#34;
+
+    def __init__(self, api_key):
+        self.api_key = api_key
+
+
+    def get_requests_remaining(self):
+        &#34;&#34;&#34;Get the number of requests remaining. An API key usually gives you 1000 requests/hour.
+
+        Returns:
+            int: number of requests remaining
+        &#34;&#34;&#34;
+        # this is a document that we know exists; it was chosen arbitrarily
+        r = requests.get(&#39;https://api.regulations.gov/v4/documents/FDA-2009-N-0501-0012&#39;,
+                        headers={&#39;X-Api-Key&#39;: self.api_key},
+                        verify=False)
+        if r.status_code != 200:
+            print(r.json())
+            r.raise_for_status()
+
+        return int(r.headers[&#39;X-RateLimit-Remaining&#39;])
+
+
+    def get_request_json(self, endpoint, params=None, print_remaining_requests=False,
+                         wait_for_rate_limits=False, skip_duplicates=False):
+        &#34;&#34;&#34;Used to return the JSON associated with a request to the API
+
+        Args:
+            endpoint (str): URL of the API to access (e.g., https://api.regulations.gov/v4/documents)
+            params (dict, optional): Parameters to specify to the endpoint request. Defaults to None, in
+                which case no parameters are specified and it is assumed we are accessing the &#34;Details&#34; endpoint.
+                If params is not None, we also append the &#34;page[size]&#34; parameter so that we always get
+                the maximum page size of 250 elements per page.
+            print_remaining_requests (bool, optional): Whether to print out the number of remaining
+                requests this hour, based on the response headers. Defaults to False.
+            wait_for_rate_limits (bool, optional): Determines whether to wait to re-try if we run out of
+                requests in a given hour. Defaults to False.
+            skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
+                should we skip that request? Defaults to False.
+
+        Returns:
+            dict: JSON-ified request response
+        &#34;&#34;&#34;
+
+        # Our API key has a rate limit of 1,000 requests/hour. If we hit that limit, we can
+        # retry every WAIT_MINUTES minutes (more frequently than once an hour, in case our request limit
+        # is updated sooner). We will sleep for POLL_SECONDS seconds at a time to see if we&#39;ve been
+        # interrupted. Otherwise we&#39;d have to wait a while before getting interrupted. We could do this
+        # with threads, but that gets more complicated than it needs to be.
+        STATUS_CODE_OVER_RATE_LIMIT = 429
+        WAIT_MINUTES = 20  # time between attempts to get a response
+        POLL_SECONDS = 10  # run time.sleep() for this long, so we can check if we&#39;ve been interrupted
+
+        # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
+        # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
+        session = requests.Session()
+        session.mount(&#39;https&#39;, HTTPAdapter(max_retries=8))
+
+        def poll_for_response(api_key, else_func):
+            if params is not None:  # querying the search endpoint (e.g., /documents)
+                r = session.get(endpoint,
+                                headers={&#39;X-Api-Key&#39;: api_key},
+                                params={**params,
+                                        &#39;page[size]&#39;: 250}, # always get max page size
+                                verify=False)
+            else:  # querying the &#34;detail&#34; endpoint (e.g., /documents/{documentId})
+                r = session.get(endpoint, headers={&#39;X-Api-Key&#39;: api_key}, verify=False)
+
+            if r.status_code == 200:
+                # SUCCESS! Return the JSON of the request
+                num_requests_left = int(r.headers[&#39;X-RateLimit-Remaining&#39;])
+                if print_remaining_requests or \
+                    (num_requests_left &lt; 10) or \
+                    (num_requests_left &lt;= 100 and num_requests_left % 10 == 0) or \
+                    (num_requests_left % 100 == 0 and num_requests_left &lt; 1000):
+                    print(f&#34;(Requests left: {r.headers[&#39;X-RateLimit-Remaining&#39;]})&#34;)
+
+                return [True, r.json()]
+            else:
+                if r.status_code == STATUS_CODE_OVER_RATE_LIMIT and wait_for_rate_limits:
+                    else_func()
+                elif self._is_duplicated_on_server(r.json()) and skip_duplicates:
+                    print(&#34;****Duplicate entries on server. Skipping.&#34;)
+                    print(r.json()[&#39;errors&#39;][0][&#39;detail&#39;])
+                else:  # some other kind of error
+                    print([r, r.status_code])
+                    print(r.json())
+                    r.raise_for_status()
+
+            return [False, r.json()]
+
+        def wait_for_requests():
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#39;{the_time}: Hit rate limits. Waiting {WAIT_MINUTES} minutes to try again&#39;, flush=True)
+            # We ran out of requests. Wait for WAIT_MINUTES minutes, but poll every POLL_SECONDS seconds for interruptions
+            for i in range(int(WAIT_MINUTES * 60 / POLL_SECONDS)):
+                time.sleep(POLL_SECONDS)
+
+        for _ in range(1, int(60 / WAIT_MINUTES) + 3):
+            success, r_json = poll_for_response(self.api_key, wait_for_requests)
+
+            if success or (self._is_duplicated_on_server(r_json) and skip_duplicates):
+                return r_json
+
+        print(r_json)
+        raise RuntimeError(f&#34;Unrecoverable error; {r_json}&#34;)
+
+
+    def get_items_count(self, data_type, params):
+        &#34;&#34;&#34;Gets the number of items returned by a request in the totalElements attribute.
+
+        Args:
+            data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+            params (dict): Parameters to specify to the endpoint request for the query. See details
+                on available parameters at https://open.gsa.gov/api/regulationsgov/.
+
+        Returns:
+            int: Number of items returned by request
+        &#34;&#34;&#34;
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+        r_items = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}&#39;, params=params)
+        totalElements = r_items[&#39;meta&#39;][&#39;totalElements&#39;]
+        return totalElements
+
+
+    def gather_headers(self, data_type, params, db_filename=None, csv_filename=None, max_items=None, verbose=True):
+        &#34;&#34;&#34;This function is meant to get the header data for the item returned by the query defined by
+        params. The API returns these data in &#34;pages&#34; of up to 250 items at a time, and up to 20 pages are
+        available per query. If the query would return more than 250*20 = 5000 items, the recommended way
+        to retrieve the full dataset is to sort the data by lastModifiedDate and save the largest value
+        from the last page of a given query, then use that to filter the next batch to all those with a
+        lastModifiedDate greater than or equal to the saved date. Unfortunately, this also means it&#39;s
+        you&#39;ll retrieve some of the same headers multiple times, but this is unavoidable because there is no
+        uniqueness constraint on lastModifiedDate.
+
+        The data retrieved are output either to a database (db_filename), or a CSV (csv_filename),
+        or both. These data do not include more specific detail that would be retrieved in a &#34;Details&#34; query,
+        which returns that data (e.g., plain-text of a comment). That kind of data can be gathered
+        using the gather_details function below.
+
+        An example call is:
+            gather_headers(data_type=&#39;comments&#39;, db_filename=&#34;comments_2020&#34;, params={&#39;filter[postedDate][ge]&#39;: &#39;2020-01-01&#39;})
+
+        Args:
+            data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+            params (dict): Parameters to specify to the endpoint request for the query. See details
+                on available parameters at https://open.gsa.gov/api/regulationsgov/.
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV file should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+            max_items (int, optional): If this is specified, limits to this many items. Note that this
+                is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
+                end up with duplicate records being pulled, so we will hit this limit sooner than we should,
+                but we shouldn&#39;t be off by very much. Defaults to None.
+            verbose (bool, optional): Whether to print more detailed info. Defaults to True.
+        &#34;&#34;&#34;
+
+        if db_filename is None and csv_filename is None:
+            raise ValueError(&#34;Must specify either a database file name or CSV filename&#34;)
+
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+        n_retrieved = 0
+        prev_query_max_date = &#39;1900-01-01 00:00:00&#39;  # placeholder value for first round of 5000
+        EASTERN_TIME = tz.gettz(&#39;America/New_York&#39;)
+
+        # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
+        id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
+
+        if db_filename is not None:
+            conn = self._get_database_connection(db_filename)
+            cur = conn.cursor()
+        else:
+            conn = cur = None
+
+        # first request, to ensure there are documents and to get a total count
+        totalElements = self.get_items_count(data_type, params)
+        print(f&#39;Found {totalElements} {data_type}...&#39;, flush=True)
+
+        if max_items is not None and max_items &lt; totalElements:
+            print(f&#39;...but limiting to {max_items} {data_type}...&#39;, flush=True)
+            totalElements = max_items
+
+        while n_retrieved &lt; totalElements:
+            # loop over 5000 in each request (20 pages of 250 each)
+            if verbose: print(f&#39;\nEnter outer loop ({n_retrieved} {data_type} collected)...&#39;, flush=True)
+            page = 1
+            data = []
+
+            while (n_retrieved &lt; totalElements) and (page == 1 or (not r_items[&#39;meta&#39;][&#39;lastPage&#39;])):
+                ## note: this will NOT lead to an off-by-one error because at the start of the loop
+                # r_items is from the *previous* request. If the *previous* request was the last page
+                # then we exit the loop (unless we&#39;re on the first page, in which case get the data then exit)
+                retries = 5
+                while retries &gt; 0:
+                    try:
+                        r_items = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}&#39;,
+                                                        params={**params,
+                                                                &#39;filter[lastModifiedDate][ge]&#39;: prev_query_max_date,
+                                                                &#39;page[number]&#39;: str(page),
+                                                                &#39;sort&#39;: f&#39;lastModifiedDate&#39;},
+                                                        wait_for_rate_limits=True)
+                        break
+                    except:
+                        retries -= 1
+
+                n_retrieved += len(r_items[&#39;data&#39;])
+                data.extend(r_items[&#39;data&#39;])  # add all items from this request
+                page += 1
+
+                ## There may be duplicates due to pagination, so the commented out code here doesn&#39;t apply,
+                ## but I&#39;m leaving it in so I know not to &#34;fix&#34; this issue later on.
+                #if n_retrieved &gt; totalElements:
+                #    data = data[:-(n_retrieved - totalElements)]  # remove the extras
+                #    assert len(data) == totalElements
+                #    n_retrieved = totalElements
+
+                if verbose: print(f&#39;    {n_retrieved} {data_type} retrieved&#39;, flush=True)
+
+            # get our query&#39;s final record&#39;s lastModifiedDate, and convert to eastern timezone for filtering via URL
+            prev_query_max_date = r_items[&#39;data&#39;][-1][&#39;attributes&#39;][&#39;lastModifiedDate&#39;].replace(&#39;Z&#39;, &#39;+00:00&#39;)
+            prev_query_max_date = datetime.fromisoformat(prev_query_max_date).astimezone(EASTERN_TIME).strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+
+            data = self._get_processed_data(data, id_col)
+            self._output_data(data,
+                              table_name=(data_type + &#34;_header&#34;),
+                              conn=conn,
+                              cur=cur,
+                              csv_filename=csv_filename)
+
+        # Note: the count in n_retrieved may not reflect what&#39;s in the database because there may be
+        # duplicates downloaded along the way due to the pagination mechanism on Regulations.gov&#39;s API.
+        # The sqlite database uses a unique constraint to avoid duplicates, so the final count printed
+        # below may not match what is shown in the database. For CSVs, the count here should match
+        # the number of rows in the output.
+
+        self._close_database_connection(conn)
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#39;{the_time}: Finished: {n_retrieved} {data_type} collected&#39;, flush=True)
+
+
+    def gather_details(self, data_type, ids, db_filename=None, csv_filename=None, insert_every_n_rows=500, skip_duplicates=True):
+        &#34;&#34;&#34;This function is meant to get the Details data for each item in ids, one at a time. The data
+        for each item is output either to a database (specified by db_filename) or a CSV (specified by csv_filename).
+
+        An example call is:
+            gather_details(data_type=&#39;documents&#39;, cols=documents_cols, id_col=&#39;documentId&#39;, ids=document_ids, csv_filename=&#34;documents_2020.csv&#34;)
+
+        Args:
+            data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+            ids (list of str): List of IDs for items for which you are querying details. These IDs are
+                appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+            insert_every_n_rows (int): How often to write to the database or CSV. Defaults to every 500 rows.
+            skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
+                should we skip that request? Defaults to True.
+
+        &#34;&#34;&#34;
+        if db_filename is None and csv_filename is None:
+            raise ValueError(&#34;Must specify either a database file name or CSV filename&#34;)
+
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+        n_retrieved = 0
+        data = []
+
+        # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
+        id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
+
+        if db_filename is not None:
+            conn = self._get_database_connection(db_filename)
+            cur = conn.cursor()
+        else:
+            conn = cur = None
+
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#39;{the_time}: Gathering details for {len(ids)} {data_type}...&#39;, flush=True)
+
+        for item_id in ids:
+            r_item = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}/{item_id}&#39;,
+                                           wait_for_rate_limits=True,
+                                           skip_duplicates=skip_duplicates)
+
+            if(skip_duplicates and self._is_duplicated_on_server(r_item)):
+                print(f&#34;Skipping for {item_id}\n&#34;)
+                continue
+
+            n_retrieved += 1
+            data.append(r_item[&#39;data&#39;])  # only one item from the Details endpoint, not a list, so use append (not extend)
+
+            if n_retrieved &gt; 0 and n_retrieved % insert_every_n_rows == 0:
+                data = self._get_processed_data(data, id_col)
+                self._output_data(data,
+                                  table_name=(data_type + &#34;_detail&#34;),
+                                  conn=conn,
+                                  cur=cur,
+                                  csv_filename=csv_filename)
+                data = []  # reset for next batch
+
+        if len(data) &gt; 0:  # insert any remaining in final batch
+            data = self._get_processed_data(data, id_col)
+            self._output_data(data,
+                              table_name=(data_type + &#34;_detail&#34;),
+                              conn=conn,
+                              cur=cur,
+                              csv_filename=csv_filename)
+
+        self._close_database_connection(conn)
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#39;{the_time}: Finished: {n_retrieved} {data_type} collected&#39;, flush=True)
+
+
+    def gather_comments_by_document(self, document_id, db_filename=None, csv_filename=None):
+        &#34;&#34;&#34;User-friendly function for downloading all of the comments on a single document, using
+        the documentId visible on the Regulations.gov website. This abstracts away all the details around
+        filtering and paginating through the API and downloads the data into either a CSV or sqlite database
+        or both.
+
+        Note that if a database is used (i.e., db_filename is not None), the &#34;header&#34; information for comments 
+        will be saved, in addition to the &#34;details&#34; of each comment. In other words, the table comments_header 
+        will be populated in addition to comments_detail.
+
+        Args:
+            document_id (str): document ID, as visible in either the URL or on the website. Note, this is
+                distinct from the docket ID and from the API&#39;s internal objectId.
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+        &#34;&#34;&#34;
+        if db_filename is None and csv_filename is None:
+            raise ValueError(&#34;Need to specify either a database filename or CSV filename or both&#34;)
+
+        def get_object_id(document_id):
+            # first, get the objectId for the document, which we use to filter to its comments
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;{the_time}: Getting objectId for document {document_id}...&#34;, end=&#34;&#34;, flush=True)
+
+            r_json = self.get_request_json(f&#39;https://api.regulations.gov/v4/documents/{document_id}&#39;)
+            object_id = r_json[&#39;data&#39;][&#39;attributes&#39;][&#39;objectId&#39;]
+
+            print(f&#34;Got it ({object_id})&#34;, flush=True)
+            return object_id
+        
+        def get_comment_ids(object_id):
+            # We need to create a temporary CSV so we can read back in the commentIds. This is because the
+            # comment headers do not include the associated documentId or objectId, so if we append the 
+            # comment headers to an existing file or database, we won&#39;t be able to tell which comments
+            # correspond to this document.
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;{the_time}: Getting comment headers associated with document {document_id}...\n&#34;, flush=True)
+
+            temp_filename = f&#34;comment_headers_{datetime.now().strftime(&#39;%H%M%S&#39;)}.csv&#34;
+            self.gather_headers(data_type=&#34;comments&#34;, 
+                                params={&#39;filter[commentOnId]&#39;: object_id}, 
+                                db_filename=db_filename,
+                                csv_filename=temp_filename,
+                                verbose=False)
+            
+            # if file didn&#39;t get created, we found 0 comments
+            if os.path.isfile(temp_filename):
+                comment_ids = self.get_ids_from_csv(temp_filename, &#34;comments&#34;, unique=True)
+
+                try:
+                    os.remove(temp_filename)
+                except:
+                    pass
+            else:
+                return []
+
+            print(&#34;\nDone getting comment IDs----------------\n&#34;, flush=True)
+            return comment_ids
+
+        object_id = get_object_id(document_id)
+        comment_ids = get_comment_ids(object_id)
+
+        if len(comment_ids) &gt; 0:
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;{the_time}: Getting comments associated with document {document_id}...\n&#34;, flush=True)
+
+            self.gather_details(&#34;comments&#34;, comment_ids, db_filename=db_filename, csv_filename=csv_filename)
+
+            # Get the total number of comments retrieved. This may differ from what we expect if there 
+            # are issues during the download process or the database prevents importing duplicates from pagination.
+            n_comments = self._get_comment_count(csv_filename, db_filename, &#34;commentOnDocumentId&#34;, document_id)
+        else:
+            n_comments = 0
+
+        print(f&#34;\nDone getting all {n_comments} comments for document {document_id}----------------\n&#34;, flush=True)
+
+
+    def gather_comments_by_docket(self, docket_id, db_filename=None, csv_filename=None):
+        &#34;&#34;&#34;User-friendly function for downloading all of the comments in a docket, using the docketId visible 
+        on the Regulations.gov website. This abstracts away all the details around finding all the documents
+        in a given docket and getting their individual comments, including filtering and paginating through 
+        the API. It downloads the comments into either a CSV or sqlite database or both.
+
+        Note that if a database is used (i.e., db_filename is not None), the &#34;header&#34; information for documents
+        and comments will be saved, in addition to the &#34;details&#34; of each comment. In other words, the table 
+        comments_header will be populated in addition to comments_detail, and the table documents_header will
+        be populated as well.
+
+        Args:
+            document_id (str): document ID, as visible in either the URL or on the website. Note, this is
+                distinct from the docket ID and from the API&#39;s internal objectId.
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+        &#34;&#34;&#34;
+        if db_filename is None and csv_filename is None:
+            raise ValueError(&#34;Need to specify either a database filename or CSV filename or both&#34;)
+
+        def get_document_ids(docket_id): 
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;{the_time}: Getting documents associated with docket...\n&#34;, flush=True)
+       
+            temp_filename = f&#34;document_headers_{datetime.now().strftime(&#39;%H%M%S&#39;)}.csv&#34;
+            self.gather_headers(data_type=&#34;documents&#34;, 
+                                params={&#39;filter[docketId]&#39;: docket_id}, 
+                                db_filename=db_filename,
+                                csv_filename=temp_filename,
+                                verbose=False)
+            document_ids = self.get_ids_from_csv(temp_filename, &#34;documents&#34;, unique=True)
+            try:
+                os.remove(temp_filename)
+            except:
+                pass
+
+            print(f&#34;\nDone----------------\n&#34;, flush=True)
+            return document_ids
+
+        document_ids = get_document_ids(docket_id)
+
+        for document_id in document_ids:
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;******************************\n{the_time}: Getting comments for document {document_id}...\n&#34;, flush=True)
+            self.gather_comments_by_document(document_id, db_filename, csv_filename)
+
+        # get the total number of comments retrieved
+        n_comments = self._get_comment_count(csv_filename, db_filename, &#34;docketId&#34;, docket_id)
+        print(f&#34;DONE retrieving all {n_comments} comments from {len(document_ids)} document(s) for docket {docket_id}----------------\n&#34;, flush=True)
+
+
+    def get_ids_from_csv(self, csv_filename, data_type, unique=False):
+        &#34;&#34;&#34;Get IDs for dockets, documents, or comments in a given CSV. Assumes that the header row
+        exists in the file and that the ID column is named one of docketId, documentId, or commentId.
+
+        Note: the CSV could be very large, so we don&#39;t load the whole thing into memory, but instead
+        loop over it one row at a time.
+
+        Args:
+            csv_filename (str): Name (optionally with path) of the CSV file with the data
+            data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+            unique (bool, optional): Whether to remove duplicates, making the list of IDs unique.
+                Defaults to False so that the IDs are returned in the same order and number as the
+                input file.
+
+        Returns:
+            list of str: IDs for the given data_type from the specified csv_filename
+        &#34;&#34;&#34;
+        # make sure the data_type is NOT plural before adding Id
+        id_column = (data_type[:-1] if data_type[-1:] == &#34;s&#34; else data_type) + &#34;Id&#34;
+        id_column_index = None
+        ids = []
+
+        with open(csv_filename, &#39;r&#39;, encoding=&#39;utf8&#39;) as f:
+            reader = csv.reader(f)
+            for row in reader:
+                if id_column_index is None:
+                    try:
+                        id_column_index = row.index(id_column)
+                    except ValueError:
+                        raise ValueError(f&#34;Missing id column {id_column} in {csv_filename}&#34;)
+                else:
+                    ids.append(row[id_column_index])
+
+        if unique:
+            ids = list(set(ids))
+
+        return ids
+
+
+    def _get_database_connection(self, filename, drop_if_exists=False):
+        &#34;&#34;&#34;Get a connection to the database in the file at filename. If the database does not
+        exist it will be created with the necessary tables. If it does exist, tables are kept as-is
+        unless drop_if_exists is specified, in which case existing tables are dropped before creating
+        the necessary tables.
+
+        Args:
+            filename (str): Filename of database, optionally including path.
+            drop_if_exists (bool, optional): Whether to drop the necessary tables if they exist.
+                Defaults to False, in which case if the tables exist, they will be left as-is and
+                new data will be appended.
+
+        Returns:
+            sqlite.Connection: open connection to the database
+        &#34;&#34;&#34;
+        # If the database exists already, this just ensures all the necessary tables exist
+        self._setup_database(filename, drop_if_exists=drop_if_exists)
+        return sqlite3.connect(filename)
+
+
+    def _setup_database(self, filename=None, drop_if_exists=False):
+        &#34;&#34;&#34;Set up a sqlite database with the tables and columns necessary for the data returned
+        by the Regulations.gov API.
+
+        Args:
+            filename (str): Filename, optionally including path.
+            drop_if_exists (bool, optional): Whether to drop the six tables used here if they already exist.
+                Defaults to False so that we don&#39;t delete any information.
+        &#34;&#34;&#34;
+        if filename is None:
+            filename = &#39;regulations.gov_&#39; + datetime.now().strftime(&#39;%Y%m%d&#39;) + &#34;.db&#34;
+
+        # make the path if necessary
+        if len(os.path.dirname(filename)) &gt; 0:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+        conn = sqlite3.connect(filename)
+        cur = conn.cursor()
+
+        if drop_if_exists:
+            cur.execute(&#39;drop table if exists dockets_header&#39;)
+            cur.execute(&#39;drop table if exists dockets_detail&#39;)
+            cur.execute(&#39;drop table if exists documents_header&#39;)
+            cur.execute(&#39;drop table if exists documents_detail&#39;)
+            cur.execute(&#39;drop table if exists comments_header&#39;)
+            cur.execute(&#39;drop table if exists comments_detail&#39;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS dockets_header (
+            docketId            TEXT    NOT NULL UNIQUE,
+            agencyId            TEXT,
+            docketType          TEXT,
+            title               TEXT,
+            lastModifiedDate    TEXT NOT NULL,
+            objectId            TEXT,
+            sqltime             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS dockets_detail (
+            docketId        TEXT    NOT NULL UNIQUE,
+            agencyId        TEXT,
+            category        TEXT,
+            dkAbstract      TEXT,
+            docketType      TEXT,
+            effectiveDate   TEXT,
+            field1          TEXT,
+            field2          TEXT,
+            generic         TEXT,
+            keywords        TEXT,
+            legacyId        TEXT,
+            modifyDate      TEXT NOT NULL,
+            objectId        TEXT,
+            organization    TEXT,
+            petitionNbr     TEXT,
+            program         TEXT,
+            rin             TEXT,
+            shortTitle      TEXT,
+            subType         TEXT,
+            subType2        TEXT,
+            title           TEXT,
+            sqltime         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS documents_header (
+            documentId          TEXT    NOT NULL UNIQUE,
+            commentEndDate      TEXT,
+            commentStartDate    TEXT,
+            docketId            TEXT,
+            documentType        TEXT,
+            frDocNum            TEXT,
+            lastModifiedDate    TEXT NOT NULL,
+            objectId            TEXT,
+            postedDate          TEXT,
+            subtype             TEXT,
+            title               TEXT,
+            withdrawn           INTEGER,
+            sqltime             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS documents_detail (
+            documentId              TEXT    NOT NULL UNIQUE,
+            additionalRins          TEXT,
+            agencyId                TEXT,
+            allowLateComments       INTEGER,
+            authorDate              TEXT,
+            authors                 TEXT,
+            category                TEXT,
+            cfrPart                 TEXT,
+            city                    TEXT,
+            comment                 TEXT,
+            commentEndDate          TEXT,
+            commentStartDate        TEXT,
+            country                 TEXT,
+            docAbstract             TEXT,
+            docketId                TEXT,
+            documentType            TEXT,
+            effectiveDate           TEXT,
+            exhibitLocation         TEXT,
+            exhibitType             TEXT,
+            field1                  TEXT,
+            field2                  TEXT,
+            firstName               TEXT,
+            frDocNum                TEXT,
+            frVolNum                TEXT,
+            govAgency               TEXT,
+            govAgencyType           TEXT,
+            implementationDate      TEXT,
+            lastName                TEXT,
+            legacyId                TEXT,
+            media                   TEXT,
+            modifyDate              TEXT NOT NULL,
+            objectId                TEXT,
+            ombApproval             TEXT,
+            openForComment          INTEGER,
+            organization            TEXT,
+            originalDocumentId      TEXT,
+            pageCount               TEXT,
+            paperLength             INTEGER,
+            paperWidth              INTEGER,
+            postedDate              TEXT,
+            postmarkDate            TEXT,
+            reasonWithdrawn         TEXT,
+            receiveDate             TEXT,
+            regWriterInstruction    TEXT,
+            restrictReason          TEXT,
+            restrictReasonType      TEXT,
+            sourceCitation          TEXT,
+            startEndPage            TEXT,
+            stateProvinceRegion     TEXT,
+            subject                 TEXT,
+            submitterRep            TEXT,
+            submitterRepCityState   TEXT,
+            subtype                 TEXT,
+            title                   TEXT,
+            topics                  TEXT,
+            trackingNbr             TEXT,
+            withdrawn               INTEGER,
+            zip                     TEXT,
+            sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS comments_header (
+            commentId               TEXT    NOT NULL UNIQUE,
+            agencyId                TEXT,
+            documentType            TEXT,
+            lastModifiedDate        TEXT NOT NULL,
+            objectId                TEXT,
+            postedDate              TEXT,
+            title                   TEXT,
+            withdrawn               INTEGER,
+            sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        )&#34;&#34;&#34;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS comments_detail (
+            commentId               TEXT    NOT NULL UNIQUE,
+            agencyId                TEXT,
+            category                TEXT,
+            city                    TEXT,
+            comment                 TEXT,
+            commentOn               TEXT,
+            commentOnDocumentId     TEXT,
+            country                 TEXT,
+            docAbstract             TEXT,
+            docketId                TEXT,
+            documentType            TEXT,
+            duplicateComments       INTEGER,
+            field1                  TEXT,
+            field2                  TEXT,
+            firstName               TEXT,
+            govAgency               TEXT,
+            govAgencyType           TEXT,
+            lastName                TEXT,
+            legacyId                TEXT,
+            modifyDate              TEXT NOT NULL,
+            objectId                TEXT,
+            openForComment          INTEGER,
+            organization            TEXT,
+            originalDocumentId      TEXT,
+            pageCount               TEXT,
+            postedDate              TEXT,
+            postmarkDate            TEXT,
+            reasonWithdrawn         TEXT,
+            receiveDate             TEXT,
+            restrictReason          TEXT,
+            restrictReasonType      TEXT,
+            stateProvinceRegion     TEXT,
+            submitterRep            TEXT,
+            submitterRepCityState   TEXT,
+            subtype                 TEXT,
+            title                   TEXT,
+            trackingNbr             TEXT,
+            withdrawn               INTEGER,
+            zip                     TEXT,
+            sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+        conn.close()
+
+
+    def _close_database_connection(self, conn):
+        &#34;&#34;&#34;Close a database connection
+
+        Args:
+            conn (sqlite3.Connection): Try to close the connection. If there are any errors, ignore them.
+        &#34;&#34;&#34;
+        if conn is not None and type(conn) == sqlite3.Connection:
+            try:
+                conn.close()
+            except:
+                pass
+
+
+    def _is_duplicated_on_server(self, response_json):
+        &#34;&#34;&#34;Used to determine whether a given response indicates a duplicate on the server. This is
+        because there is a bug in the server: there are some commentIds, like NRCS-2009-0004-0003,
+        which correspond to multiple actual comments! This function determines whether the
+        returned JSON has an error indicating this issue
+
+        Args:
+            response_json (dict): JSON from request to API (usually, from get_request_json)
+
+        Returns:
+            bool: whether the response indicates a duplicate issue or not
+        &#34;&#34;&#34;
+        return (&#39;errors&#39; in response_json.keys()) \
+                and (response_json[&#39;errors&#39;][0][&#39;status&#39;] == &#34;500&#34;) \
+                and (response_json[&#39;errors&#39;][0][&#39;detail&#39;][:21] == &#34;Incorrect result size&#34;)
+
+
+    def _get_comment_count(self, csv_filename=None, db_filename=None, filter_column=None, filter_value=None):
+        &#34;&#34;&#34;Simple helper function used to get the number of comments retrieved, as stored in either
+        a CSV file or a sqlite database.
+
+        Args:
+            csv_filename (str): File name (optionally with path) where comments are stored. Defaults to 
+                None, in which case a db_filename should be specified.
+            db_filename (str): File name (optionally with path) where database, containing comments, is located.
+                Defaults to None, in which case a csv_filename should be specified.
+            filter_column (str): Identifies the column used to filter the database to get the count. Defaults to 
+                None for the case when we are using a CSV.
+            filter_value (str): The value used in filter_column to filter the database to get the count. Defaults to 
+                None for the case when we are using a CSV.
+
+        Returns:
+            int: Number of comments stored in either comments_detail (contained in the database db_filename) or the CSV
+        &#34;&#34;&#34;
+        if csv_filename is None and (db_filename is None or filter_column is None or filter_value is None):
+            raise ValueError(&#34;Must specify either a csv_filename or a db_filename and its filter_column and filter_value&#34;)
+
+        if db_filename is not None:
+            conn = sqlite3.connect(db_filename)
+            cur = conn.cursor()
+            n_comments = cur.execute(f&#34;select count(*) from comments_detail where {filter_column}=?&#34;, (filter_value,)).fetchone()[0]
+            conn.close()
+        else:
+            n_comments = len(self.get_ids_from_csv(csv_filename, &#34;comments&#34;))
+        
+        return n_comments
+
+
+    def _get_processed_data(self, data, id_col):
+        &#34;&#34;&#34;Used to take the data contained in a response (e.g., the data for a bunch of comments)
+        and remove unnecessary columns (i.e., those not specified in `cols`). Also adds the ID
+        associated with the items and flattens lists contained in each item&#39;s data.
+
+        Args:
+            data (list of dict): List of items to process from a request (e.g., a bunch of comments).
+                Each dict is expected to be formatted like: {&#39;id&#39;: &#39;...&#39;, &#39;attributes&#39;: {&#39;attrib1&#39;: &#39;data&#39;, ...}, &lt;other keys:values&gt;}
+            id_col (str): Name of the ID column for this data type, i.e., &#39;docketId&#39;, &#39;documentId&#39;, or &#39;commentId&#39;
+
+        Returns:
+            list of dict: processed dataset, ready for input into sqlite or output to CSV
+        &#34;&#34;&#34;
+        output = []
+        cols = [x for x in data[0][&#39;attributes&#39;].keys() if x not in \
+                    [&#39;id&#39;, &#39;displayProperties&#39;, &#39;highlightedContent&#39;, &#39;fileFormats&#39;]]
+
+        for item in data:
+            # get just the dict of columns we want, and if one of the values is a list, flatten it
+            out = {k:(&#39; &#39;.join(v) if type(v) == list else v) for (k,v) in item[&#39;attributes&#39;].items() if k in cols}
+
+            # also, the item&#39;s ID
+            out[id_col] = item[&#39;id&#39;]
+            output.append(out)
+
+        return output
+
+
+    def _insert_data(self, data, table_name, conn, cur=None):
+        &#34;&#34;&#34;Add data to a specified sqlite table
+
+        Args:
+            data (list of dict): Data to be inserted into database
+            table_name (str): specifies table to insert into (one of: &#34;dockets_header&#34;, &#34;dockets_detail&#34;,
+                &#34;documents_header&#34;, &#34;documents_detail&#34;, &#34;comments_header&#34;, or &#34;comments_detail&#34;)
+            conn (sqlite3.Connection): Open connection to database
+            cur (sqlite3.Cursor): Open cursor into the database
+        &#34;&#34;&#34;
+        # upload into staging table, then insert, skipping any rows that violate key constraints
+        if conn is None:
+            raise ValueError(&#34;conn cannot be None&#34;)
+        if table_name is None:
+            raise ValueError(&#34;Need to specify table_name&#34;)
+        if cur is None:
+            cur = conn.cursor()
+
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        cols = [x for x in pd.read_sql_query(f&#39;select * from {table_name} limit 1&#39;, conn).columns if x != &#34;sqltime&#34;]
+
+        print(f&#34;{the_time}: Inserting {len(data)} records into database...&#34;, flush=True)
+        pd.DataFrame(data).to_sql(&#34;tmp&#34;, conn, if_exists=&#34;replace&#34;, index=False)
+        cur.execute(f&#34;INSERT OR IGNORE INTO {table_name} ({&#39;,&#39;.join(cols)}) SELECT {&#39;,&#39;.join(cols)} FROM tmp&#34;)
+        conn.commit()
+
+
+    def _write_to_csv(self, data, csv_filename):
+        &#34;&#34;&#34;Write out data to a CSV file. Data will be appended to an existing file, or if the file does
+        not exist, the file will be created with headers. Subsequent appends do not include the header row.
+
+        Args:
+            data (list of dict): Data to write out
+            csv_filename (str): Name (optionally with path) of the CSV file to write to
+        &#34;&#34;&#34;
+        if csv_filename is None:
+            raise ValueError(&#34;csv_filename cannot be None&#34;)
+
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#34;{the_time}: Writing {len(data)} records to {csv_filename}...&#34;, end=&#34;&#34;, flush=True)
+
+        df = pd.DataFrame(data)
+
+        # remove line breaks in each field so that the rows of the CSV correspond to one record
+        df.replace(r&#34;\n&#34;, &#34; &#34;, regex=True, inplace=True)
+
+        # make the path if necessary
+        if len(os.path.dirname(csv_filename)) &gt; 0:
+            os.makedirs(os.path.dirname(csv_filename), exist_ok=True)
+
+        df.to_csv(csv_filename, index=False, mode=&#39;a&#39;, quoting=csv.QUOTE_ALL,
+                  header=(not os.path.isfile(csv_filename)))
+
+        print(&#34;Done&#34;, flush=True)
+
+
+    def _output_data(self, data, table_name=None, conn=None, cur=None, csv_filename=None):
+        &#34;&#34;&#34;Routes the output call to either database or the CSV, depending on parameters
+
+        Args:
+            data (list of dict): Data to write out
+            table_name (str): For sqlite database, specifies table to insert into (one of: &#34;dockets_header&#34;, &#34;dockets_detail&#34;,
+                &#34;documents_header&#34;, &#34;documents_detail&#34;, &#34;comments_header&#34;, or &#34;comments_detail&#34;). Can be None if using CSV.
+            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a CSV should be specified.
+                Can be None if using a CSV.
+            cur (sqlite3.Cursor): Open cursor into the database. Can be None, in which case a CSV should be specified.
+                Can be None if using a CSV.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+        &#34;&#34;&#34;
+        if conn is None and csv_filename is None:
+            raise ValueError(&#34;Need to specify either conn or csv_filename&#34;)
+
+        if conn is not None:
+            self._insert_data(data, table_name, conn, cur)
+
+        if csv_filename is not None:
+            self._write_to_csv(data, csv_filename)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="comment_downloader.CommentsDownloader"><code class="flex name class">
+<span>class <span class="ident">CommentsDownloader</span></span>
+<span>(</span><span>api_key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class is used for downloading dockets, documents, and comments from Regulations.gov</p>
+<p>It can be used in very general ways, by getting the raw JSON from the API, or in a more common way,
+downloading the "headers" and "details" of items in bulk.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CommentsDownloader:
+    &#34;&#34;&#34;This class is used for downloading dockets, documents, and comments from Regulations.gov
+
+    It can be used in very general ways, by getting the raw JSON from the API, or in a more common way,
+    downloading the &#34;headers&#34; and &#34;details&#34; of items in bulk.
+    &#34;&#34;&#34;
+
+    def __init__(self, api_key):
+        self.api_key = api_key
+
+
+    def get_requests_remaining(self):
+        &#34;&#34;&#34;Get the number of requests remaining. An API key usually gives you 1000 requests/hour.
+
+        Returns:
+            int: number of requests remaining
+        &#34;&#34;&#34;
+        # this is a document that we know exists; it was chosen arbitrarily
+        r = requests.get(&#39;https://api.regulations.gov/v4/documents/FDA-2009-N-0501-0012&#39;,
+                        headers={&#39;X-Api-Key&#39;: self.api_key},
+                        verify=False)
+        if r.status_code != 200:
+            print(r.json())
+            r.raise_for_status()
+
+        return int(r.headers[&#39;X-RateLimit-Remaining&#39;])
+
+
+    def get_request_json(self, endpoint, params=None, print_remaining_requests=False,
+                         wait_for_rate_limits=False, skip_duplicates=False):
+        &#34;&#34;&#34;Used to return the JSON associated with a request to the API
+
+        Args:
+            endpoint (str): URL of the API to access (e.g., https://api.regulations.gov/v4/documents)
+            params (dict, optional): Parameters to specify to the endpoint request. Defaults to None, in
+                which case no parameters are specified and it is assumed we are accessing the &#34;Details&#34; endpoint.
+                If params is not None, we also append the &#34;page[size]&#34; parameter so that we always get
+                the maximum page size of 250 elements per page.
+            print_remaining_requests (bool, optional): Whether to print out the number of remaining
+                requests this hour, based on the response headers. Defaults to False.
+            wait_for_rate_limits (bool, optional): Determines whether to wait to re-try if we run out of
+                requests in a given hour. Defaults to False.
+            skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
+                should we skip that request? Defaults to False.
+
+        Returns:
+            dict: JSON-ified request response
+        &#34;&#34;&#34;
+
+        # Our API key has a rate limit of 1,000 requests/hour. If we hit that limit, we can
+        # retry every WAIT_MINUTES minutes (more frequently than once an hour, in case our request limit
+        # is updated sooner). We will sleep for POLL_SECONDS seconds at a time to see if we&#39;ve been
+        # interrupted. Otherwise we&#39;d have to wait a while before getting interrupted. We could do this
+        # with threads, but that gets more complicated than it needs to be.
+        STATUS_CODE_OVER_RATE_LIMIT = 429
+        WAIT_MINUTES = 20  # time between attempts to get a response
+        POLL_SECONDS = 10  # run time.sleep() for this long, so we can check if we&#39;ve been interrupted
+
+        # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
+        # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
+        session = requests.Session()
+        session.mount(&#39;https&#39;, HTTPAdapter(max_retries=8))
+
+        def poll_for_response(api_key, else_func):
+            if params is not None:  # querying the search endpoint (e.g., /documents)
+                r = session.get(endpoint,
+                                headers={&#39;X-Api-Key&#39;: api_key},
+                                params={**params,
+                                        &#39;page[size]&#39;: 250}, # always get max page size
+                                verify=False)
+            else:  # querying the &#34;detail&#34; endpoint (e.g., /documents/{documentId})
+                r = session.get(endpoint, headers={&#39;X-Api-Key&#39;: api_key}, verify=False)
+
+            if r.status_code == 200:
+                # SUCCESS! Return the JSON of the request
+                num_requests_left = int(r.headers[&#39;X-RateLimit-Remaining&#39;])
+                if print_remaining_requests or \
+                    (num_requests_left &lt; 10) or \
+                    (num_requests_left &lt;= 100 and num_requests_left % 10 == 0) or \
+                    (num_requests_left % 100 == 0 and num_requests_left &lt; 1000):
+                    print(f&#34;(Requests left: {r.headers[&#39;X-RateLimit-Remaining&#39;]})&#34;)
+
+                return [True, r.json()]
+            else:
+                if r.status_code == STATUS_CODE_OVER_RATE_LIMIT and wait_for_rate_limits:
+                    else_func()
+                elif self._is_duplicated_on_server(r.json()) and skip_duplicates:
+                    print(&#34;****Duplicate entries on server. Skipping.&#34;)
+                    print(r.json()[&#39;errors&#39;][0][&#39;detail&#39;])
+                else:  # some other kind of error
+                    print([r, r.status_code])
+                    print(r.json())
+                    r.raise_for_status()
+
+            return [False, r.json()]
+
+        def wait_for_requests():
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#39;{the_time}: Hit rate limits. Waiting {WAIT_MINUTES} minutes to try again&#39;, flush=True)
+            # We ran out of requests. Wait for WAIT_MINUTES minutes, but poll every POLL_SECONDS seconds for interruptions
+            for i in range(int(WAIT_MINUTES * 60 / POLL_SECONDS)):
+                time.sleep(POLL_SECONDS)
+
+        for _ in range(1, int(60 / WAIT_MINUTES) + 3):
+            success, r_json = poll_for_response(self.api_key, wait_for_requests)
+
+            if success or (self._is_duplicated_on_server(r_json) and skip_duplicates):
+                return r_json
+
+        print(r_json)
+        raise RuntimeError(f&#34;Unrecoverable error; {r_json}&#34;)
+
+
+    def get_items_count(self, data_type, params):
+        &#34;&#34;&#34;Gets the number of items returned by a request in the totalElements attribute.
+
+        Args:
+            data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+            params (dict): Parameters to specify to the endpoint request for the query. See details
+                on available parameters at https://open.gsa.gov/api/regulationsgov/.
+
+        Returns:
+            int: Number of items returned by request
+        &#34;&#34;&#34;
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+        r_items = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}&#39;, params=params)
+        totalElements = r_items[&#39;meta&#39;][&#39;totalElements&#39;]
+        return totalElements
+
+
+    def gather_headers(self, data_type, params, db_filename=None, csv_filename=None, max_items=None, verbose=True):
+        &#34;&#34;&#34;This function is meant to get the header data for the item returned by the query defined by
+        params. The API returns these data in &#34;pages&#34; of up to 250 items at a time, and up to 20 pages are
+        available per query. If the query would return more than 250*20 = 5000 items, the recommended way
+        to retrieve the full dataset is to sort the data by lastModifiedDate and save the largest value
+        from the last page of a given query, then use that to filter the next batch to all those with a
+        lastModifiedDate greater than or equal to the saved date. Unfortunately, this also means it&#39;s
+        you&#39;ll retrieve some of the same headers multiple times, but this is unavoidable because there is no
+        uniqueness constraint on lastModifiedDate.
+
+        The data retrieved are output either to a database (db_filename), or a CSV (csv_filename),
+        or both. These data do not include more specific detail that would be retrieved in a &#34;Details&#34; query,
+        which returns that data (e.g., plain-text of a comment). That kind of data can be gathered
+        using the gather_details function below.
+
+        An example call is:
+            gather_headers(data_type=&#39;comments&#39;, db_filename=&#34;comments_2020&#34;, params={&#39;filter[postedDate][ge]&#39;: &#39;2020-01-01&#39;})
+
+        Args:
+            data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+            params (dict): Parameters to specify to the endpoint request for the query. See details
+                on available parameters at https://open.gsa.gov/api/regulationsgov/.
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV file should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+            max_items (int, optional): If this is specified, limits to this many items. Note that this
+                is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
+                end up with duplicate records being pulled, so we will hit this limit sooner than we should,
+                but we shouldn&#39;t be off by very much. Defaults to None.
+            verbose (bool, optional): Whether to print more detailed info. Defaults to True.
+        &#34;&#34;&#34;
+
+        if db_filename is None and csv_filename is None:
+            raise ValueError(&#34;Must specify either a database file name or CSV filename&#34;)
+
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+        n_retrieved = 0
+        prev_query_max_date = &#39;1900-01-01 00:00:00&#39;  # placeholder value for first round of 5000
+        EASTERN_TIME = tz.gettz(&#39;America/New_York&#39;)
+
+        # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
+        id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
+
+        if db_filename is not None:
+            conn = self._get_database_connection(db_filename)
+            cur = conn.cursor()
+        else:
+            conn = cur = None
+
+        # first request, to ensure there are documents and to get a total count
+        totalElements = self.get_items_count(data_type, params)
+        print(f&#39;Found {totalElements} {data_type}...&#39;, flush=True)
+
+        if max_items is not None and max_items &lt; totalElements:
+            print(f&#39;...but limiting to {max_items} {data_type}...&#39;, flush=True)
+            totalElements = max_items
+
+        while n_retrieved &lt; totalElements:
+            # loop over 5000 in each request (20 pages of 250 each)
+            if verbose: print(f&#39;\nEnter outer loop ({n_retrieved} {data_type} collected)...&#39;, flush=True)
+            page = 1
+            data = []
+
+            while (n_retrieved &lt; totalElements) and (page == 1 or (not r_items[&#39;meta&#39;][&#39;lastPage&#39;])):
+                ## note: this will NOT lead to an off-by-one error because at the start of the loop
+                # r_items is from the *previous* request. If the *previous* request was the last page
+                # then we exit the loop (unless we&#39;re on the first page, in which case get the data then exit)
+                retries = 5
+                while retries &gt; 0:
+                    try:
+                        r_items = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}&#39;,
+                                                        params={**params,
+                                                                &#39;filter[lastModifiedDate][ge]&#39;: prev_query_max_date,
+                                                                &#39;page[number]&#39;: str(page),
+                                                                &#39;sort&#39;: f&#39;lastModifiedDate&#39;},
+                                                        wait_for_rate_limits=True)
+                        break
+                    except:
+                        retries -= 1
+
+                n_retrieved += len(r_items[&#39;data&#39;])
+                data.extend(r_items[&#39;data&#39;])  # add all items from this request
+                page += 1
+
+                ## There may be duplicates due to pagination, so the commented out code here doesn&#39;t apply,
+                ## but I&#39;m leaving it in so I know not to &#34;fix&#34; this issue later on.
+                #if n_retrieved &gt; totalElements:
+                #    data = data[:-(n_retrieved - totalElements)]  # remove the extras
+                #    assert len(data) == totalElements
+                #    n_retrieved = totalElements
+
+                if verbose: print(f&#39;    {n_retrieved} {data_type} retrieved&#39;, flush=True)
+
+            # get our query&#39;s final record&#39;s lastModifiedDate, and convert to eastern timezone for filtering via URL
+            prev_query_max_date = r_items[&#39;data&#39;][-1][&#39;attributes&#39;][&#39;lastModifiedDate&#39;].replace(&#39;Z&#39;, &#39;+00:00&#39;)
+            prev_query_max_date = datetime.fromisoformat(prev_query_max_date).astimezone(EASTERN_TIME).strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+
+            data = self._get_processed_data(data, id_col)
+            self._output_data(data,
+                              table_name=(data_type + &#34;_header&#34;),
+                              conn=conn,
+                              cur=cur,
+                              csv_filename=csv_filename)
+
+        # Note: the count in n_retrieved may not reflect what&#39;s in the database because there may be
+        # duplicates downloaded along the way due to the pagination mechanism on Regulations.gov&#39;s API.
+        # The sqlite database uses a unique constraint to avoid duplicates, so the final count printed
+        # below may not match what is shown in the database. For CSVs, the count here should match
+        # the number of rows in the output.
+
+        self._close_database_connection(conn)
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#39;{the_time}: Finished: {n_retrieved} {data_type} collected&#39;, flush=True)
+
+
+    def gather_details(self, data_type, ids, db_filename=None, csv_filename=None, insert_every_n_rows=500, skip_duplicates=True):
+        &#34;&#34;&#34;This function is meant to get the Details data for each item in ids, one at a time. The data
+        for each item is output either to a database (specified by db_filename) or a CSV (specified by csv_filename).
+
+        An example call is:
+            gather_details(data_type=&#39;documents&#39;, cols=documents_cols, id_col=&#39;documentId&#39;, ids=document_ids, csv_filename=&#34;documents_2020.csv&#34;)
+
+        Args:
+            data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+            ids (list of str): List of IDs for items for which you are querying details. These IDs are
+                appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+            insert_every_n_rows (int): How often to write to the database or CSV. Defaults to every 500 rows.
+            skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
+                should we skip that request? Defaults to True.
+
+        &#34;&#34;&#34;
+        if db_filename is None and csv_filename is None:
+            raise ValueError(&#34;Must specify either a database file name or CSV filename&#34;)
+
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+        n_retrieved = 0
+        data = []
+
+        # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
+        id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
+
+        if db_filename is not None:
+            conn = self._get_database_connection(db_filename)
+            cur = conn.cursor()
+        else:
+            conn = cur = None
+
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#39;{the_time}: Gathering details for {len(ids)} {data_type}...&#39;, flush=True)
+
+        for item_id in ids:
+            r_item = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}/{item_id}&#39;,
+                                           wait_for_rate_limits=True,
+                                           skip_duplicates=skip_duplicates)
+
+            if(skip_duplicates and self._is_duplicated_on_server(r_item)):
+                print(f&#34;Skipping for {item_id}\n&#34;)
+                continue
+
+            n_retrieved += 1
+            data.append(r_item[&#39;data&#39;])  # only one item from the Details endpoint, not a list, so use append (not extend)
+
+            if n_retrieved &gt; 0 and n_retrieved % insert_every_n_rows == 0:
+                data = self._get_processed_data(data, id_col)
+                self._output_data(data,
+                                  table_name=(data_type + &#34;_detail&#34;),
+                                  conn=conn,
+                                  cur=cur,
+                                  csv_filename=csv_filename)
+                data = []  # reset for next batch
+
+        if len(data) &gt; 0:  # insert any remaining in final batch
+            data = self._get_processed_data(data, id_col)
+            self._output_data(data,
+                              table_name=(data_type + &#34;_detail&#34;),
+                              conn=conn,
+                              cur=cur,
+                              csv_filename=csv_filename)
+
+        self._close_database_connection(conn)
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#39;{the_time}: Finished: {n_retrieved} {data_type} collected&#39;, flush=True)
+
+
+    def gather_comments_by_document(self, document_id, db_filename=None, csv_filename=None):
+        &#34;&#34;&#34;User-friendly function for downloading all of the comments on a single document, using
+        the documentId visible on the Regulations.gov website. This abstracts away all the details around
+        filtering and paginating through the API and downloads the data into either a CSV or sqlite database
+        or both.
+
+        Note that if a database is used (i.e., db_filename is not None), the &#34;header&#34; information for comments 
+        will be saved, in addition to the &#34;details&#34; of each comment. In other words, the table comments_header 
+        will be populated in addition to comments_detail.
+
+        Args:
+            document_id (str): document ID, as visible in either the URL or on the website. Note, this is
+                distinct from the docket ID and from the API&#39;s internal objectId.
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+        &#34;&#34;&#34;
+        if db_filename is None and csv_filename is None:
+            raise ValueError(&#34;Need to specify either a database filename or CSV filename or both&#34;)
+
+        def get_object_id(document_id):
+            # first, get the objectId for the document, which we use to filter to its comments
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;{the_time}: Getting objectId for document {document_id}...&#34;, end=&#34;&#34;, flush=True)
+
+            r_json = self.get_request_json(f&#39;https://api.regulations.gov/v4/documents/{document_id}&#39;)
+            object_id = r_json[&#39;data&#39;][&#39;attributes&#39;][&#39;objectId&#39;]
+
+            print(f&#34;Got it ({object_id})&#34;, flush=True)
+            return object_id
+        
+        def get_comment_ids(object_id):
+            # We need to create a temporary CSV so we can read back in the commentIds. This is because the
+            # comment headers do not include the associated documentId or objectId, so if we append the 
+            # comment headers to an existing file or database, we won&#39;t be able to tell which comments
+            # correspond to this document.
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;{the_time}: Getting comment headers associated with document {document_id}...\n&#34;, flush=True)
+
+            temp_filename = f&#34;comment_headers_{datetime.now().strftime(&#39;%H%M%S&#39;)}.csv&#34;
+            self.gather_headers(data_type=&#34;comments&#34;, 
+                                params={&#39;filter[commentOnId]&#39;: object_id}, 
+                                db_filename=db_filename,
+                                csv_filename=temp_filename,
+                                verbose=False)
+            
+            # if file didn&#39;t get created, we found 0 comments
+            if os.path.isfile(temp_filename):
+                comment_ids = self.get_ids_from_csv(temp_filename, &#34;comments&#34;, unique=True)
+
+                try:
+                    os.remove(temp_filename)
+                except:
+                    pass
+            else:
+                return []
+
+            print(&#34;\nDone getting comment IDs----------------\n&#34;, flush=True)
+            return comment_ids
+
+        object_id = get_object_id(document_id)
+        comment_ids = get_comment_ids(object_id)
+
+        if len(comment_ids) &gt; 0:
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;{the_time}: Getting comments associated with document {document_id}...\n&#34;, flush=True)
+
+            self.gather_details(&#34;comments&#34;, comment_ids, db_filename=db_filename, csv_filename=csv_filename)
+
+            # Get the total number of comments retrieved. This may differ from what we expect if there 
+            # are issues during the download process or the database prevents importing duplicates from pagination.
+            n_comments = self._get_comment_count(csv_filename, db_filename, &#34;commentOnDocumentId&#34;, document_id)
+        else:
+            n_comments = 0
+
+        print(f&#34;\nDone getting all {n_comments} comments for document {document_id}----------------\n&#34;, flush=True)
+
+
+    def gather_comments_by_docket(self, docket_id, db_filename=None, csv_filename=None):
+        &#34;&#34;&#34;User-friendly function for downloading all of the comments in a docket, using the docketId visible 
+        on the Regulations.gov website. This abstracts away all the details around finding all the documents
+        in a given docket and getting their individual comments, including filtering and paginating through 
+        the API. It downloads the comments into either a CSV or sqlite database or both.
+
+        Note that if a database is used (i.e., db_filename is not None), the &#34;header&#34; information for documents
+        and comments will be saved, in addition to the &#34;details&#34; of each comment. In other words, the table 
+        comments_header will be populated in addition to comments_detail, and the table documents_header will
+        be populated as well.
+
+        Args:
+            document_id (str): document ID, as visible in either the URL or on the website. Note, this is
+                distinct from the docket ID and from the API&#39;s internal objectId.
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+        &#34;&#34;&#34;
+        if db_filename is None and csv_filename is None:
+            raise ValueError(&#34;Need to specify either a database filename or CSV filename or both&#34;)
+
+        def get_document_ids(docket_id): 
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;{the_time}: Getting documents associated with docket...\n&#34;, flush=True)
+       
+            temp_filename = f&#34;document_headers_{datetime.now().strftime(&#39;%H%M%S&#39;)}.csv&#34;
+            self.gather_headers(data_type=&#34;documents&#34;, 
+                                params={&#39;filter[docketId]&#39;: docket_id}, 
+                                db_filename=db_filename,
+                                csv_filename=temp_filename,
+                                verbose=False)
+            document_ids = self.get_ids_from_csv(temp_filename, &#34;documents&#34;, unique=True)
+            try:
+                os.remove(temp_filename)
+            except:
+                pass
+
+            print(f&#34;\nDone----------------\n&#34;, flush=True)
+            return document_ids
+
+        document_ids = get_document_ids(docket_id)
+
+        for document_id in document_ids:
+            the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+            print(f&#34;******************************\n{the_time}: Getting comments for document {document_id}...\n&#34;, flush=True)
+            self.gather_comments_by_document(document_id, db_filename, csv_filename)
+
+        # get the total number of comments retrieved
+        n_comments = self._get_comment_count(csv_filename, db_filename, &#34;docketId&#34;, docket_id)
+        print(f&#34;DONE retrieving all {n_comments} comments from {len(document_ids)} document(s) for docket {docket_id}----------------\n&#34;, flush=True)
+
+
+    def get_ids_from_csv(self, csv_filename, data_type, unique=False):
+        &#34;&#34;&#34;Get IDs for dockets, documents, or comments in a given CSV. Assumes that the header row
+        exists in the file and that the ID column is named one of docketId, documentId, or commentId.
+
+        Note: the CSV could be very large, so we don&#39;t load the whole thing into memory, but instead
+        loop over it one row at a time.
+
+        Args:
+            csv_filename (str): Name (optionally with path) of the CSV file with the data
+            data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+            unique (bool, optional): Whether to remove duplicates, making the list of IDs unique.
+                Defaults to False so that the IDs are returned in the same order and number as the
+                input file.
+
+        Returns:
+            list of str: IDs for the given data_type from the specified csv_filename
+        &#34;&#34;&#34;
+        # make sure the data_type is NOT plural before adding Id
+        id_column = (data_type[:-1] if data_type[-1:] == &#34;s&#34; else data_type) + &#34;Id&#34;
+        id_column_index = None
+        ids = []
+
+        with open(csv_filename, &#39;r&#39;, encoding=&#39;utf8&#39;) as f:
+            reader = csv.reader(f)
+            for row in reader:
+                if id_column_index is None:
+                    try:
+                        id_column_index = row.index(id_column)
+                    except ValueError:
+                        raise ValueError(f&#34;Missing id column {id_column} in {csv_filename}&#34;)
+                else:
+                    ids.append(row[id_column_index])
+
+        if unique:
+            ids = list(set(ids))
+
+        return ids
+
+
+    def _get_database_connection(self, filename, drop_if_exists=False):
+        &#34;&#34;&#34;Get a connection to the database in the file at filename. If the database does not
+        exist it will be created with the necessary tables. If it does exist, tables are kept as-is
+        unless drop_if_exists is specified, in which case existing tables are dropped before creating
+        the necessary tables.
+
+        Args:
+            filename (str): Filename of database, optionally including path.
+            drop_if_exists (bool, optional): Whether to drop the necessary tables if they exist.
+                Defaults to False, in which case if the tables exist, they will be left as-is and
+                new data will be appended.
+
+        Returns:
+            sqlite.Connection: open connection to the database
+        &#34;&#34;&#34;
+        # If the database exists already, this just ensures all the necessary tables exist
+        self._setup_database(filename, drop_if_exists=drop_if_exists)
+        return sqlite3.connect(filename)
+
+
+    def _setup_database(self, filename=None, drop_if_exists=False):
+        &#34;&#34;&#34;Set up a sqlite database with the tables and columns necessary for the data returned
+        by the Regulations.gov API.
+
+        Args:
+            filename (str): Filename, optionally including path.
+            drop_if_exists (bool, optional): Whether to drop the six tables used here if they already exist.
+                Defaults to False so that we don&#39;t delete any information.
+        &#34;&#34;&#34;
+        if filename is None:
+            filename = &#39;regulations.gov_&#39; + datetime.now().strftime(&#39;%Y%m%d&#39;) + &#34;.db&#34;
+
+        # make the path if necessary
+        if len(os.path.dirname(filename)) &gt; 0:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+        conn = sqlite3.connect(filename)
+        cur = conn.cursor()
+
+        if drop_if_exists:
+            cur.execute(&#39;drop table if exists dockets_header&#39;)
+            cur.execute(&#39;drop table if exists dockets_detail&#39;)
+            cur.execute(&#39;drop table if exists documents_header&#39;)
+            cur.execute(&#39;drop table if exists documents_detail&#39;)
+            cur.execute(&#39;drop table if exists comments_header&#39;)
+            cur.execute(&#39;drop table if exists comments_detail&#39;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS dockets_header (
+            docketId            TEXT    NOT NULL UNIQUE,
+            agencyId            TEXT,
+            docketType          TEXT,
+            title               TEXT,
+            lastModifiedDate    TEXT NOT NULL,
+            objectId            TEXT,
+            sqltime             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS dockets_detail (
+            docketId        TEXT    NOT NULL UNIQUE,
+            agencyId        TEXT,
+            category        TEXT,
+            dkAbstract      TEXT,
+            docketType      TEXT,
+            effectiveDate   TEXT,
+            field1          TEXT,
+            field2          TEXT,
+            generic         TEXT,
+            keywords        TEXT,
+            legacyId        TEXT,
+            modifyDate      TEXT NOT NULL,
+            objectId        TEXT,
+            organization    TEXT,
+            petitionNbr     TEXT,
+            program         TEXT,
+            rin             TEXT,
+            shortTitle      TEXT,
+            subType         TEXT,
+            subType2        TEXT,
+            title           TEXT,
+            sqltime         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS documents_header (
+            documentId          TEXT    NOT NULL UNIQUE,
+            commentEndDate      TEXT,
+            commentStartDate    TEXT,
+            docketId            TEXT,
+            documentType        TEXT,
+            frDocNum            TEXT,
+            lastModifiedDate    TEXT NOT NULL,
+            objectId            TEXT,
+            postedDate          TEXT,
+            subtype             TEXT,
+            title               TEXT,
+            withdrawn           INTEGER,
+            sqltime             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS documents_detail (
+            documentId              TEXT    NOT NULL UNIQUE,
+            additionalRins          TEXT,
+            agencyId                TEXT,
+            allowLateComments       INTEGER,
+            authorDate              TEXT,
+            authors                 TEXT,
+            category                TEXT,
+            cfrPart                 TEXT,
+            city                    TEXT,
+            comment                 TEXT,
+            commentEndDate          TEXT,
+            commentStartDate        TEXT,
+            country                 TEXT,
+            docAbstract             TEXT,
+            docketId                TEXT,
+            documentType            TEXT,
+            effectiveDate           TEXT,
+            exhibitLocation         TEXT,
+            exhibitType             TEXT,
+            field1                  TEXT,
+            field2                  TEXT,
+            firstName               TEXT,
+            frDocNum                TEXT,
+            frVolNum                TEXT,
+            govAgency               TEXT,
+            govAgencyType           TEXT,
+            implementationDate      TEXT,
+            lastName                TEXT,
+            legacyId                TEXT,
+            media                   TEXT,
+            modifyDate              TEXT NOT NULL,
+            objectId                TEXT,
+            ombApproval             TEXT,
+            openForComment          INTEGER,
+            organization            TEXT,
+            originalDocumentId      TEXT,
+            pageCount               TEXT,
+            paperLength             INTEGER,
+            paperWidth              INTEGER,
+            postedDate              TEXT,
+            postmarkDate            TEXT,
+            reasonWithdrawn         TEXT,
+            receiveDate             TEXT,
+            regWriterInstruction    TEXT,
+            restrictReason          TEXT,
+            restrictReasonType      TEXT,
+            sourceCitation          TEXT,
+            startEndPage            TEXT,
+            stateProvinceRegion     TEXT,
+            subject                 TEXT,
+            submitterRep            TEXT,
+            submitterRepCityState   TEXT,
+            subtype                 TEXT,
+            title                   TEXT,
+            topics                  TEXT,
+            trackingNbr             TEXT,
+            withdrawn               INTEGER,
+            zip                     TEXT,
+            sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS comments_header (
+            commentId               TEXT    NOT NULL UNIQUE,
+            agencyId                TEXT,
+            documentType            TEXT,
+            lastModifiedDate        TEXT NOT NULL,
+            objectId                TEXT,
+            postedDate              TEXT,
+            title                   TEXT,
+            withdrawn               INTEGER,
+            sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        )&#34;&#34;&#34;)
+
+        cur.execute(&#34;&#34;&#34;
+        CREATE TABLE IF NOT EXISTS comments_detail (
+            commentId               TEXT    NOT NULL UNIQUE,
+            agencyId                TEXT,
+            category                TEXT,
+            city                    TEXT,
+            comment                 TEXT,
+            commentOn               TEXT,
+            commentOnDocumentId     TEXT,
+            country                 TEXT,
+            docAbstract             TEXT,
+            docketId                TEXT,
+            documentType            TEXT,
+            duplicateComments       INTEGER,
+            field1                  TEXT,
+            field2                  TEXT,
+            firstName               TEXT,
+            govAgency               TEXT,
+            govAgencyType           TEXT,
+            lastName                TEXT,
+            legacyId                TEXT,
+            modifyDate              TEXT NOT NULL,
+            objectId                TEXT,
+            openForComment          INTEGER,
+            organization            TEXT,
+            originalDocumentId      TEXT,
+            pageCount               TEXT,
+            postedDate              TEXT,
+            postmarkDate            TEXT,
+            reasonWithdrawn         TEXT,
+            receiveDate             TEXT,
+            restrictReason          TEXT,
+            restrictReasonType      TEXT,
+            stateProvinceRegion     TEXT,
+            submitterRep            TEXT,
+            submitterRepCityState   TEXT,
+            subtype                 TEXT,
+            title                   TEXT,
+            trackingNbr             TEXT,
+            withdrawn               INTEGER,
+            zip                     TEXT,
+            sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )&#34;&#34;&#34;)
+
+        conn.close()
+
+
+    def _close_database_connection(self, conn):
+        &#34;&#34;&#34;Close a database connection
+
+        Args:
+            conn (sqlite3.Connection): Try to close the connection. If there are any errors, ignore them.
+        &#34;&#34;&#34;
+        if conn is not None and type(conn) == sqlite3.Connection:
+            try:
+                conn.close()
+            except:
+                pass
+
+
+    def _is_duplicated_on_server(self, response_json):
+        &#34;&#34;&#34;Used to determine whether a given response indicates a duplicate on the server. This is
+        because there is a bug in the server: there are some commentIds, like NRCS-2009-0004-0003,
+        which correspond to multiple actual comments! This function determines whether the
+        returned JSON has an error indicating this issue
+
+        Args:
+            response_json (dict): JSON from request to API (usually, from get_request_json)
+
+        Returns:
+            bool: whether the response indicates a duplicate issue or not
+        &#34;&#34;&#34;
+        return (&#39;errors&#39; in response_json.keys()) \
+                and (response_json[&#39;errors&#39;][0][&#39;status&#39;] == &#34;500&#34;) \
+                and (response_json[&#39;errors&#39;][0][&#39;detail&#39;][:21] == &#34;Incorrect result size&#34;)
+
+
+    def _get_comment_count(self, csv_filename=None, db_filename=None, filter_column=None, filter_value=None):
+        &#34;&#34;&#34;Simple helper function used to get the number of comments retrieved, as stored in either
+        a CSV file or a sqlite database.
+
+        Args:
+            csv_filename (str): File name (optionally with path) where comments are stored. Defaults to 
+                None, in which case a db_filename should be specified.
+            db_filename (str): File name (optionally with path) where database, containing comments, is located.
+                Defaults to None, in which case a csv_filename should be specified.
+            filter_column (str): Identifies the column used to filter the database to get the count. Defaults to 
+                None for the case when we are using a CSV.
+            filter_value (str): The value used in filter_column to filter the database to get the count. Defaults to 
+                None for the case when we are using a CSV.
+
+        Returns:
+            int: Number of comments stored in either comments_detail (contained in the database db_filename) or the CSV
+        &#34;&#34;&#34;
+        if csv_filename is None and (db_filename is None or filter_column is None or filter_value is None):
+            raise ValueError(&#34;Must specify either a csv_filename or a db_filename and its filter_column and filter_value&#34;)
+
+        if db_filename is not None:
+            conn = sqlite3.connect(db_filename)
+            cur = conn.cursor()
+            n_comments = cur.execute(f&#34;select count(*) from comments_detail where {filter_column}=?&#34;, (filter_value,)).fetchone()[0]
+            conn.close()
+        else:
+            n_comments = len(self.get_ids_from_csv(csv_filename, &#34;comments&#34;))
+        
+        return n_comments
+
+
+    def _get_processed_data(self, data, id_col):
+        &#34;&#34;&#34;Used to take the data contained in a response (e.g., the data for a bunch of comments)
+        and remove unnecessary columns (i.e., those not specified in `cols`). Also adds the ID
+        associated with the items and flattens lists contained in each item&#39;s data.
+
+        Args:
+            data (list of dict): List of items to process from a request (e.g., a bunch of comments).
+                Each dict is expected to be formatted like: {&#39;id&#39;: &#39;...&#39;, &#39;attributes&#39;: {&#39;attrib1&#39;: &#39;data&#39;, ...}, &lt;other keys:values&gt;}
+            id_col (str): Name of the ID column for this data type, i.e., &#39;docketId&#39;, &#39;documentId&#39;, or &#39;commentId&#39;
+
+        Returns:
+            list of dict: processed dataset, ready for input into sqlite or output to CSV
+        &#34;&#34;&#34;
+        output = []
+        cols = [x for x in data[0][&#39;attributes&#39;].keys() if x not in \
+                    [&#39;id&#39;, &#39;displayProperties&#39;, &#39;highlightedContent&#39;, &#39;fileFormats&#39;]]
+
+        for item in data:
+            # get just the dict of columns we want, and if one of the values is a list, flatten it
+            out = {k:(&#39; &#39;.join(v) if type(v) == list else v) for (k,v) in item[&#39;attributes&#39;].items() if k in cols}
+
+            # also, the item&#39;s ID
+            out[id_col] = item[&#39;id&#39;]
+            output.append(out)
+
+        return output
+
+
+    def _insert_data(self, data, table_name, conn, cur=None):
+        &#34;&#34;&#34;Add data to a specified sqlite table
+
+        Args:
+            data (list of dict): Data to be inserted into database
+            table_name (str): specifies table to insert into (one of: &#34;dockets_header&#34;, &#34;dockets_detail&#34;,
+                &#34;documents_header&#34;, &#34;documents_detail&#34;, &#34;comments_header&#34;, or &#34;comments_detail&#34;)
+            conn (sqlite3.Connection): Open connection to database
+            cur (sqlite3.Cursor): Open cursor into the database
+        &#34;&#34;&#34;
+        # upload into staging table, then insert, skipping any rows that violate key constraints
+        if conn is None:
+            raise ValueError(&#34;conn cannot be None&#34;)
+        if table_name is None:
+            raise ValueError(&#34;Need to specify table_name&#34;)
+        if cur is None:
+            cur = conn.cursor()
+
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        cols = [x for x in pd.read_sql_query(f&#39;select * from {table_name} limit 1&#39;, conn).columns if x != &#34;sqltime&#34;]
+
+        print(f&#34;{the_time}: Inserting {len(data)} records into database...&#34;, flush=True)
+        pd.DataFrame(data).to_sql(&#34;tmp&#34;, conn, if_exists=&#34;replace&#34;, index=False)
+        cur.execute(f&#34;INSERT OR IGNORE INTO {table_name} ({&#39;,&#39;.join(cols)}) SELECT {&#39;,&#39;.join(cols)} FROM tmp&#34;)
+        conn.commit()
+
+
+    def _write_to_csv(self, data, csv_filename):
+        &#34;&#34;&#34;Write out data to a CSV file. Data will be appended to an existing file, or if the file does
+        not exist, the file will be created with headers. Subsequent appends do not include the header row.
+
+        Args:
+            data (list of dict): Data to write out
+            csv_filename (str): Name (optionally with path) of the CSV file to write to
+        &#34;&#34;&#34;
+        if csv_filename is None:
+            raise ValueError(&#34;csv_filename cannot be None&#34;)
+
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#34;{the_time}: Writing {len(data)} records to {csv_filename}...&#34;, end=&#34;&#34;, flush=True)
+
+        df = pd.DataFrame(data)
+
+        # remove line breaks in each field so that the rows of the CSV correspond to one record
+        df.replace(r&#34;\n&#34;, &#34; &#34;, regex=True, inplace=True)
+
+        # make the path if necessary
+        if len(os.path.dirname(csv_filename)) &gt; 0:
+            os.makedirs(os.path.dirname(csv_filename), exist_ok=True)
+
+        df.to_csv(csv_filename, index=False, mode=&#39;a&#39;, quoting=csv.QUOTE_ALL,
+                  header=(not os.path.isfile(csv_filename)))
+
+        print(&#34;Done&#34;, flush=True)
+
+
+    def _output_data(self, data, table_name=None, conn=None, cur=None, csv_filename=None):
+        &#34;&#34;&#34;Routes the output call to either database or the CSV, depending on parameters
+
+        Args:
+            data (list of dict): Data to write out
+            table_name (str): For sqlite database, specifies table to insert into (one of: &#34;dockets_header&#34;, &#34;dockets_detail&#34;,
+                &#34;documents_header&#34;, &#34;documents_detail&#34;, &#34;comments_header&#34;, or &#34;comments_detail&#34;). Can be None if using CSV.
+            conn (sqlite3.Connection): Open connection to database. Can be None, in which case a CSV should be specified.
+                Can be None if using a CSV.
+            cur (sqlite3.Cursor): Open cursor into the database. Can be None, in which case a CSV should be specified.
+                Can be None if using a CSV.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+        &#34;&#34;&#34;
+        if conn is None and csv_filename is None:
+            raise ValueError(&#34;Need to specify either conn or csv_filename&#34;)
+
+        if conn is not None:
+            self._insert_data(data, table_name, conn, cur)
+
+        if csv_filename is not None:
+            self._write_to_csv(data, csv_filename)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="comment_downloader.CommentsDownloader.gather_comments_by_docket"><code class="name flex">
+<span>def <span class="ident">gather_comments_by_docket</span></span>(<span>self, docket_id, db_filename=None, csv_filename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>User-friendly function for downloading all of the comments in a docket, using the docketId visible
+on the Regulations.gov website. This abstracts away all the details around finding all the documents
+in a given docket and getting their individual comments, including filtering and paginating through
+the API. It downloads the comments into either a CSV or sqlite database or both.</p>
+<p>Note that if a database is used (i.e., db_filename is not None), the "header" information for documents
+and comments will be saved, in addition to the "details" of each comment. In other words, the table
+comments_header will be populated in addition to comments_detail, and the table documents_header will
+be populated as well.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>document_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>document ID, as visible in either the URL or on the website. Note, this is
+distinct from the docket ID and from the API's internal objectId.</dd>
+<dt><strong><code>db_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+it will be created automatically. If it does exist, we will add to it. Can be None, in which
+case a CSV should be specified.</dd>
+<dt><strong><code>csv_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the CSV file to write to. Can be None, in which
+case a database file should be specified.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gather_comments_by_docket(self, docket_id, db_filename=None, csv_filename=None):
+    &#34;&#34;&#34;User-friendly function for downloading all of the comments in a docket, using the docketId visible 
+    on the Regulations.gov website. This abstracts away all the details around finding all the documents
+    in a given docket and getting their individual comments, including filtering and paginating through 
+    the API. It downloads the comments into either a CSV or sqlite database or both.
+
+    Note that if a database is used (i.e., db_filename is not None), the &#34;header&#34; information for documents
+    and comments will be saved, in addition to the &#34;details&#34; of each comment. In other words, the table 
+    comments_header will be populated in addition to comments_detail, and the table documents_header will
+    be populated as well.
+
+    Args:
+        document_id (str): document ID, as visible in either the URL or on the website. Note, this is
+            distinct from the docket ID and from the API&#39;s internal objectId.
+        db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+            it will be created automatically. If it does exist, we will add to it. Can be None, in which
+            case a CSV should be specified.
+        csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+            case a database file should be specified.
+    &#34;&#34;&#34;
+    if db_filename is None and csv_filename is None:
+        raise ValueError(&#34;Need to specify either a database filename or CSV filename or both&#34;)
+
+    def get_document_ids(docket_id): 
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#34;{the_time}: Getting documents associated with docket...\n&#34;, flush=True)
+   
+        temp_filename = f&#34;document_headers_{datetime.now().strftime(&#39;%H%M%S&#39;)}.csv&#34;
+        self.gather_headers(data_type=&#34;documents&#34;, 
+                            params={&#39;filter[docketId]&#39;: docket_id}, 
+                            db_filename=db_filename,
+                            csv_filename=temp_filename,
+                            verbose=False)
+        document_ids = self.get_ids_from_csv(temp_filename, &#34;documents&#34;, unique=True)
+        try:
+            os.remove(temp_filename)
+        except:
+            pass
+
+        print(f&#34;\nDone----------------\n&#34;, flush=True)
+        return document_ids
+
+    document_ids = get_document_ids(docket_id)
+
+    for document_id in document_ids:
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#34;******************************\n{the_time}: Getting comments for document {document_id}...\n&#34;, flush=True)
+        self.gather_comments_by_document(document_id, db_filename, csv_filename)
+
+    # get the total number of comments retrieved
+    n_comments = self._get_comment_count(csv_filename, db_filename, &#34;docketId&#34;, docket_id)
+    print(f&#34;DONE retrieving all {n_comments} comments from {len(document_ids)} document(s) for docket {docket_id}----------------\n&#34;, flush=True)</code></pre>
+</details>
+</dd>
+<dt id="comment_downloader.CommentsDownloader.gather_comments_by_document"><code class="name flex">
+<span>def <span class="ident">gather_comments_by_document</span></span>(<span>self, document_id, db_filename=None, csv_filename=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>User-friendly function for downloading all of the comments on a single document, using
+the documentId visible on the Regulations.gov website. This abstracts away all the details around
+filtering and paginating through the API and downloads the data into either a CSV or sqlite database
+or both.</p>
+<p>Note that if a database is used (i.e., db_filename is not None), the "header" information for comments
+will be saved, in addition to the "details" of each comment. In other words, the table comments_header
+will be populated in addition to comments_detail.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>document_id</code></strong> :&ensp;<code>str</code></dt>
+<dd>document ID, as visible in either the URL or on the website. Note, this is
+distinct from the docket ID and from the API's internal objectId.</dd>
+<dt><strong><code>db_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+it will be created automatically. If it does exist, we will add to it. Can be None, in which
+case a CSV should be specified.</dd>
+<dt><strong><code>csv_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the CSV file to write to. Can be None, in which
+case a database file should be specified.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gather_comments_by_document(self, document_id, db_filename=None, csv_filename=None):
+    &#34;&#34;&#34;User-friendly function for downloading all of the comments on a single document, using
+    the documentId visible on the Regulations.gov website. This abstracts away all the details around
+    filtering and paginating through the API and downloads the data into either a CSV or sqlite database
+    or both.
+
+    Note that if a database is used (i.e., db_filename is not None), the &#34;header&#34; information for comments 
+    will be saved, in addition to the &#34;details&#34; of each comment. In other words, the table comments_header 
+    will be populated in addition to comments_detail.
+
+    Args:
+        document_id (str): document ID, as visible in either the URL or on the website. Note, this is
+            distinct from the docket ID and from the API&#39;s internal objectId.
+        db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+            it will be created automatically. If it does exist, we will add to it. Can be None, in which
+            case a CSV should be specified.
+        csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+            case a database file should be specified.
+    &#34;&#34;&#34;
+    if db_filename is None and csv_filename is None:
+        raise ValueError(&#34;Need to specify either a database filename or CSV filename or both&#34;)
+
+    def get_object_id(document_id):
+        # first, get the objectId for the document, which we use to filter to its comments
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#34;{the_time}: Getting objectId for document {document_id}...&#34;, end=&#34;&#34;, flush=True)
+
+        r_json = self.get_request_json(f&#39;https://api.regulations.gov/v4/documents/{document_id}&#39;)
+        object_id = r_json[&#39;data&#39;][&#39;attributes&#39;][&#39;objectId&#39;]
+
+        print(f&#34;Got it ({object_id})&#34;, flush=True)
+        return object_id
+    
+    def get_comment_ids(object_id):
+        # We need to create a temporary CSV so we can read back in the commentIds. This is because the
+        # comment headers do not include the associated documentId or objectId, so if we append the 
+        # comment headers to an existing file or database, we won&#39;t be able to tell which comments
+        # correspond to this document.
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#34;{the_time}: Getting comment headers associated with document {document_id}...\n&#34;, flush=True)
+
+        temp_filename = f&#34;comment_headers_{datetime.now().strftime(&#39;%H%M%S&#39;)}.csv&#34;
+        self.gather_headers(data_type=&#34;comments&#34;, 
+                            params={&#39;filter[commentOnId]&#39;: object_id}, 
+                            db_filename=db_filename,
+                            csv_filename=temp_filename,
+                            verbose=False)
+        
+        # if file didn&#39;t get created, we found 0 comments
+        if os.path.isfile(temp_filename):
+            comment_ids = self.get_ids_from_csv(temp_filename, &#34;comments&#34;, unique=True)
+
+            try:
+                os.remove(temp_filename)
+            except:
+                pass
+        else:
+            return []
+
+        print(&#34;\nDone getting comment IDs----------------\n&#34;, flush=True)
+        return comment_ids
+
+    object_id = get_object_id(document_id)
+    comment_ids = get_comment_ids(object_id)
+
+    if len(comment_ids) &gt; 0:
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#34;{the_time}: Getting comments associated with document {document_id}...\n&#34;, flush=True)
+
+        self.gather_details(&#34;comments&#34;, comment_ids, db_filename=db_filename, csv_filename=csv_filename)
+
+        # Get the total number of comments retrieved. This may differ from what we expect if there 
+        # are issues during the download process or the database prevents importing duplicates from pagination.
+        n_comments = self._get_comment_count(csv_filename, db_filename, &#34;commentOnDocumentId&#34;, document_id)
+    else:
+        n_comments = 0
+
+    print(f&#34;\nDone getting all {n_comments} comments for document {document_id}----------------\n&#34;, flush=True)</code></pre>
+</details>
+</dd>
+<dt id="comment_downloader.CommentsDownloader.gather_details"><code class="name flex">
+<span>def <span class="ident">gather_details</span></span>(<span>self, data_type, ids, db_filename=None, csv_filename=None, insert_every_n_rows=500, skip_duplicates=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function is meant to get the Details data for each item in ids, one at a time. The data
+for each item is output either to a database (specified by db_filename) or a CSV (specified by csv_filename).</p>
+<p>An example call is:
+gather_details(data_type='documents', cols=documents_cols, id_col='documentId', ids=document_ids, csv_filename="documents_2020.csv")</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>data_type</code></strong> :&ensp;<code>str</code></dt>
+<dd>One of "dockets", "documents", or "comments".</dd>
+<dt><strong><code>ids</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>List of IDs for items for which you are querying details. These IDs are
+appended to the URL directly, e.g., <a href="https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003">https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003</a></dd>
+<dt><strong><code>db_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+it will be created automatically. If it does exist, we will add to it. Can be None, in which
+case a CSV should be specified.</dd>
+<dt><strong><code>csv_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the CSV file to write to. Can be None, in which
+case a database file should be specified.</dd>
+<dt><strong><code>insert_every_n_rows</code></strong> :&ensp;<code>int</code></dt>
+<dd>How often to write to the database or CSV. Defaults to every 500 rows.</dd>
+<dt><strong><code>skip_duplicates</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>If a request returns multiple items when only 1 was expected,
+should we skip that request? Defaults to True.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gather_details(self, data_type, ids, db_filename=None, csv_filename=None, insert_every_n_rows=500, skip_duplicates=True):
+    &#34;&#34;&#34;This function is meant to get the Details data for each item in ids, one at a time. The data
+    for each item is output either to a database (specified by db_filename) or a CSV (specified by csv_filename).
+
+    An example call is:
+        gather_details(data_type=&#39;documents&#39;, cols=documents_cols, id_col=&#39;documentId&#39;, ids=document_ids, csv_filename=&#34;documents_2020.csv&#34;)
+
+    Args:
+        data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+        ids (list of str): List of IDs for items for which you are querying details. These IDs are
+            appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
+        db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+            it will be created automatically. If it does exist, we will add to it. Can be None, in which
+            case a CSV should be specified.
+        csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+            case a database file should be specified.
+        insert_every_n_rows (int): How often to write to the database or CSV. Defaults to every 500 rows.
+        skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
+            should we skip that request? Defaults to True.
+
+    &#34;&#34;&#34;
+    if db_filename is None and csv_filename is None:
+        raise ValueError(&#34;Must specify either a database file name or CSV filename&#34;)
+
+    # make sure the data_type is plural
+    data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+    n_retrieved = 0
+    data = []
+
+    # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
+    id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
+
+    if db_filename is not None:
+        conn = self._get_database_connection(db_filename)
+        cur = conn.cursor()
+    else:
+        conn = cur = None
+
+    the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+    print(f&#39;{the_time}: Gathering details for {len(ids)} {data_type}...&#39;, flush=True)
+
+    for item_id in ids:
+        r_item = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}/{item_id}&#39;,
+                                       wait_for_rate_limits=True,
+                                       skip_duplicates=skip_duplicates)
+
+        if(skip_duplicates and self._is_duplicated_on_server(r_item)):
+            print(f&#34;Skipping for {item_id}\n&#34;)
+            continue
+
+        n_retrieved += 1
+        data.append(r_item[&#39;data&#39;])  # only one item from the Details endpoint, not a list, so use append (not extend)
+
+        if n_retrieved &gt; 0 and n_retrieved % insert_every_n_rows == 0:
+            data = self._get_processed_data(data, id_col)
+            self._output_data(data,
+                              table_name=(data_type + &#34;_detail&#34;),
+                              conn=conn,
+                              cur=cur,
+                              csv_filename=csv_filename)
+            data = []  # reset for next batch
+
+    if len(data) &gt; 0:  # insert any remaining in final batch
+        data = self._get_processed_data(data, id_col)
+        self._output_data(data,
+                          table_name=(data_type + &#34;_detail&#34;),
+                          conn=conn,
+                          cur=cur,
+                          csv_filename=csv_filename)
+
+    self._close_database_connection(conn)
+    the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+    print(f&#39;{the_time}: Finished: {n_retrieved} {data_type} collected&#39;, flush=True)</code></pre>
+</details>
+</dd>
+<dt id="comment_downloader.CommentsDownloader.gather_headers"><code class="name flex">
+<span>def <span class="ident">gather_headers</span></span>(<span>self, data_type, params, db_filename=None, csv_filename=None, max_items=None, verbose=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function is meant to get the header data for the item returned by the query defined by
+params. The API returns these data in "pages" of up to 250 items at a time, and up to 20 pages are
+available per query. If the query would return more than 250*20 = 5000 items, the recommended way
+to retrieve the full dataset is to sort the data by lastModifiedDate and save the largest value
+from the last page of a given query, then use that to filter the next batch to all those with a
+lastModifiedDate greater than or equal to the saved date. Unfortunately, this also means it's
+you'll retrieve some of the same headers multiple times, but this is unavoidable because there is no
+uniqueness constraint on lastModifiedDate.</p>
+<p>The data retrieved are output either to a database (db_filename), or a CSV (csv_filename),
+or both. These data do not include more specific detail that would be retrieved in a "Details" query,
+which returns that data (e.g., plain-text of a comment). That kind of data can be gathered
+using the gather_details function below.</p>
+<p>An example call is:
+gather_headers(data_type='comments', db_filename="comments_2020", params={'filter[postedDate][ge]': '2020-01-01'})</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>data_type</code></strong> :&ensp;<code>str</code></dt>
+<dd>One of "dockets", "documents", or "comments".</dd>
+<dt><strong><code>params</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Parameters to specify to the endpoint request for the query. See details
+on available parameters at <a href="https://open.gsa.gov/api/regulationsgov/.">https://open.gsa.gov/api/regulationsgov/.</a></dd>
+<dt><strong><code>db_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+it will be created automatically. If it does exist, we will add to it. Can be None, in which
+case a CSV file should be specified.</dd>
+<dt><strong><code>csv_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the CSV file to write to. Can be None, in which
+case a database file should be specified.</dd>
+<dt><strong><code>max_items</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd>If this is specified, limits to this many items. Note that this
+is an <em>approximate</em> limit. Because of how we have to query with pagination, we will inevitably
+end up with duplicate records being pulled, so we will hit this limit sooner than we should,
+but we shouldn't be off by very much. Defaults to None.</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether to print more detailed info. Defaults to True.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def gather_headers(self, data_type, params, db_filename=None, csv_filename=None, max_items=None, verbose=True):
+    &#34;&#34;&#34;This function is meant to get the header data for the item returned by the query defined by
+    params. The API returns these data in &#34;pages&#34; of up to 250 items at a time, and up to 20 pages are
+    available per query. If the query would return more than 250*20 = 5000 items, the recommended way
+    to retrieve the full dataset is to sort the data by lastModifiedDate and save the largest value
+    from the last page of a given query, then use that to filter the next batch to all those with a
+    lastModifiedDate greater than or equal to the saved date. Unfortunately, this also means it&#39;s
+    you&#39;ll retrieve some of the same headers multiple times, but this is unavoidable because there is no
+    uniqueness constraint on lastModifiedDate.
+
+    The data retrieved are output either to a database (db_filename), or a CSV (csv_filename),
+    or both. These data do not include more specific detail that would be retrieved in a &#34;Details&#34; query,
+    which returns that data (e.g., plain-text of a comment). That kind of data can be gathered
+    using the gather_details function below.
+
+    An example call is:
+        gather_headers(data_type=&#39;comments&#39;, db_filename=&#34;comments_2020&#34;, params={&#39;filter[postedDate][ge]&#39;: &#39;2020-01-01&#39;})
+
+    Args:
+        data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+        params (dict): Parameters to specify to the endpoint request for the query. See details
+            on available parameters at https://open.gsa.gov/api/regulationsgov/.
+        db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn&#39;t yet exist,
+            it will be created automatically. If it does exist, we will add to it. Can be None, in which
+            case a CSV file should be specified.
+        csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+            case a database file should be specified.
+        max_items (int, optional): If this is specified, limits to this many items. Note that this
+            is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
+            end up with duplicate records being pulled, so we will hit this limit sooner than we should,
+            but we shouldn&#39;t be off by very much. Defaults to None.
+        verbose (bool, optional): Whether to print more detailed info. Defaults to True.
+    &#34;&#34;&#34;
+
+    if db_filename is None and csv_filename is None:
+        raise ValueError(&#34;Must specify either a database file name or CSV filename&#34;)
+
+    # make sure the data_type is plural
+    data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+    n_retrieved = 0
+    prev_query_max_date = &#39;1900-01-01 00:00:00&#39;  # placeholder value for first round of 5000
+    EASTERN_TIME = tz.gettz(&#39;America/New_York&#39;)
+
+    # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
+    id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
+
+    if db_filename is not None:
+        conn = self._get_database_connection(db_filename)
+        cur = conn.cursor()
+    else:
+        conn = cur = None
+
+    # first request, to ensure there are documents and to get a total count
+    totalElements = self.get_items_count(data_type, params)
+    print(f&#39;Found {totalElements} {data_type}...&#39;, flush=True)
+
+    if max_items is not None and max_items &lt; totalElements:
+        print(f&#39;...but limiting to {max_items} {data_type}...&#39;, flush=True)
+        totalElements = max_items
+
+    while n_retrieved &lt; totalElements:
+        # loop over 5000 in each request (20 pages of 250 each)
+        if verbose: print(f&#39;\nEnter outer loop ({n_retrieved} {data_type} collected)...&#39;, flush=True)
+        page = 1
+        data = []
+
+        while (n_retrieved &lt; totalElements) and (page == 1 or (not r_items[&#39;meta&#39;][&#39;lastPage&#39;])):
+            ## note: this will NOT lead to an off-by-one error because at the start of the loop
+            # r_items is from the *previous* request. If the *previous* request was the last page
+            # then we exit the loop (unless we&#39;re on the first page, in which case get the data then exit)
+            retries = 5
+            while retries &gt; 0:
+                try:
+                    r_items = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}&#39;,
+                                                    params={**params,
+                                                            &#39;filter[lastModifiedDate][ge]&#39;: prev_query_max_date,
+                                                            &#39;page[number]&#39;: str(page),
+                                                            &#39;sort&#39;: f&#39;lastModifiedDate&#39;},
+                                                    wait_for_rate_limits=True)
+                    break
+                except:
+                    retries -= 1
+
+            n_retrieved += len(r_items[&#39;data&#39;])
+            data.extend(r_items[&#39;data&#39;])  # add all items from this request
+            page += 1
+
+            ## There may be duplicates due to pagination, so the commented out code here doesn&#39;t apply,
+            ## but I&#39;m leaving it in so I know not to &#34;fix&#34; this issue later on.
+            #if n_retrieved &gt; totalElements:
+            #    data = data[:-(n_retrieved - totalElements)]  # remove the extras
+            #    assert len(data) == totalElements
+            #    n_retrieved = totalElements
+
+            if verbose: print(f&#39;    {n_retrieved} {data_type} retrieved&#39;, flush=True)
+
+        # get our query&#39;s final record&#39;s lastModifiedDate, and convert to eastern timezone for filtering via URL
+        prev_query_max_date = r_items[&#39;data&#39;][-1][&#39;attributes&#39;][&#39;lastModifiedDate&#39;].replace(&#39;Z&#39;, &#39;+00:00&#39;)
+        prev_query_max_date = datetime.fromisoformat(prev_query_max_date).astimezone(EASTERN_TIME).strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+
+        data = self._get_processed_data(data, id_col)
+        self._output_data(data,
+                          table_name=(data_type + &#34;_header&#34;),
+                          conn=conn,
+                          cur=cur,
+                          csv_filename=csv_filename)
+
+    # Note: the count in n_retrieved may not reflect what&#39;s in the database because there may be
+    # duplicates downloaded along the way due to the pagination mechanism on Regulations.gov&#39;s API.
+    # The sqlite database uses a unique constraint to avoid duplicates, so the final count printed
+    # below may not match what is shown in the database. For CSVs, the count here should match
+    # the number of rows in the output.
+
+    self._close_database_connection(conn)
+    the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+    print(f&#39;{the_time}: Finished: {n_retrieved} {data_type} collected&#39;, flush=True)</code></pre>
+</details>
+</dd>
+<dt id="comment_downloader.CommentsDownloader.get_ids_from_csv"><code class="name flex">
+<span>def <span class="ident">get_ids_from_csv</span></span>(<span>self, csv_filename, data_type, unique=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get IDs for dockets, documents, or comments in a given CSV. Assumes that the header row
+exists in the file and that the ID column is named one of docketId, documentId, or commentId.</p>
+<p>Note: the CSV could be very large, so we don't load the whole thing into memory, but instead
+loop over it one row at a time.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>csv_filename</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name (optionally with path) of the CSV file with the data</dd>
+<dt><strong><code>data_type</code></strong> :&ensp;<code>str</code></dt>
+<dd>One of "dockets", "documents", or "comments".</dd>
+<dt><strong><code>unique</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether to remove duplicates, making the list of IDs unique.
+Defaults to False so that the IDs are returned in the same order and number as the
+input file.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code> of <code>str</code></dt>
+<dd>IDs for the given data_type from the specified csv_filename</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_ids_from_csv(self, csv_filename, data_type, unique=False):
+    &#34;&#34;&#34;Get IDs for dockets, documents, or comments in a given CSV. Assumes that the header row
+    exists in the file and that the ID column is named one of docketId, documentId, or commentId.
+
+    Note: the CSV could be very large, so we don&#39;t load the whole thing into memory, but instead
+    loop over it one row at a time.
+
+    Args:
+        csv_filename (str): Name (optionally with path) of the CSV file with the data
+        data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+        unique (bool, optional): Whether to remove duplicates, making the list of IDs unique.
+            Defaults to False so that the IDs are returned in the same order and number as the
+            input file.
+
+    Returns:
+        list of str: IDs for the given data_type from the specified csv_filename
+    &#34;&#34;&#34;
+    # make sure the data_type is NOT plural before adding Id
+    id_column = (data_type[:-1] if data_type[-1:] == &#34;s&#34; else data_type) + &#34;Id&#34;
+    id_column_index = None
+    ids = []
+
+    with open(csv_filename, &#39;r&#39;, encoding=&#39;utf8&#39;) as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if id_column_index is None:
+                try:
+                    id_column_index = row.index(id_column)
+                except ValueError:
+                    raise ValueError(f&#34;Missing id column {id_column} in {csv_filename}&#34;)
+            else:
+                ids.append(row[id_column_index])
+
+    if unique:
+        ids = list(set(ids))
+
+    return ids</code></pre>
+</details>
+</dd>
+<dt id="comment_downloader.CommentsDownloader.get_items_count"><code class="name flex">
+<span>def <span class="ident">get_items_count</span></span>(<span>self, data_type, params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets the number of items returned by a request in the totalElements attribute.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>data_type</code></strong> :&ensp;<code>str</code></dt>
+<dd>One of "dockets", "documents", or "comments".</dd>
+<dt><strong><code>params</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Parameters to specify to the endpoint request for the query. See details
+on available parameters at <a href="https://open.gsa.gov/api/regulationsgov/.">https://open.gsa.gov/api/regulationsgov/.</a></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>Number of items returned by request</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_items_count(self, data_type, params):
+    &#34;&#34;&#34;Gets the number of items returned by a request in the totalElements attribute.
+
+    Args:
+        data_type (str): One of &#34;dockets&#34;, &#34;documents&#34;, or &#34;comments&#34;.
+        params (dict): Parameters to specify to the endpoint request for the query. See details
+            on available parameters at https://open.gsa.gov/api/regulationsgov/.
+
+    Returns:
+        int: Number of items returned by request
+    &#34;&#34;&#34;
+    # make sure the data_type is plural
+    data_type = data_type if data_type[-1:] == &#34;s&#34; else data_type + &#34;s&#34;
+
+    r_items = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}&#39;, params=params)
+    totalElements = r_items[&#39;meta&#39;][&#39;totalElements&#39;]
+    return totalElements</code></pre>
+</details>
+</dd>
+<dt id="comment_downloader.CommentsDownloader.get_request_json"><code class="name flex">
+<span>def <span class="ident">get_request_json</span></span>(<span>self, endpoint, params=None, print_remaining_requests=False, wait_for_rate_limits=False, skip_duplicates=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Used to return the JSON associated with a request to the API</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>endpoint</code></strong> :&ensp;<code>str</code></dt>
+<dd>URL of the API to access (e.g., <a href="https://api.regulations.gov/v4/documents">https://api.regulations.gov/v4/documents</a>)</dd>
+<dt><strong><code>params</code></strong> :&ensp;<code>dict</code>, optional</dt>
+<dd>Parameters to specify to the endpoint request. Defaults to None, in
+which case no parameters are specified and it is assumed we are accessing the "Details" endpoint.
+If params is not None, we also append the "page[size]" parameter so that we always get
+the maximum page size of 250 elements per page.</dd>
+<dt><strong><code>print_remaining_requests</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Whether to print out the number of remaining
+requests this hour, based on the response headers. Defaults to False.</dd>
+<dt><strong><code>wait_for_rate_limits</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Determines whether to wait to re-try if we run out of
+requests in a given hour. Defaults to False.</dd>
+<dt><strong><code>skip_duplicates</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>If a request returns multiple items when only 1 was expected,
+should we skip that request? Defaults to False.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>JSON-ified request response</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_request_json(self, endpoint, params=None, print_remaining_requests=False,
+                     wait_for_rate_limits=False, skip_duplicates=False):
+    &#34;&#34;&#34;Used to return the JSON associated with a request to the API
+
+    Args:
+        endpoint (str): URL of the API to access (e.g., https://api.regulations.gov/v4/documents)
+        params (dict, optional): Parameters to specify to the endpoint request. Defaults to None, in
+            which case no parameters are specified and it is assumed we are accessing the &#34;Details&#34; endpoint.
+            If params is not None, we also append the &#34;page[size]&#34; parameter so that we always get
+            the maximum page size of 250 elements per page.
+        print_remaining_requests (bool, optional): Whether to print out the number of remaining
+            requests this hour, based on the response headers. Defaults to False.
+        wait_for_rate_limits (bool, optional): Determines whether to wait to re-try if we run out of
+            requests in a given hour. Defaults to False.
+        skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
+            should we skip that request? Defaults to False.
+
+    Returns:
+        dict: JSON-ified request response
+    &#34;&#34;&#34;
+
+    # Our API key has a rate limit of 1,000 requests/hour. If we hit that limit, we can
+    # retry every WAIT_MINUTES minutes (more frequently than once an hour, in case our request limit
+    # is updated sooner). We will sleep for POLL_SECONDS seconds at a time to see if we&#39;ve been
+    # interrupted. Otherwise we&#39;d have to wait a while before getting interrupted. We could do this
+    # with threads, but that gets more complicated than it needs to be.
+    STATUS_CODE_OVER_RATE_LIMIT = 429
+    WAIT_MINUTES = 20  # time between attempts to get a response
+    POLL_SECONDS = 10  # run time.sleep() for this long, so we can check if we&#39;ve been interrupted
+
+    # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
+    # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
+    session = requests.Session()
+    session.mount(&#39;https&#39;, HTTPAdapter(max_retries=8))
+
+    def poll_for_response(api_key, else_func):
+        if params is not None:  # querying the search endpoint (e.g., /documents)
+            r = session.get(endpoint,
+                            headers={&#39;X-Api-Key&#39;: api_key},
+                            params={**params,
+                                    &#39;page[size]&#39;: 250}, # always get max page size
+                            verify=False)
+        else:  # querying the &#34;detail&#34; endpoint (e.g., /documents/{documentId})
+            r = session.get(endpoint, headers={&#39;X-Api-Key&#39;: api_key}, verify=False)
+
+        if r.status_code == 200:
+            # SUCCESS! Return the JSON of the request
+            num_requests_left = int(r.headers[&#39;X-RateLimit-Remaining&#39;])
+            if print_remaining_requests or \
+                (num_requests_left &lt; 10) or \
+                (num_requests_left &lt;= 100 and num_requests_left % 10 == 0) or \
+                (num_requests_left % 100 == 0 and num_requests_left &lt; 1000):
+                print(f&#34;(Requests left: {r.headers[&#39;X-RateLimit-Remaining&#39;]})&#34;)
+
+            return [True, r.json()]
+        else:
+            if r.status_code == STATUS_CODE_OVER_RATE_LIMIT and wait_for_rate_limits:
+                else_func()
+            elif self._is_duplicated_on_server(r.json()) and skip_duplicates:
+                print(&#34;****Duplicate entries on server. Skipping.&#34;)
+                print(r.json()[&#39;errors&#39;][0][&#39;detail&#39;])
+            else:  # some other kind of error
+                print([r, r.status_code])
+                print(r.json())
+                r.raise_for_status()
+
+        return [False, r.json()]
+
+    def wait_for_requests():
+        the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
+        print(f&#39;{the_time}: Hit rate limits. Waiting {WAIT_MINUTES} minutes to try again&#39;, flush=True)
+        # We ran out of requests. Wait for WAIT_MINUTES minutes, but poll every POLL_SECONDS seconds for interruptions
+        for i in range(int(WAIT_MINUTES * 60 / POLL_SECONDS)):
+            time.sleep(POLL_SECONDS)
+
+    for _ in range(1, int(60 / WAIT_MINUTES) + 3):
+        success, r_json = poll_for_response(self.api_key, wait_for_requests)
+
+        if success or (self._is_duplicated_on_server(r_json) and skip_duplicates):
+            return r_json
+
+    print(r_json)
+    raise RuntimeError(f&#34;Unrecoverable error; {r_json}&#34;)</code></pre>
+</details>
+</dd>
+<dt id="comment_downloader.CommentsDownloader.get_requests_remaining"><code class="name flex">
+<span>def <span class="ident">get_requests_remaining</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the number of requests remaining. An API key usually gives you 1000 requests/hour.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>number of requests remaining</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_requests_remaining(self):
+    &#34;&#34;&#34;Get the number of requests remaining. An API key usually gives you 1000 requests/hour.
+
+    Returns:
+        int: number of requests remaining
+    &#34;&#34;&#34;
+    # this is a document that we know exists; it was chosen arbitrarily
+    r = requests.get(&#39;https://api.regulations.gov/v4/documents/FDA-2009-N-0501-0012&#39;,
+                    headers={&#39;X-Api-Key&#39;: self.api_key},
+                    verify=False)
+    if r.status_code != 200:
+        print(r.json())
+        r.raise_for_status()
+
+    return int(r.headers[&#39;X-RateLimit-Remaining&#39;])</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="comment_downloader.CommentsDownloader" href="#comment_downloader.CommentsDownloader">CommentsDownloader</a></code></h4>
+<ul class="">
+<li><code><a title="comment_downloader.CommentsDownloader.gather_comments_by_docket" href="#comment_downloader.CommentsDownloader.gather_comments_by_docket">gather_comments_by_docket</a></code></li>
+<li><code><a title="comment_downloader.CommentsDownloader.gather_comments_by_document" href="#comment_downloader.CommentsDownloader.gather_comments_by_document">gather_comments_by_document</a></code></li>
+<li><code><a title="comment_downloader.CommentsDownloader.gather_details" href="#comment_downloader.CommentsDownloader.gather_details">gather_details</a></code></li>
+<li><code><a title="comment_downloader.CommentsDownloader.gather_headers" href="#comment_downloader.CommentsDownloader.gather_headers">gather_headers</a></code></li>
+<li><code><a title="comment_downloader.CommentsDownloader.get_ids_from_csv" href="#comment_downloader.CommentsDownloader.get_ids_from_csv">get_ids_from_csv</a></code></li>
+<li><code><a title="comment_downloader.CommentsDownloader.get_items_count" href="#comment_downloader.CommentsDownloader.get_items_count">get_items_count</a></code></li>
+<li><code><a title="comment_downloader.CommentsDownloader.get_request_json" href="#comment_downloader.CommentsDownloader.get_request_json">get_request_json</a></code></li>
+<li><code><a title="comment_downloader.CommentsDownloader.get_requests_remaining" href="#comment_downloader.CommentsDownloader.get_requests_remaining">get_requests_remaining</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
