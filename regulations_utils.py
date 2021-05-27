@@ -116,7 +116,7 @@ class CommentsDownloader:
                     (num_requests_left < 10) or \
                     (num_requests_left <= 100 and num_requests_left % 10 == 0) or \
                     (num_requests_left % 100 == 0 and num_requests_left < 1000):
-                    print(f"Requests left: {r.headers['X-RateLimit-Remaining']}")
+                    print(f"(Requests left: {r.headers['X-RateLimit-Remaining']})")
 
                 return [True, r.json()]
             else:
@@ -168,7 +168,7 @@ class CommentsDownloader:
         return totalElements
 
 
-    def gather_headers(self, data_type, params, db_filename=None, csv_filename=None, max_items=None):
+    def gather_headers(self, data_type, params, db_filename=None, csv_filename=None, max_items=None, verbose=True):
         """This function is meant to get the header data for the item returned by the query defined by
         params. The API returns these data in "pages" of up to 250 items at a time, and up to 20 pages are
         available per query. If the query would return more than 250*20 = 5000 items, the recommended way
@@ -194,11 +194,12 @@ class CommentsDownloader:
                 it will be created automatically. If it does exist, we will add to it. Can be None, in which
                 case a CSV file should be specified.
             csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
-                case a connection should be specified.
+                case a database file should be specified.
             max_items (int, optional): If this is specified, limits to this many items. Note that this
                 is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
                 end up with duplicate records being pulled, so we will hit this limit sooner than we should,
                 but we shouldn't be off by very much. Defaults to None.
+            verbose (bool, optional): Whether to print more detailed info. Defaults to True.
         """
 
         if db_filename is None and csv_filename is None:
@@ -230,7 +231,7 @@ class CommentsDownloader:
 
         while n_retrieved < totalElements:
             # loop over 5000 in each request (20 pages of 250 each)
-            print(f'\nEnter outer loop ({n_retrieved} {data_type} collected)...', flush=True)
+            if verbose: print(f'\nEnter outer loop ({n_retrieved} {data_type} collected)...', flush=True)
             page = 1
             data = []
 
@@ -262,7 +263,7 @@ class CommentsDownloader:
                 #    assert len(data) == totalElements
                 #    n_retrieved = totalElements
 
-                print(f'    {n_retrieved} {data_type} retrieved', flush=True)
+                if verbose: print(f'    {n_retrieved} {data_type} retrieved', flush=True)
 
             # get our query's final record's lastModifiedDate, and convert to eastern timezone for filtering via URL
             prev_query_max_date = r_items['data'][-1]['attributes']['lastModifiedDate'].replace('Z', '+00:00')
@@ -283,7 +284,7 @@ class CommentsDownloader:
 
         self._close_database_connection(conn)
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
+        print(f'{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
 
 
     def gather_details(self, data_type, ids, db_filename=None, csv_filename=None, insert_every_n_rows=500, skip_duplicates=True):
@@ -301,7 +302,7 @@ class CommentsDownloader:
                 it will be created automatically. If it does exist, we will add to it. Can be None, in which
                 case a CSV should be specified.
             csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
-                case a connection should be specified.
+                case a database file should be specified.
             insert_every_n_rows (int): How often to write to the database or CSV. Defaults to every 500 rows.
             skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
                 should we skip that request? Defaults to True.
@@ -359,7 +360,141 @@ class CommentsDownloader:
 
         self._close_database_connection(conn)
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
+        print(f'{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
+
+
+    def gather_comments_by_document(self, document_id, db_filename=None, csv_filename=None):
+        """User-friendly function for downloading all of the comments on a single document, using
+        the documentId visible on the Regulations.gov website. This abstracts away all the details around
+        filtering and paginating through the API and downloads the data into either a CSV or sqlite database
+        or both.
+
+        Note that if a database is used (i.e., db_filename is not None), the "header" information for comments 
+        will be saved, in addition to the "details" of each comment. In other words, the table comments_header 
+        will be populated in addition to comments_detail.
+
+        Args:
+            document_id (str): document ID, as visible in either the URL or on the website. Note, this is
+                distinct from the docket ID and from the API's internal objectId.
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+        """
+        if db_filename is None and csv_filename is None:
+            raise ValueError("Need to specify either a database filename or CSV filename or both")
+
+        def get_object_id(document_id):
+            # first, get the objectId for the document, which we use to filter to its comments
+            the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print(f"{the_time}: Getting objectId for document {document_id}...", end="", flush=True)
+
+            r_json = self.get_request_json(f'https://api.regulations.gov/v4/documents/{document_id}')
+            object_id = r_json['data']['attributes']['objectId']
+
+            print(f"Got it ({object_id})", flush=True)
+            return object_id
+        
+        def get_comment_ids(object_id):
+            # We need to create a temporary CSV so we can read back in the commentIds. This is because the
+            # comment headers do not include the associated documentId or objectId, so if we append the 
+            # comment headers to an existing file or database, we won't be able to tell which comments
+            # correspond to this document.
+            the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print(f"{the_time}: Getting comment headers associated with document {document_id}...\n", flush=True)
+
+            temp_filename = f"comment_headers_{datetime.now().strftime('%H%M%S')}.csv"
+            self.gather_headers(data_type="comments", 
+                                params={'filter[commentOnId]': object_id}, 
+                                db_filename=db_filename,
+                                csv_filename=temp_filename,
+                                verbose=False)
+            
+            # if file didn't get created, we found 0 comments
+            if os.path.isfile(temp_filename):
+                comment_ids = self.get_ids_from_csv(temp_filename, "comments", unique=True)
+
+                try:
+                    os.remove(temp_filename)
+                except:
+                    pass
+            else:
+                return []
+
+            print("\nDone getting comment IDs----------------\n", flush=True)
+            return comment_ids
+
+        object_id = get_object_id(document_id)
+        comment_ids = get_comment_ids(object_id)
+
+        if len(comment_ids) > 0:
+            the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print(f"{the_time}: Getting comments associated with document {document_id}...\n", flush=True)
+
+            self.gather_details("comments", comment_ids, db_filename=db_filename, csv_filename=csv_filename)
+
+            # Get the total number of comments retrieved. This may differ from what we expect if there 
+            # are issues during the download process or the database prevents importing duplicates from pagination.
+            n_comments = self._get_comment_count(csv_filename, db_filename, "commentOnDocumentId", document_id)
+        else:
+            n_comments = 0
+
+        print(f"\nDone getting all {n_comments} comments for document {document_id}----------------\n", flush=True)
+
+
+    def gather_comments_by_docket(self, docket_id, db_filename=None, csv_filename=None):
+        """User-friendly function for downloading all of the comments in a docket, using the docketId visible 
+        on the Regulations.gov website. This abstracts away all the details around finding all the documents
+        in a given docket and getting their individual comments, including filtering and paginating through 
+        the API. It downloads the comments into either a CSV or sqlite database or both.
+
+        Note that if a database is used (i.e., db_filename is not None), the "header" information for documents
+        and comments will be saved, in addition to the "details" of each comment. In other words, the table 
+        comments_header will be populated in addition to comments_detail, and the table documents_header will
+        be populated as well.
+
+        Args:
+            document_id (str): document ID, as visible in either the URL or on the website. Note, this is
+                distinct from the docket ID and from the API's internal objectId.
+            db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
+                case a CSV should be specified.
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
+                case a database file should be specified.
+        """
+        if db_filename is None and csv_filename is None:
+            raise ValueError("Need to specify either a database filename or CSV filename or both")
+
+        def get_document_ids(docket_id): 
+            the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print(f"{the_time}: Getting documents associated with docket...\n", flush=True)
+       
+            temp_filename = f"document_headers_{datetime.now().strftime('%H%M%S')}.csv"
+            self.gather_headers(data_type="documents", 
+                                params={'filter[docketId]': docket_id}, 
+                                db_filename=db_filename,
+                                csv_filename=temp_filename,
+                                verbose=False)
+            document_ids = self.get_ids_from_csv(temp_filename, "documents", unique=True)
+            try:
+                os.remove(temp_filename)
+            except:
+                pass
+
+            print(f"\nDone----------------\n", flush=True)
+            return document_ids
+
+        document_ids = get_document_ids(docket_id)
+
+        for document_id in document_ids:
+            the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            print(f"******************************\n{the_time}: Getting comments for document {document_id}...\n", flush=True)
+            self.gather_comments_by_document(document_id, db_filename, csv_filename)
+
+        # get the total number of comments retrieved
+        n_comments = self._get_comment_count(csv_filename, db_filename, "docketId", docket_id)
+        print(f"DONE retrieving all {n_comments} comments from {len(document_ids)} document(s) for docket {docket_id}----------------\n", flush=True)
 
 
     def get_ids_from_csv(self, csv_filename, data_type, unique=False):
@@ -656,6 +791,37 @@ class CommentsDownloader:
                 and (response_json['errors'][0]['detail'][:21] == "Incorrect result size")
 
 
+    def _get_comment_count(self, csv_filename=None, db_filename=None, filter_column=None, filter_value=None):
+        """Simple helper function used to get the number of comments retrieved, as stored in either
+        a CSV file or a sqlite database.
+
+        Args:
+            csv_filename (str): File name (optionally with path) where comments are stored. Defaults to 
+                None, in which case a db_filename should be specified.
+            db_filename (str): File name (optionally with path) where database, containing comments, is located.
+                Defaults to None, in which case a csv_filename should be specified.
+            filter_column (str): Identifies the column used to filter the database to get the count. Defaults to 
+                None for the case when we are using a CSV.
+            filter_value (str): The value used in filter_column to filter the database to get the count. Defaults to 
+                None for the case when we are using a CSV.
+
+        Returns:
+            int: Number of comments stored in either comments_detail (contained in the database db_filename) or the CSV
+        """
+        if csv_filename is None and (db_filename is None or filter_column is None or filter_value is None):
+            raise ValueError("Must specify either a csv_filename or a db_filename and its filter_column and filter_value")
+
+        if db_filename is not None:
+            conn = sqlite3.connect(db_filename)
+            cur = conn.cursor()
+            n_comments = cur.execute(f"select count(*) from comments_detail where {filter_column}=?", (filter_value,)).fetchone()[0]
+            conn.close()
+        else:
+            n_comments = len(self.get_ids_from_csv(csv_filename, "comments"))
+        
+        return n_comments
+
+
     def _get_processed_data(self, data, id_col):
         """Used to take the data contained in a response (e.g., the data for a bunch of comments)
         and remove unnecessary columns (i.e., those not specified in `cols`). Also adds the ID
@@ -752,7 +918,7 @@ class CommentsDownloader:
             cur (sqlite3.Cursor): Open cursor into the database. Can be None, in which case a CSV should be specified.
                 Can be None if using a CSV.
             csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
-                case a connection and cursor should be specified.
+                case a database file should be specified.
         """
         if conn is None and csv_filename is None:
             raise ValueError("Need to specify either conn or csv_filename")
