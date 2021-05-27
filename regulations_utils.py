@@ -1,3 +1,4 @@
+import sys
 import os
 import requests
 from requests.adapters import HTTPAdapter
@@ -25,16 +26,16 @@ class CommentsDownloader:
         downloader = Comments_Downloader("DEMO_KEY")
         conn = downloader.setup_database("mycomments.db")
 
-        downloader.gather_headers(data_type="comments", 
+        downloader.gather_headers(data_type="comments",
                                   params={"filter[agencyId]": "EPA",
                                           "filter[postedDate][ge]": "2021-01-01",
                                           "filter[postedDate][le]": "2021-04-30"},
                                   conn=conn)
-                                  # alternatively, specify a CSV: 
+                                  # alternatively, specify a CSV:
                                   # csv_filename="comments.csv"
 
         comment_ids = pd.read_sql_query('select commentId from comments_header order by postedDate', conn)['commentId'].values
-        
+
         downloader.gather_details(data_type="comments, ids=comment_ids, conn=conn)
 
     Note: be careful when filtering by lastModifiedDate. gather_headers and gather_details both use lastModifiedDate
@@ -63,7 +64,7 @@ class CommentsDownloader:
         return int(r.headers['X-RateLimit-Remaining'])
 
 
-    def get_request_json(self, endpoint, params=None, print_remaining_requests=False, 
+    def get_request_json(self, endpoint, params=None, print_remaining_requests=False,
                          wait_for_rate_limits=False, skip_duplicates=False):
         """Used to return the JSON associated with a request to the API
 
@@ -153,7 +154,7 @@ class CommentsDownloader:
 
         Args:
             data_type (str): One of "dockets", "documents", or "comments".
-            params (dict): Parameters to specify to the endpoint request for the query. See details 
+            params (dict): Parameters to specify to the endpoint request for the query. See details
                 on available parameters at https://open.gsa.gov/api/regulationsgov/.
 
         Returns:
@@ -168,31 +169,31 @@ class CommentsDownloader:
 
 
     def gather_headers(self, data_type, params, db_filename=None, csv_filename=None, max_items=None):
-        """This function is meant to get the header data for the item returned by the query defined by 
+        """This function is meant to get the header data for the item returned by the query defined by
         params. The API returns these data in "pages" of up to 250 items at a time, and up to 20 pages are
         available per query. If the query would return more than 250*20 = 5000 items, the recommended way
         to retrieve the full dataset is to sort the data by lastModifiedDate and save the largest value
-        from the last page of a given query, then use that to filter the next batch to all those with a 
+        from the last page of a given query, then use that to filter the next batch to all those with a
         lastModifiedDate greater than or equal to the saved date. Unfortunately, this also means it's
         you'll retrieve some of the same headers multiple times, but this is unavoidable because there is no
         uniqueness constraint on lastModifiedDate.
 
         The data retrieved are output either to a database (db_filename), or a CSV (csv_filename),
-        or both. These data do not include more specific detail that would be retrieved in a "Details" query, 
-        which returns that data (e.g., plain-text of a comment). That kind of data can be gathered 
-        using the gather_details function below. 
-        
+        or both. These data do not include more specific detail that would be retrieved in a "Details" query,
+        which returns that data (e.g., plain-text of a comment). That kind of data can be gathered
+        using the gather_details function below.
+
         An example call is:
             gather_headers(data_type='comments', db_filename="comments_2020", params={'filter[postedDate][ge]': '2020-01-01'})
 
         Args:
             data_type (str): One of "dockets", "documents", or "comments".
-            params (dict): Parameters to specify to the endpoint request for the query. See details 
+            params (dict): Parameters to specify to the endpoint request for the query. See details
                 on available parameters at https://open.gsa.gov/api/regulationsgov/.
             db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
-                it will be created automatically. If it does exist, we will add to it. Can be None, in which 
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
                 case a CSV file should be specified.
-            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
                 case a connection should be specified.
             max_items (int, optional): If this is specified, limits to this many items. Note that this
                 is an *approximate* limit. Because of how we have to query with pagination, we will inevitably
@@ -209,7 +210,7 @@ class CommentsDownloader:
         n_retrieved = 0
         prev_query_max_date = '1900-01-01 00:00:00'  # placeholder value for first round of 5000
         EASTERN_TIME = tz.gettz('America/New_York')
-        
+
         # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
         id_col = data_type[:len(data_type)-1] + "Id"
 
@@ -268,15 +269,15 @@ class CommentsDownloader:
             prev_query_max_date = datetime.fromisoformat(prev_query_max_date).astimezone(EASTERN_TIME).strftime('%Y-%m-%d %H:%M:%S')
 
             data = self._get_processed_data(data, id_col)
-            self._output_data(data, 
-                              table_name=(data_type + "_header"), 
-                              conn=conn, 
-                              cur=cur, 
+            self._output_data(data,
+                              table_name=(data_type + "_header"),
+                              conn=conn,
+                              cur=cur,
                               csv_filename=csv_filename)
 
-        # Note: the count in n_retrieved may not reflect what's in the database because there may be 
+        # Note: the count in n_retrieved may not reflect what's in the database because there may be
         # duplicates downloaded along the way due to the pagination mechanism on Regulations.gov's API.
-        # The sqlite database uses a unique constraint to avoid duplicates, so the final count printed 
+        # The sqlite database uses a unique constraint to avoid duplicates, so the final count printed
         # below may not match what is shown in the database. For CSVs, the count here should match
         # the number of rows in the output.
 
@@ -286,9 +287,9 @@ class CommentsDownloader:
 
 
     def gather_details(self, data_type, ids, db_filename=None, csv_filename=None, insert_every_n_rows=500, skip_duplicates=True):
-        """This function is meant to get the Details data for each item in ids, one at a time. The data 
-        for each item is output either to a database (specified by db_filename) or a CSV (specified by csv_filename). 
-        
+        """This function is meant to get the Details data for each item in ids, one at a time. The data
+        for each item is output either to a database (specified by db_filename) or a CSV (specified by csv_filename).
+
         An example call is:
             gather_details(data_type='documents', cols=documents_cols, id_col='documentId', ids=document_ids, csv_filename="documents_2020.csv")
 
@@ -297,9 +298,9 @@ class CommentsDownloader:
             ids (list of str): List of IDs for items for which you are querying details. These IDs are
                 appended to the URL directly, e.g., https://api.regulations.gov/v4/comments/FWS-R8-ES-2008-0006-0003
             db_filename (str): Name (optionally with path) of the sqlite database to write to. If it doesn't yet exist,
-                it will be created automatically. If it does exist, we will add to it. Can be None, in which 
+                it will be created automatically. If it does exist, we will add to it. Can be None, in which
                 case a CSV should be specified.
-            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
                 case a connection should be specified.
             insert_every_n_rows (int): How often to write to the database or CSV. Defaults to every 500 rows.
             skip_duplicates (bool, optional): If a request returns multiple items when only 1 was expected,
@@ -331,7 +332,7 @@ class CommentsDownloader:
             r_item = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}/{item_id}',
                                            wait_for_rate_limits=True,
                                            skip_duplicates=skip_duplicates)
-            
+
             if(skip_duplicates and self._is_duplicated_on_server(r_item)):
                 print(f"Skipping for {item_id}\n")
                 continue
@@ -341,24 +342,63 @@ class CommentsDownloader:
 
             if n_retrieved > 0 and n_retrieved % insert_every_n_rows == 0:
                 data = self._get_processed_data(data, id_col)
-                self._output_data(data, 
+                self._output_data(data,
                                   table_name=(data_type + "_detail"),
-                                  conn=conn, 
-                                  cur=cur, 
+                                  conn=conn,
+                                  cur=cur,
                                   csv_filename=csv_filename)
                 data = []  # reset for next batch
 
         if len(data) > 0:  # insert any remaining in final batch
             data = self._get_processed_data(data, id_col)
-            self._output_data(data, 
+            self._output_data(data,
                               table_name=(data_type + "_detail"),
-                              conn=conn, 
-                              cur=cur, 
+                              conn=conn,
+                              cur=cur,
                               csv_filename=csv_filename)
 
         self._close_database_connection(conn)
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f'\n{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
+
+
+    def get_ids_from_csv(self, csv_filename, data_type, unique=False):
+        """Get IDs for dockets, documents, or comments in a given CSV. Assumes that the header row
+        exists in the file and that the ID column is named one of docketId, documentId, or commentId.
+
+        Note: the CSV could be very large, so we don't load the whole thing into memory, but instead
+        loop over it one row at a time.
+
+        Args:
+            csv_filename (str): Name (optionally with path) of the CSV file with the data
+            data_type (str): One of "dockets", "documents", or "comments".
+            unique (bool, optional): Whether to remove duplicates, making the list of IDs unique.
+                Defaults to False so that the IDs are returned in the same order and number as the
+                input file.
+
+        Returns:
+            list of str: IDs for the given data_type from the specified csv_filename
+        """
+        # make sure the data_type is NOT plural before adding Id
+        id_column = (data_type[:-1] if data_type[-1:] == "s" else data_type) + "Id"
+        id_column_index = None
+        ids = []
+
+        with open(csv_filename, 'r', encoding='utf8') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                if id_column_index is None:
+                    try:
+                        id_column_index = row.index(id_column)
+                    except ValueError:
+                        raise ValueError(f"Missing id column {id_column} in {csv_filename}")
+                else:
+                    ids.append(row[id_column_index])
+
+        if unique:
+            ids = list(set(ids))
+
+        return ids
 
 
     def _get_database_connection(self, filename, drop_if_exists=False):
@@ -369,7 +409,7 @@ class CommentsDownloader:
 
         Args:
             filename (str): Filename of database, optionally including path.
-            drop_if_exists (bool, optional): Whether to drop the necessary tables if they exist. 
+            drop_if_exists (bool, optional): Whether to drop the necessary tables if they exist.
                 Defaults to False, in which case if the tables exist, they will be left as-is and
                 new data will be appended.
 
@@ -601,7 +641,7 @@ class CommentsDownloader:
 
     def _is_duplicated_on_server(self, response_json):
         """Used to determine whether a given response indicates a duplicate on the server. This is
-        because there is a bug in the server: there are some commentIds, like NRCS-2009-0004-0003, 
+        because there is a bug in the server: there are some commentIds, like NRCS-2009-0004-0003,
         which correspond to multiple actual comments! This function determines whether the
         returned JSON has an error indicating this issue
 
@@ -649,7 +689,7 @@ class CommentsDownloader:
 
         Args:
             data (list of dict): Data to be inserted into database
-            table_name (str): specifies table to insert into (one of: "dockets_header", "dockets_detail", 
+            table_name (str): specifies table to insert into (one of: "dockets_header", "dockets_detail",
                 "documents_header", "documents_detail", "comments_header", or "comments_detail")
             conn (sqlite3.Connection): Open connection to database
             cur (sqlite3.Cursor): Open cursor into the database
@@ -686,7 +726,7 @@ class CommentsDownloader:
         print(f"{the_time}: Writing {len(data)} records to {csv_filename}...", end="", flush=True)
 
         df = pd.DataFrame(data)
-        
+
         # remove line breaks in each field so that the rows of the CSV correspond to one record
         df.replace(r"\n", " ", regex=True, inplace=True)
 
@@ -705,13 +745,13 @@ class CommentsDownloader:
 
         Args:
             data (list of dict): Data to write out
-            table_name (str): For sqlite database, specifies table to insert into (one of: "dockets_header", "dockets_detail", 
+            table_name (str): For sqlite database, specifies table to insert into (one of: "dockets_header", "dockets_detail",
                 "documents_header", "documents_detail", "comments_header", or "comments_detail"). Can be None if using CSV.
             conn (sqlite3.Connection): Open connection to database. Can be None, in which case a CSV should be specified.
                 Can be None if using a CSV.
             cur (sqlite3.Cursor): Open cursor into the database. Can be None, in which case a CSV should be specified.
                 Can be None if using a CSV.
-            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which 
+            csv_filename (str): Name (optionally with path) of the CSV file to write to. Can be None, in which
                 case a connection and cursor should be specified.
         """
         if conn is None and csv_filename is None:
@@ -719,6 +759,20 @@ class CommentsDownloader:
 
         if conn is not None:
             self._insert_data(data, table_name, conn, cur)
-        
+
         if csv_filename is not None:
             self._write_to_csv(data, csv_filename)
+
+
+    def set_csv_fieldsize(self):
+        """Comments can be very long, so the default field size might be too short. This function should make 
+        it long enough by reducing the max file size by a factor of 2 until we don't get an OverflowError.
+        The usual `csv.field_size_limit(sys.maxsize)` resulted in an OverflowError (Python int too large
+        to convert to C long) on Windows 10.
+        """
+        for exponent in range(32, 10-1, -1):
+            try:
+                csv.field_size_limit(2**exponent)
+                break  # found one that works!
+            except OverflowError:
+                pass
