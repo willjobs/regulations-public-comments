@@ -254,15 +254,17 @@ class CommentsDownloader:
                               cur=cur,
                               csv_filename=csv_filename)
 
+        self._remove_duplicates_from_csv(data_type, csv_filename)
+        self._close_database_connection(conn)
+
         # Note: the count in n_retrieved may not reflect what's in the database because there may be
         # duplicates downloaded along the way due to the pagination mechanism on Regulations.gov's API.
         # The sqlite database uses a unique constraint to avoid duplicates, so the final count printed
         # below may not match what is shown in the database. For CSVs, the count here should match
         # the number of rows in the output.
 
-        self._close_database_connection(conn)
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f'{the_time}: Finished: {n_retrieved} {data_type} collected', flush=True)
+        print(f'{the_time}: Finished: approximately {n_retrieved} {data_type} collected', flush=True)
 
 
     def gather_details(self, data_type, ids, db_filename=None, csv_filename=None, insert_every_n_rows=500, skip_duplicates=True):
@@ -414,7 +416,8 @@ class CommentsDownloader:
 
             # Get the total number of comments retrieved. This may differ from what we expect if there 
             # are issues during the download process or the database prevents importing duplicates from pagination.
-            n_comments = self._get_comment_count(csv_filename, db_filename, "commentOnDocumentId", document_id)
+            n_comments = self._get_item_count(data_type="comments", csv_filename=csv_filename, db_filename=db_filename, 
+                                              filter_column="commentOnDocumentId", filter_value=document_id)
         else:
             n_comments = 0
 
@@ -471,7 +474,8 @@ class CommentsDownloader:
             self.gather_comments_by_document(document_id, db_filename, csv_filename)
 
         # get the total number of comments retrieved
-        n_comments = self._get_comment_count(csv_filename, db_filename, "docketId", docket_id)
+        n_comments = self._get_item_count(data_type="comments", csv_filename=csv_filename, db_filename=db_filename, 
+                                          filter_column="docketId", filter_value=docket_id)
         print(f"DONE retrieving all {n_comments} comments from {len(document_ids)} document(s) for docket {docket_id}----------------\n", flush=True)
 
 
@@ -497,7 +501,7 @@ class CommentsDownloader:
         id_column_index = None
         ids = []
 
-        with open(csv_filename, 'r', encoding='utf8') as f:
+        with open(csv_filename, 'r', encoding='utf8', newline='') as f:
             reader = csv.reader(f)
             for row in reader:
                 if id_column_index is None:
@@ -745,11 +749,10 @@ class CommentsDownloader:
         Args:
             conn (sqlite3.Connection): Try to close the connection. If there are any errors, ignore them.
         """
-        if conn is not None and type(conn) == sqlite3.Connection:
-            try:
-                conn.close()
-            except:
-                pass
+        try:
+            conn.close()
+        except:
+            pass
 
 
     def _is_duplicated_on_server(self, response_json):
@@ -769,35 +772,43 @@ class CommentsDownloader:
                 and (response_json['errors'][0]['detail'][:21] == "Incorrect result size")
 
 
-    def _get_comment_count(self, csv_filename=None, db_filename=None, filter_column=None, filter_value=None):
-        """Simple helper function used to get the number of comments retrieved, as stored in either
+    def _get_item_count(self, data_type, csv_filename=None, db_filename=None, filter_column=None, filter_value=None):
+        """Simple helper function used to get the number of items retrieved, as stored in either
         a CSV file or a sqlite database.
 
         Args:
-            csv_filename (str): File name (optionally with path) where comments are stored. Defaults to 
+            data_type (str): One of "dockets", "documents", or "comments".
+            csv_filename (str): File name (optionally with path) where items are stored. Defaults to 
                 None, in which case a db_filename should be specified.
             db_filename (str): File name (optionally with path) where database, containing comments, is located.
                 Defaults to None, in which case a csv_filename should be specified.
             filter_column (str): Identifies the column used to filter the database to get the count. Defaults to 
-                None for the case when we are using a CSV.
+                None for the case when we are using a CSV or don't want to use a filter.
             filter_value (str): The value used in filter_column to filter the database to get the count. Defaults to 
-                None for the case when we are using a CSV.
+                None for the case when we are using a CSV or don't want to use a filter.
 
         Returns:
-            int: Number of comments stored in either comments_detail (contained in the database db_filename) or the CSV
+            int: Number of items stored in either the detail table (contained in the database db_filename) or the CSV
         """
-        if csv_filename is None and (db_filename is None or filter_column is None or filter_value is None):
-            raise ValueError("Must specify either a csv_filename or a db_filename and its filter_column and filter_value")
+        if csv_filename is None and db_filename is None:
+            raise ValueError("Must specify either a csv_filename or a db_filename")
+
+        # make sure the data_type is plural
+        data_type = data_type if data_type[-1:] == "s" else data_type + "s"
 
         if db_filename is not None:
             conn = sqlite3.connect(db_filename)
             cur = conn.cursor()
-            n_comments = cur.execute(f"select count(*) from comments_detail where {filter_column}=?", (filter_value,)).fetchone()[0]
+            if filter_column is not None and filter_value is not None:
+                n_items = cur.execute(f"select count(*) from {data_type}_detail where {filter_column}=?", (filter_value,)).fetchone()[0]
+            else:
+                n_items = cur.execute(f"select count(*) from {data_type}_detail").fetchone()[0]
+
             conn.close()
         else:
-            n_comments = len(self.get_ids_from_csv(csv_filename, "comments"))
+            n_items = len(self.get_ids_from_csv(csv_filename, data_type, unique=True))
         
-        return n_comments
+        return n_items
 
 
     def _get_processed_data(self, data, id_col):
@@ -872,7 +883,7 @@ class CommentsDownloader:
         df = pd.DataFrame(data)
 
         # remove line breaks in each field so that the rows of the CSV correspond to one record
-        df.replace(r"\n", " ", regex=True, inplace=True)
+        df.replace(r"\r\n|\n", " ", regex=True, inplace=True)
 
         # make the path if necessary
         if len(os.path.dirname(csv_filename)) > 0:
@@ -906,3 +917,57 @@ class CommentsDownloader:
 
         if csv_filename is not None:
             self._write_to_csv(data, csv_filename)
+    
+
+    def _remove_duplicates_from_csv(self, data_type, csv_filename):
+        """Function used to remove duplicates (on docketId, documentId, or commentId, depending on 
+        the data_type) from a CSV, which may be introduced because of the pagination mechanism.
+
+        Args:
+            data_type (str): One of "dockets", "documents", or "comments".
+            csv_filename (str): Name (optionally with path) of the CSV file containing the data. Can be None, in which
+                case a database file should be specified.
+        """
+        if csv_filename is None or not os.path.isfile(csv_filename):
+            return
+
+        the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{the_time}: Removing any duplicates in the CSV...", flush=True)
+
+        # first, create a tempfile to hold the new CSV
+        temp_filename = f"{csv_filename}_temp_{datetime.now().strftime('%H%M%S')}.csv"
+
+        id_column = (data_type[:-1] if data_type[-1:] == "s" else data_type) + "Id"
+        id_column_index = None
+
+        ids = set()
+        duplicates = 0
+
+        # loop over CSV, adding unique rows to our new CSV
+        with open(csv_filename, 'r', encoding='utf8', newline='') as source_file, \
+             open(temp_filename, 'w', encoding='utf8', newline='') as dest_file:
+            reader = csv.reader(source_file)
+            writer = csv.writer(dest_file, quoting=csv.QUOTE_ALL)
+
+            for row in reader:
+                if id_column_index is None:
+                    try:
+                        # get column number of ID column and output header row
+                        id_column_index = row.index(id_column)
+                        writer.writerow(row)
+                    except ValueError:
+                        raise ValueError(f"Missing id column {id_column} in {csv_filename}")
+                else:
+                    new_id = row[id_column_index]
+                    if new_id not in ids:  # otherwise, don't add this row to our output file
+                        ids.add(new_id)
+                        writer.writerow(row)
+                    else:
+                        duplicates += 1  
+
+        # replace old CSV with new one
+        os.remove(csv_filename)
+        os.rename(temp_filename, csv_filename)
+
+        the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"{the_time}: Done. Removed {duplicates} duplicate rows from {csv_filename}.")
