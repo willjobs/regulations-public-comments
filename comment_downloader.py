@@ -19,28 +19,6 @@ class CommentsDownloader:
 
     It can be used in very general ways, by getting the raw JSON from the API, or in a more common way,
     downloading the "headers" and "details" of items in bulk.
-
-    Typically, you will instantiate this object, specifying its API key, then call either `gather_headers` or `gather_details`.
-
-    Example:
-        downloader = Comments_Downloader("DEMO_KEY")
-        conn = downloader.setup_database("mycomments.db")
-
-        downloader.gather_headers(data_type="comments",
-                                  params={"filter[agencyId]": "EPA",
-                                          "filter[postedDate][ge]": "2021-01-01",
-                                          "filter[postedDate][le]": "2021-04-30"},
-                                  conn=conn)
-                                  # alternatively, specify a CSV:
-                                  # csv_filename="comments.csv"
-
-        comment_ids = pd.read_sql_query('select commentId from comments_header order by postedDate', conn)['commentId'].values
-
-        downloader.gather_details(data_type="comments, ids=comment_ids, conn=conn)
-
-    Note: be careful when filtering by lastModifiedDate. gather_headers and gather_details both use lastModifiedDate
-    for pagination, so any filter on that will be overridden. This is an unfortunate consequence of how the Regulations.gov
-    server's pagination works.
     """
 
     def __init__(self, api_key):
