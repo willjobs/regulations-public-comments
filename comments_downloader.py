@@ -75,7 +75,7 @@ class CommentsDownloader:
         # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
         # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
         session = requests.Session()
-        session.mount('https', HTTPAdapter(max_retries=8))
+        session.mount('https', HTTPAdapter(max_retries=4))
 
         def poll_for_response(api_key, else_func):
             if params is not None:  # querying the search endpoint (e.g., /documents)
@@ -227,8 +227,10 @@ class CommentsDownloader:
                                                                 'sort': f'lastModifiedDate'},
                                                         wait_for_rate_limits=True)
                         break
-                    except:
+                    except Exception as e:
                         retries -= 1
+                        if retries <= 0:
+                            raise e
 
                 n_retrieved += len(r_items['data'])
                 data.extend(r_items['data'])  # add all items from this request
@@ -310,9 +312,18 @@ class CommentsDownloader:
         print(f'{the_time}: Gathering details for {len(ids)} {data_type}...', flush=True)
 
         for item_id in ids:
-            r_item = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}/{item_id}',
-                                           wait_for_rate_limits=True,
-                                           skip_duplicates=skip_duplicates)
+            retries = 5
+            while retries > 0:
+                try:
+                    r_item = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}/{item_id}',
+                                                   wait_for_rate_limits=True,
+                                                   skip_duplicates=skip_duplicates)
+                    break
+                except Exception as e:
+                    retries -= 1
+                    if retries <= 0:
+                        print(f"Error encountered for {item_id}")
+                        raise e
 
             if(skip_duplicates and self._is_duplicated_on_server(r_item)):
                 print(f"Skipping for {item_id}\n")
