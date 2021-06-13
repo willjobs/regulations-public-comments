@@ -319,7 +319,7 @@ class CommentsDownloader:
             while retries > 0:
                 try:
                     r_item = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}/{item_id}',
-                                                   params={"include":"attachments"},
+                                                   params={"include":"attachments"} if data_type == "comments" else None,
                                                    wait_for_rate_limits=True,
                                                    skip_duplicates=skip_duplicates)
                     break
@@ -342,6 +342,9 @@ class CommentsDownloader:
                 attachments.append(None)
 
             if n_retrieved > 0 and n_retrieved % insert_every_n_rows == 0:
+                if data_type != "comments":
+                    attachments = None
+
                 data = self._get_processed_data(data, id_col, attachments)
                 self._output_data(data,
                                   table_name=(data_type + "_detail"),
@@ -352,6 +355,9 @@ class CommentsDownloader:
                 attachments = []
 
         if len(data) > 0:  # insert any remaining in final batch
+            if data_type != "comments":
+                attachments = None
+
             data = self._get_processed_data(data, id_col, attachments)
             self._output_data(data,
                               table_name=(data_type + "_detail"),
