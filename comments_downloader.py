@@ -868,8 +868,8 @@ class CommentsDownloader:
                 else:
                     out["attachmentLinks"] = ""
 
-            # also, the item's ID
-            out[id_col] = item['id']
+            # add the item's ID at the first position
+            out = {id_col: item['id'], **out}
             output.append(out)
 
         return output
