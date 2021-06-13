@@ -71,6 +71,12 @@ class CommentsDownloader:
         STATUS_CODE_OVER_RATE_LIMIT = 429
         WAIT_MINUTES = 20  # time between attempts to get a response
         POLL_SECONDS = 10  # run time.sleep() for this long, so we can check if we've been interrupted
+        
+        params = params if params is not None else {}
+        
+        # whether we are querying the search endpoint (e.g., /documents) or the "details" endpoint
+        if (endpoint.split("/")[-1] in ["dockets", "documents", "comments"]):
+            params = {**params, "page[size]": 250}  # always get max page size
 
         # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
         # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
@@ -78,14 +84,10 @@ class CommentsDownloader:
         session.mount('https', HTTPAdapter(max_retries=4))
 
         def poll_for_response(api_key, else_func):
-            if params is not None:  # querying the search endpoint (e.g., /documents)
-                r = session.get(endpoint,
-                                headers={'X-Api-Key': api_key},
-                                params={**params,
-                                        'page[size]': 250}, # always get max page size
-                                verify=False)
-            else:  # querying the "detail" endpoint (e.g., /documents/{documentId})
-                r = session.get(endpoint, headers={'X-Api-Key': api_key}, verify=False)
+            r = session.get(endpoint,
+                            headers={'X-Api-Key': api_key},
+                            params=params,
+                            verify=False)
 
             if r.status_code == 200:
                 # SUCCESS! Return the JSON of the request
@@ -298,6 +300,7 @@ class CommentsDownloader:
 
         n_retrieved = 0
         data = []
+        attachments = []
 
         # remove the trailing s before adding "Id"; e.g., "dockets" --> "docketId"
         id_col = data_type[:len(data_type)-1] + "Id"
@@ -316,6 +319,7 @@ class CommentsDownloader:
             while retries > 0:
                 try:
                     r_item = self.get_request_json(f'https://api.regulations.gov/v4/{data_type}/{item_id}',
+                                                   params={"include":"attachments"} if data_type == "comments" else None,
                                                    wait_for_rate_limits=True,
                                                    skip_duplicates=skip_duplicates)
                     break
@@ -331,18 +335,30 @@ class CommentsDownloader:
 
             n_retrieved += 1
             data.append(r_item['data'])  # only one item from the Details endpoint, not a list, so use append (not extend)
+            
+            if 'included' in r_item.keys():
+                attachments.append(r_item['included'][0]['attributes']['fileFormats'])
+            else:
+                attachments.append(None)
 
             if n_retrieved > 0 and n_retrieved % insert_every_n_rows == 0:
-                data = self._get_processed_data(data, id_col)
+                if data_type != "comments":
+                    attachments = None
+
+                data = self._get_processed_data(data, id_col, attachments)
                 self._output_data(data,
                                   table_name=(data_type + "_detail"),
                                   conn=conn,
                                   cur=cur,
                                   csv_filename=csv_filename)
                 data = []  # reset for next batch
+                attachments = []
 
         if len(data) > 0:  # insert any remaining in final batch
-            data = self._get_processed_data(data, id_col)
+            if data_type != "comments":
+                attachments = None
+
+            data = self._get_processed_data(data, id_col, attachments)
             self._output_data(data,
                               table_name=(data_type + "_detail"),
                               conn=conn,
@@ -754,6 +770,7 @@ class CommentsDownloader:
             trackingNbr             TEXT,
             withdrawn               INTEGER,
             zip                     TEXT,
+            attachmentLinks         TEXT,
             sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )""")
 
@@ -828,7 +845,7 @@ class CommentsDownloader:
         return n_items
 
 
-    def _get_processed_data(self, data, id_col):
+    def _get_processed_data(self, data, id_col, attachments=None):
         """Used to take the data contained in a response (e.g., the data for a bunch of comments)
         and remove unnecessary columns (i.e., those not specified in `cols`). Also adds the ID
         associated with the items and flattens lists contained in each item's data.
@@ -837,6 +854,7 @@ class CommentsDownloader:
             data (list of dict): List of items to process from a request (e.g., a bunch of comments).
                 Each dict is expected to be formatted like: {'id': '...', 'attributes': {'attrib1': 'data', ...}, <other keys:values>}
             id_col (str): Name of the ID column for this data type, i.e., 'docketId', 'documentId', or 'commentId'
+            attachments (list of dict): List of dict with the file attachments, if any. Dict contains 'fileUrl', 'format', and 'size' keys.
 
         Returns:
             list of dict: processed dataset, ready for input into sqlite or output to CSV
@@ -845,12 +863,19 @@ class CommentsDownloader:
         cols = [x for x in data[0]['attributes'].keys() if x not in \
                     ['id', 'displayProperties', 'highlightedContent', 'fileFormats']]
 
-        for item in data:
+        for idx, item in enumerate(data):
             # get just the dict of columns we want, and if one of the values is a list, flatten it
             out = {k:(' '.join(v) if type(v) == list else v) for (k,v) in item['attributes'].items() if k in cols}
 
-            # also, the item's ID
-            out[id_col] = item['id']
+            if attachments is not None:
+                if attachments[idx] is not None:
+                    # create a "|" separated list of URLs
+                    out["attachmentLinks"] = "|".join([x['fileUrl'] for x in attachments[idx]])
+                else:
+                    out["attachmentLinks"] = ""
+
+            # add the item's ID at the first position
+            out = {id_col: item['id'], **out}
             output.append(out)
 
         return output
