@@ -99,6 +99,12 @@ class CommentsDownloader:
         STATUS_CODE_OVER_RATE_LIMIT = 429
         WAIT_MINUTES = 20  # time between attempts to get a response
         POLL_SECONDS = 10  # run time.sleep() for this long, so we can check if we&#39;ve been interrupted
+        
+        params = params if params is not None else {}
+        
+        # whether we are querying the search endpoint (e.g., /documents) or the &#34;details&#34; endpoint
+        if (endpoint.split(&#34;/&#34;)[-1] in [&#34;dockets&#34;, &#34;documents&#34;, &#34;comments&#34;]):
+            params = {**params, &#34;page[size]&#34;: 250}  # always get max page size
 
         # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
         # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
@@ -106,14 +112,10 @@ class CommentsDownloader:
         session.mount(&#39;https&#39;, HTTPAdapter(max_retries=4))
 
         def poll_for_response(api_key, else_func):
-            if params is not None:  # querying the search endpoint (e.g., /documents)
-                r = session.get(endpoint,
-                                headers={&#39;X-Api-Key&#39;: api_key},
-                                params={**params,
-                                        &#39;page[size]&#39;: 250}, # always get max page size
-                                verify=False)
-            else:  # querying the &#34;detail&#34; endpoint (e.g., /documents/{documentId})
-                r = session.get(endpoint, headers={&#39;X-Api-Key&#39;: api_key}, verify=False)
+            r = session.get(endpoint,
+                            headers={&#39;X-Api-Key&#39;: api_key},
+                            params=params,
+                            verify=False)
 
             if r.status_code == 200:
                 # SUCCESS! Return the JSON of the request
@@ -326,6 +328,7 @@ class CommentsDownloader:
 
         n_retrieved = 0
         data = []
+        attachments = []
 
         # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
         id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
@@ -344,6 +347,7 @@ class CommentsDownloader:
             while retries &gt; 0:
                 try:
                     r_item = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}/{item_id}&#39;,
+                                                   params={&#34;include&#34;:&#34;attachments&#34;} if data_type == &#34;comments&#34; else None,
                                                    wait_for_rate_limits=True,
                                                    skip_duplicates=skip_duplicates)
                     break
@@ -359,18 +363,30 @@ class CommentsDownloader:
 
             n_retrieved += 1
             data.append(r_item[&#39;data&#39;])  # only one item from the Details endpoint, not a list, so use append (not extend)
+            
+            if &#39;included&#39; in r_item.keys():
+                attachments.append(r_item[&#39;included&#39;][0][&#39;attributes&#39;][&#39;fileFormats&#39;])
+            else:
+                attachments.append(None)
 
             if n_retrieved &gt; 0 and n_retrieved % insert_every_n_rows == 0:
-                data = self._get_processed_data(data, id_col)
+                if data_type != &#34;comments&#34;:
+                    attachments = None
+
+                data = self._get_processed_data(data, id_col, attachments)
                 self._output_data(data,
                                   table_name=(data_type + &#34;_detail&#34;),
                                   conn=conn,
                                   cur=cur,
                                   csv_filename=csv_filename)
                 data = []  # reset for next batch
+                attachments = []
 
         if len(data) &gt; 0:  # insert any remaining in final batch
-            data = self._get_processed_data(data, id_col)
+            if data_type != &#34;comments&#34;:
+                attachments = None
+
+            data = self._get_processed_data(data, id_col, attachments)
             self._output_data(data,
                               table_name=(data_type + &#34;_detail&#34;),
                               conn=conn,
@@ -782,6 +798,7 @@ class CommentsDownloader:
             trackingNbr             TEXT,
             withdrawn               INTEGER,
             zip                     TEXT,
+            attachmentLinks         TEXT,
             sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )&#34;&#34;&#34;)
 
@@ -856,7 +873,7 @@ class CommentsDownloader:
         return n_items
 
 
-    def _get_processed_data(self, data, id_col):
+    def _get_processed_data(self, data, id_col, attachments=None):
         &#34;&#34;&#34;Used to take the data contained in a response (e.g., the data for a bunch of comments)
         and remove unnecessary columns (i.e., those not specified in `cols`). Also adds the ID
         associated with the items and flattens lists contained in each item&#39;s data.
@@ -865,6 +882,7 @@ class CommentsDownloader:
             data (list of dict): List of items to process from a request (e.g., a bunch of comments).
                 Each dict is expected to be formatted like: {&#39;id&#39;: &#39;...&#39;, &#39;attributes&#39;: {&#39;attrib1&#39;: &#39;data&#39;, ...}, &lt;other keys:values&gt;}
             id_col (str): Name of the ID column for this data type, i.e., &#39;docketId&#39;, &#39;documentId&#39;, or &#39;commentId&#39;
+            attachments (list of dict): List of dict with the file attachments, if any. Dict contains &#39;fileUrl&#39;, &#39;format&#39;, and &#39;size&#39; keys.
 
         Returns:
             list of dict: processed dataset, ready for input into sqlite or output to CSV
@@ -873,12 +891,19 @@ class CommentsDownloader:
         cols = [x for x in data[0][&#39;attributes&#39;].keys() if x not in \
                     [&#39;id&#39;, &#39;displayProperties&#39;, &#39;highlightedContent&#39;, &#39;fileFormats&#39;]]
 
-        for item in data:
+        for idx, item in enumerate(data):
             # get just the dict of columns we want, and if one of the values is a list, flatten it
             out = {k:(&#39; &#39;.join(v) if type(v) == list else v) for (k,v) in item[&#39;attributes&#39;].items() if k in cols}
 
-            # also, the item&#39;s ID
-            out[id_col] = item[&#39;id&#39;]
+            if attachments is not None:
+                if attachments[idx] is not None:
+                    # create a &#34;|&#34; separated list of URLs
+                    out[&#34;attachmentLinks&#34;] = &#34;|&#34;.join([x[&#39;fileUrl&#39;] for x in attachments[idx]])
+                else:
+                    out[&#34;attachmentLinks&#34;] = &#34;&#34;
+
+            # add the item&#39;s ID at the first position
+            out = {id_col: item[&#39;id&#39;], **out}
             output.append(out)
 
         return output
@@ -1096,6 +1121,12 @@ downloading the "headers" and "details" of items in bulk.</p></div>
         STATUS_CODE_OVER_RATE_LIMIT = 429
         WAIT_MINUTES = 20  # time between attempts to get a response
         POLL_SECONDS = 10  # run time.sleep() for this long, so we can check if we&#39;ve been interrupted
+        
+        params = params if params is not None else {}
+        
+        # whether we are querying the search endpoint (e.g., /documents) or the &#34;details&#34; endpoint
+        if (endpoint.split(&#34;/&#34;)[-1] in [&#34;dockets&#34;, &#34;documents&#34;, &#34;comments&#34;]):
+            params = {**params, &#34;page[size]&#34;: 250}  # always get max page size
 
         # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
         # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
@@ -1103,14 +1134,10 @@ downloading the "headers" and "details" of items in bulk.</p></div>
         session.mount(&#39;https&#39;, HTTPAdapter(max_retries=4))
 
         def poll_for_response(api_key, else_func):
-            if params is not None:  # querying the search endpoint (e.g., /documents)
-                r = session.get(endpoint,
-                                headers={&#39;X-Api-Key&#39;: api_key},
-                                params={**params,
-                                        &#39;page[size]&#39;: 250}, # always get max page size
-                                verify=False)
-            else:  # querying the &#34;detail&#34; endpoint (e.g., /documents/{documentId})
-                r = session.get(endpoint, headers={&#39;X-Api-Key&#39;: api_key}, verify=False)
+            r = session.get(endpoint,
+                            headers={&#39;X-Api-Key&#39;: api_key},
+                            params=params,
+                            verify=False)
 
             if r.status_code == 200:
                 # SUCCESS! Return the JSON of the request
@@ -1323,6 +1350,7 @@ downloading the "headers" and "details" of items in bulk.</p></div>
 
         n_retrieved = 0
         data = []
+        attachments = []
 
         # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
         id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
@@ -1341,6 +1369,7 @@ downloading the "headers" and "details" of items in bulk.</p></div>
             while retries &gt; 0:
                 try:
                     r_item = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}/{item_id}&#39;,
+                                                   params={&#34;include&#34;:&#34;attachments&#34;} if data_type == &#34;comments&#34; else None,
                                                    wait_for_rate_limits=True,
                                                    skip_duplicates=skip_duplicates)
                     break
@@ -1356,18 +1385,30 @@ downloading the "headers" and "details" of items in bulk.</p></div>
 
             n_retrieved += 1
             data.append(r_item[&#39;data&#39;])  # only one item from the Details endpoint, not a list, so use append (not extend)
+            
+            if &#39;included&#39; in r_item.keys():
+                attachments.append(r_item[&#39;included&#39;][0][&#39;attributes&#39;][&#39;fileFormats&#39;])
+            else:
+                attachments.append(None)
 
             if n_retrieved &gt; 0 and n_retrieved % insert_every_n_rows == 0:
-                data = self._get_processed_data(data, id_col)
+                if data_type != &#34;comments&#34;:
+                    attachments = None
+
+                data = self._get_processed_data(data, id_col, attachments)
                 self._output_data(data,
                                   table_name=(data_type + &#34;_detail&#34;),
                                   conn=conn,
                                   cur=cur,
                                   csv_filename=csv_filename)
                 data = []  # reset for next batch
+                attachments = []
 
         if len(data) &gt; 0:  # insert any remaining in final batch
-            data = self._get_processed_data(data, id_col)
+            if data_type != &#34;comments&#34;:
+                attachments = None
+
+            data = self._get_processed_data(data, id_col, attachments)
             self._output_data(data,
                               table_name=(data_type + &#34;_detail&#34;),
                               conn=conn,
@@ -1779,6 +1820,7 @@ downloading the "headers" and "details" of items in bulk.</p></div>
             trackingNbr             TEXT,
             withdrawn               INTEGER,
             zip                     TEXT,
+            attachmentLinks         TEXT,
             sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )&#34;&#34;&#34;)
 
@@ -1853,7 +1895,7 @@ downloading the "headers" and "details" of items in bulk.</p></div>
         return n_items
 
 
-    def _get_processed_data(self, data, id_col):
+    def _get_processed_data(self, data, id_col, attachments=None):
         &#34;&#34;&#34;Used to take the data contained in a response (e.g., the data for a bunch of comments)
         and remove unnecessary columns (i.e., those not specified in `cols`). Also adds the ID
         associated with the items and flattens lists contained in each item&#39;s data.
@@ -1862,6 +1904,7 @@ downloading the "headers" and "details" of items in bulk.</p></div>
             data (list of dict): List of items to process from a request (e.g., a bunch of comments).
                 Each dict is expected to be formatted like: {&#39;id&#39;: &#39;...&#39;, &#39;attributes&#39;: {&#39;attrib1&#39;: &#39;data&#39;, ...}, &lt;other keys:values&gt;}
             id_col (str): Name of the ID column for this data type, i.e., &#39;docketId&#39;, &#39;documentId&#39;, or &#39;commentId&#39;
+            attachments (list of dict): List of dict with the file attachments, if any. Dict contains &#39;fileUrl&#39;, &#39;format&#39;, and &#39;size&#39; keys.
 
         Returns:
             list of dict: processed dataset, ready for input into sqlite or output to CSV
@@ -1870,12 +1913,19 @@ downloading the "headers" and "details" of items in bulk.</p></div>
         cols = [x for x in data[0][&#39;attributes&#39;].keys() if x not in \
                     [&#39;id&#39;, &#39;displayProperties&#39;, &#39;highlightedContent&#39;, &#39;fileFormats&#39;]]
 
-        for item in data:
+        for idx, item in enumerate(data):
             # get just the dict of columns we want, and if one of the values is a list, flatten it
             out = {k:(&#39; &#39;.join(v) if type(v) == list else v) for (k,v) in item[&#39;attributes&#39;].items() if k in cols}
 
-            # also, the item&#39;s ID
-            out[id_col] = item[&#39;id&#39;]
+            if attachments is not None:
+                if attachments[idx] is not None:
+                    # create a &#34;|&#34; separated list of URLs
+                    out[&#34;attachmentLinks&#34;] = &#34;|&#34;.join([x[&#39;fileUrl&#39;] for x in attachments[idx]])
+                else:
+                    out[&#34;attachmentLinks&#34;] = &#34;&#34;
+
+            # add the item&#39;s ID at the first position
+            out = {id_col: item[&#39;id&#39;], **out}
             output.append(out)
 
         return output
@@ -2276,6 +2326,7 @@ should we skip that request? Defaults to True.</dd>
 
     n_retrieved = 0
     data = []
+    attachments = []
 
     # remove the trailing s before adding &#34;Id&#34;; e.g., &#34;dockets&#34; --&gt; &#34;docketId&#34;
     id_col = data_type[:len(data_type)-1] + &#34;Id&#34;
@@ -2294,6 +2345,7 @@ should we skip that request? Defaults to True.</dd>
         while retries &gt; 0:
             try:
                 r_item = self.get_request_json(f&#39;https://api.regulations.gov/v4/{data_type}/{item_id}&#39;,
+                                               params={&#34;include&#34;:&#34;attachments&#34;} if data_type == &#34;comments&#34; else None,
                                                wait_for_rate_limits=True,
                                                skip_duplicates=skip_duplicates)
                 break
@@ -2309,18 +2361,30 @@ should we skip that request? Defaults to True.</dd>
 
         n_retrieved += 1
         data.append(r_item[&#39;data&#39;])  # only one item from the Details endpoint, not a list, so use append (not extend)
+        
+        if &#39;included&#39; in r_item.keys():
+            attachments.append(r_item[&#39;included&#39;][0][&#39;attributes&#39;][&#39;fileFormats&#39;])
+        else:
+            attachments.append(None)
 
         if n_retrieved &gt; 0 and n_retrieved % insert_every_n_rows == 0:
-            data = self._get_processed_data(data, id_col)
+            if data_type != &#34;comments&#34;:
+                attachments = None
+
+            data = self._get_processed_data(data, id_col, attachments)
             self._output_data(data,
                               table_name=(data_type + &#34;_detail&#34;),
                               conn=conn,
                               cur=cur,
                               csv_filename=csv_filename)
             data = []  # reset for next batch
+            attachments = []
 
     if len(data) &gt; 0:  # insert any remaining in final batch
-        data = self._get_processed_data(data, id_col)
+        if data_type != &#34;comments&#34;:
+            attachments = None
+
+        data = self._get_processed_data(data, id_col, attachments)
         self._output_data(data,
                           table_name=(data_type + &#34;_detail&#34;),
                           conn=conn,
@@ -2669,6 +2733,12 @@ should we skip that request? Defaults to False.</dd>
     STATUS_CODE_OVER_RATE_LIMIT = 429
     WAIT_MINUTES = 20  # time between attempts to get a response
     POLL_SECONDS = 10  # run time.sleep() for this long, so we can check if we&#39;ve been interrupted
+    
+    params = params if params is not None else {}
+    
+    # whether we are querying the search endpoint (e.g., /documents) or the &#34;details&#34; endpoint
+    if (endpoint.split(&#34;/&#34;)[-1] in [&#34;dockets&#34;, &#34;documents&#34;, &#34;comments&#34;]):
+        params = {**params, &#34;page[size]&#34;: 250}  # always get max page size
 
     # Rather than do requests.get(), use this approach to (attempt to) gracefully handle noisy connections to the server
     # We sometimes get SSL errors (unexpected EOF or ECONNRESET), so this should hopefully help us retry.
@@ -2676,14 +2746,10 @@ should we skip that request? Defaults to False.</dd>
     session.mount(&#39;https&#39;, HTTPAdapter(max_retries=4))
 
     def poll_for_response(api_key, else_func):
-        if params is not None:  # querying the search endpoint (e.g., /documents)
-            r = session.get(endpoint,
-                            headers={&#39;X-Api-Key&#39;: api_key},
-                            params={**params,
-                                    &#39;page[size]&#39;: 250}, # always get max page size
-                            verify=False)
-        else:  # querying the &#34;detail&#34; endpoint (e.g., /documents/{documentId})
-            r = session.get(endpoint, headers={&#39;X-Api-Key&#39;: api_key}, verify=False)
+        r = session.get(endpoint,
+                        headers={&#39;X-Api-Key&#39;: api_key},
+                        params=params,
+                        verify=False)
 
         if r.status_code == 200:
             # SUCCESS! Return the JSON of the request
