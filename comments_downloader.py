@@ -48,10 +48,9 @@ class CommentsDownloader:
 
         Args:
             endpoint (str): URL of the API to access (e.g., https://api.regulations.gov/v4/documents)
-            params (dict, optional): Parameters to specify to the endpoint request. Defaults to None, in
-                which case no parameters are specified and it is assumed we are accessing the "Details" endpoint.
-                If params is not None, we also append the "page[size]" parameter so that we always get
-                the maximum page size of 250 elements per page.
+            params (dict, optional): Parameters to specify to the endpoint request. Defaults to None.
+                If we are querying the non-details endpoint, we also append the "page[size]" parameter 
+                so that we always get the maximum page size of 250 elements per page.
             print_remaining_requests (bool, optional): Whether to print out the number of remaining
                 requests this hour, based on the response headers. Defaults to False.
             wait_for_rate_limits (bool, optional): Determines whether to wait to re-try if we run out of

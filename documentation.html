@@ -76,10 +76,9 @@ class CommentsDownloader:
 
         Args:
             endpoint (str): URL of the API to access (e.g., https://api.regulations.gov/v4/documents)
-            params (dict, optional): Parameters to specify to the endpoint request. Defaults to None, in
-                which case no parameters are specified and it is assumed we are accessing the &#34;Details&#34; endpoint.
-                If params is not None, we also append the &#34;page[size]&#34; parameter so that we always get
-                the maximum page size of 250 elements per page.
+            params (dict, optional): Parameters to specify to the endpoint request. Defaults to None.
+                If we are querying the non-details endpoint, we also append the &#34;page[size]&#34; parameter 
+                so that we always get the maximum page size of 250 elements per page.
             print_remaining_requests (bool, optional): Whether to print out the number of remaining
                 requests this hour, based on the response headers. Defaults to False.
             wait_for_rate_limits (bool, optional): Determines whether to wait to re-try if we run out of
@@ -1098,10 +1097,9 @@ downloading the "headers" and "details" of items in bulk.</p></div>
 
         Args:
             endpoint (str): URL of the API to access (e.g., https://api.regulations.gov/v4/documents)
-            params (dict, optional): Parameters to specify to the endpoint request. Defaults to None, in
-                which case no parameters are specified and it is assumed we are accessing the &#34;Details&#34; endpoint.
-                If params is not None, we also append the &#34;page[size]&#34; parameter so that we always get
-                the maximum page size of 250 elements per page.
+            params (dict, optional): Parameters to specify to the endpoint request. Defaults to None.
+                If we are querying the non-details endpoint, we also append the &#34;page[size]&#34; parameter 
+                so that we always get the maximum page size of 250 elements per page.
             print_remaining_requests (bool, optional): Whether to print out the number of remaining
                 requests this hour, based on the response headers. Defaults to False.
             wait_for_rate_limits (bool, optional): Determines whether to wait to re-try if we run out of
@@ -2681,10 +2679,9 @@ on available parameters at <a href="https://open.gsa.gov/api/regulationsgov/.">h
 <dt><strong><code>endpoint</code></strong> :&ensp;<code>str</code></dt>
 <dd>URL of the API to access (e.g., <a href="https://api.regulations.gov/v4/documents">https://api.regulations.gov/v4/documents</a>)</dd>
 <dt><strong><code>params</code></strong> :&ensp;<code>dict</code>, optional</dt>
-<dd>Parameters to specify to the endpoint request. Defaults to None, in
-which case no parameters are specified and it is assumed we are accessing the "Details" endpoint.
-If params is not None, we also append the "page[size]" parameter so that we always get
-the maximum page size of 250 elements per page.</dd>
+<dd>Parameters to specify to the endpoint request. Defaults to None.
+If we are querying the non-details endpoint, we also append the "page[size]" parameter
+so that we always get the maximum page size of 250 elements per page.</dd>
 <dt><strong><code>print_remaining_requests</code></strong> :&ensp;<code>bool</code>, optional</dt>
 <dd>Whether to print out the number of remaining
 requests this hour, based on the response headers. Defaults to False.</dd>
@@ -2710,10 +2707,9 @@ should we skip that request? Defaults to False.</dd>
 
     Args:
         endpoint (str): URL of the API to access (e.g., https://api.regulations.gov/v4/documents)
-        params (dict, optional): Parameters to specify to the endpoint request. Defaults to None, in
-            which case no parameters are specified and it is assumed we are accessing the &#34;Details&#34; endpoint.
-            If params is not None, we also append the &#34;page[size]&#34; parameter so that we always get
-            the maximum page size of 250 elements per page.
+        params (dict, optional): Parameters to specify to the endpoint request. Defaults to None.
+            If we are querying the non-details endpoint, we also append the &#34;page[size]&#34; parameter 
+            so that we always get the maximum page size of 250 elements per page.
         print_remaining_requests (bool, optional): Whether to print out the number of remaining
             requests this hour, based on the response headers. Defaults to False.
         wait_for_rate_limits (bool, optional): Determines whether to wait to re-try if we run out of
