@@ -9,6 +9,7 @@ from dateutil import tz
 import time
 import csv
 import urllib3
+from argparse import ArgumentParser
 
 # we are ignoring the HTTPS check because the server occasionally returns malformed certificates (missing EOF)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -1012,3 +1013,28 @@ class CommentsDownloader:
 
         the_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f"{the_time}: Done. Removed {duplicates} duplicate rows from {csv_filename}.")
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser(description="Download comments on a given document or docket")
+    parser.add_argument("--key", type=str, help="API key used to download the comments. Get one at https://open.gsa.gov/api/regulationsgov/")
+    parser.add_argument("--document", type=str, help="documentId for which to download comments")
+    parser.add_argument("--docket", type=str, help="docketId for which to download comments")
+    args = parser.parse_args()
+    api_key = args.key
+    if api_key is None:
+        # More user-friendly on command-line than raising a ValueError
+        print("Error: Must specify an API key (get one at https://open.gsa.gov/api/regulationsgov/)")
+    else:
+        document_id = args.document
+        docket_id = args.docket
+        downloader = CommentsDownloader(api_key=api_key)
+
+        if document_id is None and docket_id is None:
+            print("Error: Must specify either a docket ID (via --docket) document ID (via --document)")
+        elif docket_id is not None:
+            print(f"Downloading comments for docket ID {docket_id}...")
+            downloader.gather_comments_by_docket(docket_id, db_filename=f"{docket_id}.db", csv_filename=f"{docket_id}.csv")
+        else:
+            print(f"Downloading comments for document ID {document_id}...")
+            downloader.gather_comments_by_document(document_id, db_filename=f"{document_id}.db", csv_filename=f"{document_id}.csv")

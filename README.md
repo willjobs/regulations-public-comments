@@ -29,7 +29,15 @@ Note that there are some idiosyncracies in the data itself. For example, there a
 
 See [the documentation](https://htmlpreview.github.io/?https://github.com/willjobs/regulations-public-comments/blob/master/documentation.html) for more detail on each function and its parameters. The examples below show some simple examples of this project might be used.
 
-See [Examples.ipynb](https://github.com/willjobs/regulations-public-comments/blob/master/Examples.ipynb) for example code and output for the following questions:
+If you just need to download comments for one docket or document, you can use the command-line:
+
+        # download all comments for docket FDA-2021-N-0270 (across all its documents)
+        python comments_downloader.py --key DEMO_KEY --docket FDA-2021-N-0270
+
+        # download all comments for document FDA-2009-N-0501-0012
+        python comments_downloader.py --key DEMO_KEY --document FDA-2009-N-0501-0012
+
+For more functionality and customization, see [Examples.ipynb](https://github.com/willjobs/regulations-public-comments/blob/master/Examples.ipynb) for example code and output for the following questions:
 
 * How do I download all comments associated with a docket?
 * How do I download all comments associated with *multiple* dockets?
