@@ -1034,7 +1034,7 @@ if __name__ == "__main__":
             print("Error: Must specify either a docket ID (via --docket) document ID (via --document)")
         elif docket_id is not None:
             print(f"Downloading comments for docket ID {docket_id}...")
-            downloader.gather_comments_by_docket(docket_id, db_filename=f"{docket_id}.db", csv_filename=f"{docket_id}.csv")
+            downloader.gather_comments_by_docket(docket_id, csv_filename=f"{docket_id}.csv")
         else:
             print(f"Downloading comments for document ID {document_id}...")
-            downloader.gather_comments_by_document(document_id, db_filename=f"{document_id}.db", csv_filename=f"{document_id}.csv")
+            downloader.gather_comments_by_document(document_id, csv_filename=f"{document_id}.csv")
