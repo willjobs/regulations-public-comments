@@ -37,6 +37,7 @@ from dateutil import tz
 import time
 import csv
 import urllib3
+from argparse import ArgumentParser
 
 # we are ignoring the HTTPS check because the server occasionally returns malformed certificates (missing EOF)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -1039,7 +1040,32 @@ class CommentsDownloader:
         os.rename(temp_filename, csv_filename)
 
         the_time = datetime.now().strftime(&#39;%Y-%m-%d %H:%M:%S&#39;)
-        print(f&#34;{the_time}: Done. Removed {duplicates} duplicate rows from {csv_filename}.&#34;)</code></pre>
+        print(f&#34;{the_time}: Done. Removed {duplicates} duplicate rows from {csv_filename}.&#34;)
+
+
+if __name__ == &#34;__main__&#34;:
+    parser = ArgumentParser(description=&#34;Download comments on a given document or docket&#34;)
+    parser.add_argument(&#34;--key&#34;, type=str, help=&#34;API key used to download the comments. Get one at https://open.gsa.gov/api/regulationsgov/&#34;)
+    parser.add_argument(&#34;--document&#34;, type=str, help=&#34;documentId for which to download comments&#34;)
+    parser.add_argument(&#34;--docket&#34;, type=str, help=&#34;docketId for which to download comments&#34;)
+    args = parser.parse_args()
+    api_key = args.key
+    if api_key is None:
+        # More user-friendly on command-line than raising a ValueError
+        print(&#34;Error: Must specify an API key (get one at https://open.gsa.gov/api/regulationsgov/)&#34;)
+    else:
+        document_id = args.document
+        docket_id = args.docket
+        downloader = CommentsDownloader(api_key=api_key)
+
+        if document_id is None and docket_id is None:
+            print(&#34;Error: Must specify either a docket ID (via --docket) document ID (via --document)&#34;)
+        elif docket_id is not None:
+            print(f&#34;Downloading comments for docket ID {docket_id}...&#34;)
+            downloader.gather_comments_by_docket(docket_id, csv_filename=f&#34;{docket_id}.csv&#34;)
+        else:
+            print(f&#34;Downloading comments for document ID {document_id}...&#34;)
+            downloader.gather_comments_by_document(document_id, csv_filename=f&#34;{document_id}.csv&#34;)</code></pre>
 </details>
 </section>
 <section>
