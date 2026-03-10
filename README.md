@@ -1,9 +1,14 @@
 # Downloading public comment data from Regulations.gov
 
+[![PyPI version](https://img.shields.io/pypi/v/regulations-public-comments.svg)](https://pypi.org/project/regulations-public-comments/)
+[![Python versions](https://img.shields.io/pypi/pyversions/regulations-public-comments.svg)](https://pypi.org/project/regulations-public-comments/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/willjobs/regulations-public-comments/actions/workflows/ci.yml/badge.svg)](https://github.com/willjobs/regulations-public-comments/actions/workflows/ci.yml)
+
 ## **Preface**
 
 About this code:
-* [📚 Documentation](https://htmlpreview.github.io/?https://github.com/willjobs/regulations-public-comments/blob/master/documentation.html) of the source code.
+* [📚 Documentation](https://willjobs.github.io/regulations-public-comments/) of the source code.
 * [🏃 Quick-start guide](#quick-start-guide)
 * [✍️ Blog post](https://medium.com/@wjobs/downloading-public-comments-with-a-simple-to-use-python-wrapper-for-the-regulations-gov-api-7affe8a4dadc) about this code
 
@@ -13,15 +18,34 @@ About the official Regulations.gov API:
 * [A blog post](https://github.com/willjobs/public-comments-project/blob/main/blogposts/post2/README.md) I wrote about the official API, with examples of the API responses and how to parse it yourself (i.e., without the use of this code)
 
 ---
+## **Installation**
+
+Requires Python 3.9+. Install with `pip` or [`uv`](https://docs.astral.sh/uv/):
+
+```bash
+# pip
+pip install regulations-public-comments
+
+# uv
+uv add regulations-public-comments
+```
+
+Then get a free API key at [https://open.gsa.gov/api/regulationsgov/](https://open.gsa.gov/api/regulationsgov/#getting-started).
+
+---
 ## **Quick Start Guide**
 
-If you just need to download comments for one docket or document, you can use the command-line:
+If you just need to download comments for one docket or document, use the command-line tool installed with the package:
 
-        # download all comments for docket FDA-2021-N-0270 (across all its documents)
-        python comments_downloader.py --key DEMO_KEY --docket FDA-2021-N-0270
+```bash
+# download all comments for docket FDA-2021-N-0270 (across all its documents)
+comments-downloader --key DEMO_KEY --docket FDA-2021-N-0270
 
-        # download all comments for document FDA-2009-N-0501-0012
-        python comments_downloader.py --key DEMO_KEY --document FDA-2009-N-0501-0012
+# download all comments for document FDA-2009-N-0501-0012
+comments-downloader --key DEMO_KEY --document FDA-2009-N-0501-0012
+```
+
+Each command saves results to a CSV named after the docket or document ID in the current directory.
 
 For more functionality and customization, see [Examples.ipynb](https://github.com/willjobs/regulations-public-comments/blob/master/Examples.ipynb) for example code and output for the following questions:
 
@@ -226,3 +250,9 @@ The six tables are: `dockets_header`, `dockets_detail`, `documents_header`, `doc
         withdrawn               INTEGER,
         zip                     TEXT,
         sqltime                 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+---
+
+## **Contributing**
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, how to run the tests, and code style guidelines.

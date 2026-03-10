@@ -1,0 +1,59 @@
+site_name: regulations-public-comments
+site_description: A Python wrapper for the Regulations.gov API to download public comments, dockets, and documents
+site_author: Will Jobs
+site_url: https://willjobs.github.io/regulations-public-comments/
+repo_url: https://github.com/willjobs/regulations-public-comments
+repo_name: willjobs/regulations-public-comments
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - toc.integrate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_submodules: false
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Usage:
+      - Quick Start: usage/quickstart.md
+      - Programmatic API: usage/programmatic.md
+  - API Reference: api.md
+  - Database Schema: schema.md
+  - Changelog: changelog.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - toc:
+      permalink: true
