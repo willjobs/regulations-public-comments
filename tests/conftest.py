@@ -1,8 +1,8 @@
 """Shared fixtures and mock API response data for the test suite."""
 
 import pytest
-from regulations_public_comments import CommentsDownloader
 
+from regulations_public_comments import CommentsDownloader
 
 # ---------------------------------------------------------------------------
 # Helpers: minimal API response shapes

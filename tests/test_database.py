@@ -4,8 +4,6 @@ import sqlite3
 
 import pytest
 
-from regulations_public_comments import CommentsDownloader
-
 
 @pytest.fixture()
 def db_path(tmp_path):

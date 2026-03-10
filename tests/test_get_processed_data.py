@@ -1,6 +1,6 @@
 """Tests for CommentsDownloader._get_processed_data."""
 
-from tests.conftest import make_comment_header_item, make_comment_detail_item
+from tests.conftest import make_comment_detail_item, make_comment_header_item
 
 
 def test_basic_comment_header(downloader):

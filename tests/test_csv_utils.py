@@ -1,7 +1,6 @@
 """Tests for CSV utility methods: get_ids_from_csv and _remove_duplicates_from_csv."""
 
 import csv
-import os
 
 import pytest
 
@@ -82,7 +81,7 @@ def test_remove_duplicates_removes_repeated_ids(downloader, tmp_path):
     )
     downloader._remove_duplicates_from_csv("comments", str(csv_file))
 
-    with open(csv_file, "r", encoding="utf8") as f:
+    with open(csv_file, encoding="utf8") as f:
         reader = csv.reader(f)
         rows = list(reader)
 
@@ -101,7 +100,7 @@ def test_remove_duplicates_noop_when_no_duplicates(downloader, tmp_path):
     )
     downloader._remove_duplicates_from_csv("comments", str(csv_file))
 
-    with open(csv_file, "r", encoding="utf8") as f:
+    with open(csv_file, encoding="utf8") as f:
         rows = list(csv.reader(f))
 
     assert len(rows) == 3  # header + 2 rows

@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from tests.conftest import make_duplicate_server_error, make_list_response, make_comment_header_item
+from tests.conftest import make_comment_header_item, make_duplicate_server_error, make_list_response
 
 BASE_URL = "https://api.regulations.gov/v4/comments"
 

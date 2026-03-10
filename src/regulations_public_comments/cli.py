@@ -1,4 +1,5 @@
 import sys
+
 import rich_click as click
 
 from regulations_public_comments import CommentsDownloader

@@ -1,14 +1,14 @@
-import sys
-import os
-import requests
-from requests.adapters import HTTPAdapter
-import sqlite3
-import pandas as pd
-from datetime import datetime
-from dateutil import tz
-import time
 import csv
+import os
+import sqlite3
+import time
+from datetime import datetime
+
+import pandas as pd
+import requests
 import urllib3
+from dateutil import tz
+from requests.adapters import HTTPAdapter
 
 # we are ignoring the HTTPS check because the server occasionally returns malformed certificates (missing EOF)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -210,11 +210,12 @@ class CommentsDownloader:
 
         while n_retrieved < totalElements:
             # loop over 5000 in each request (20 pages of 250 each)
-            if verbose: print(f'\nEnter outer loop ({n_retrieved} {data_type} collected)...', flush=True)
+            if verbose:
+                print(f'\nEnter outer loop ({n_retrieved} {data_type} collected)...', flush=True)
             page = 1
             data = []
 
-            while (n_retrieved < totalElements) and (page == 1 or (not r_items['meta']['lastPage'])):
+            while (n_retrieved < totalElements) and (page == 1 or (not r_items['meta']['lastPage'])):  # noqa: F821
                 ## note: this will NOT lead to an off-by-one error because at the start of the loop
                 # r_items is from the *previous* request. If the *previous* request was the last page
                 # then we exit the loop (unless we're on the first page, in which case get the data then exit)
@@ -225,7 +226,7 @@ class CommentsDownloader:
                                                         params={**params,
                                                                 'filter[lastModifiedDate][ge]': prev_query_max_date,
                                                                 'page[number]': str(page),
-                                                                'sort': f'lastModifiedDate'},
+                                                                'sort': 'lastModifiedDate'},
                                                         wait_for_rate_limits=True)
                         break
                     except Exception as e:
@@ -244,7 +245,8 @@ class CommentsDownloader:
                 #    assert len(data) == totalElements
                 #    n_retrieved = totalElements
 
-                if verbose: print(f'    {n_retrieved} {data_type} retrieved', flush=True)
+                if verbose:
+                    print(f'    {n_retrieved} {data_type} retrieved', flush=True)
 
             # get our query's final record's lastModifiedDate, and convert to eastern timezone for filtering via URL
             prev_query_max_date = r_items['data'][-1]['attributes']['lastModifiedDate'].replace('Z', '+00:00')
@@ -423,7 +425,7 @@ class CommentsDownloader:
 
                 try:
                     os.remove(temp_filename)
-                except:
+                except OSError:
                     pass
             else:
                 return []
@@ -490,12 +492,12 @@ class CommentsDownloader:
 
                 try:
                     os.remove(temp_filename)
-                except:
+                except OSError:
                     pass
             else:
                 raise ValueError(f"Docket {docket_id} has no documents (did you specify a documentId instead of a docketId by mistake?)")
 
-            print(f"\nDone----------------\n", flush=True)
+            print("\nDone----------------\n", flush=True)
             return document_ids
 
         document_ids = get_document_ids(docket_id)
@@ -533,7 +535,7 @@ class CommentsDownloader:
         id_column_index = None
         ids = []
 
-        with open(csv_filename, 'r', encoding='utf8', newline='') as f:
+        with open(csv_filename, encoding='utf8', newline='') as f:
             reader = csv.reader(f)
             for row in reader:
                 if id_column_index is None:
@@ -784,7 +786,7 @@ class CommentsDownloader:
         """
         try:
             conn.close()
-        except:
+        except Exception:
             pass
 
 
@@ -864,7 +866,7 @@ class CommentsDownloader:
 
         for idx, item in enumerate(data):
             # get just the dict of columns we want, and if one of the values is a list, flatten it
-            out = {k:(' '.join(v) if type(v) == list else v) for (k,v) in item['attributes'].items() if k in cols}
+            out = {k: (' '.join(v) if isinstance(v, list) else v) for (k, v) in item['attributes'].items() if k in cols}
 
             if attachments is not None:
                 if attachments[idx] is not None:
@@ -985,7 +987,7 @@ class CommentsDownloader:
         duplicates = 0
 
         # loop over CSV, adding unique rows to our new CSV
-        with open(csv_filename, 'r', encoding='utf8', newline='') as source_file, \
+        with open(csv_filename, encoding='utf8', newline='') as source_file, \
              open(temp_filename, 'w', encoding='utf8', newline='') as dest_file:
             reader = csv.reader(source_file)
             writer = csv.writer(dest_file, quoting=csv.QUOTE_ALL)
